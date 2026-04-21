@@ -46,7 +46,7 @@ namespace ConviAppWeb.Controllers
         }
 
         [HttpPost]
-        public IActionResult Register(string name, string email, string password, string confirmPassword)
+        public IActionResult Register(string name, string email, string password, string confirmPassword, string? plan)
         {
             if (password != confirmPassword)
             {
@@ -60,12 +60,16 @@ namespace ConviAppWeb.Controllers
                 return View();
             }
 
+            // Validar que el plan sea uno de los permitidos
+            var validPlans = new[] { "Basico", "Profesional", "Enterprise" };
+            var assignedRole = validPlans.Contains(plan) ? plan! : "Basico";
+
             var user = new User
             {
                 Name = name,
                 Email = email,
                 Password = password,
-                Role = "Basico"
+                Role = assignedRole
             };
             _context.Users.Add(user);
             _context.SaveChanges();

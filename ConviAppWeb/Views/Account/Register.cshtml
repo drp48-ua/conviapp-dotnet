@@ -1,0 +1,106 @@
+@{
+    ViewData["Title"] = "Registrarse";
+    var planParam = Context.Request.Query["plan"].ToString();
+}
+
+<style>
+    .plan-card {
+        border: 2px solid rgba(255,255,255,0.1);
+        border-radius: 12px;
+        padding: 14px 18px;
+        cursor: pointer;
+        transition: all 0.2s;
+        margin-bottom: 10px;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+    }
+    .plan-card:hover { border-color: var(--primary-light); }
+    .plan-card.selected { border-color: var(--primary); background: rgba(99,102,241,0.15); }
+    .plan-card input[type=radio] { accent-color: var(--primary); width: 18px; height: 18px; }
+    .plan-badge { font-size: 0.75rem; padding: 2px 8px; border-radius: 99px; font-weight: 600; }
+    .badge-free { background: rgba(99,102,241,0.2); color: #a5b4fc; }
+    .badge-pro  { background: rgba(245,158,11,0.2); color: #fbbf24; }
+    .badge-ent  { background: rgba(16,185,129,0.2); color: #34d399; }
+</style>
+
+<div class="container" style="min-height: 80vh; display: flex; align-items: center; justify-content: center; padding: 2rem;">
+    <div style="width: 100%; max-width: 500px;">
+        <div style="text-align: center; margin-bottom: 30px;">
+            <h1 style="font-family: 'Outfit', sans-serif; font-size: 2rem;">Crear cuenta 🚀</h1>
+            <p style="color: var(--text-muted);">Elige tu plan y empieza hoy</p>
+        </div>
+
+        <div class="glass-card" style="padding: 32px;">
+            @if (ViewBag.Error != null)
+            {
+                <div class="alert alert-danger" style="margin-bottom: 20px;">⚠️ @ViewBag.Error</div>
+            }
+
+            <form method="post" action="/Account/Register" id="registerForm">
+
+                <!-- Selector de plan -->
+                <div style="margin-bottom: 20px;">
+                    <label style="color: var(--text-secondary); font-size: 0.9rem; margin-bottom: 10px; display: block;">Selecciona tu plan</label>
+
+                    <label class="plan-card @(planParam == "Profesional" || planParam == "Enterprise" ? "" : "selected")" id="card-basico" onclick="selectPlan('Basico')">
+                        <input type="radio" name="plan" value="Basico" @(planParam == "Profesional" || planParam == "Enterprise" ? "" : "checked") />
+                        <div>
+                            <div style="font-weight: 600;">Básico <span class="plan-badge badge-free">Gratis</span></div>
+                            <div style="font-size: 0.8rem; color: var(--text-muted);">Funciones básicas de gestión</div>
+                        </div>
+                    </label>
+
+                    <label class="plan-card @(planParam == "Profesional" ? "selected" : "")" id="card-profesional" onclick="selectPlan('Profesional')">
+                        <input type="radio" name="plan" value="Profesional" @(planParam == "Profesional" ? "checked" : "") />
+                        <div>
+                            <div style="font-weight: 600;">Profesional <span class="plan-badge badge-pro">€9.99/mes</span></div>
+                            <div style="font-size: 0.8rem; color: var(--text-muted);">Sin anuncios + funciones avanzadas</div>
+                        </div>
+                    </label>
+
+                    <label class="plan-card @(planParam == "Enterprise" ? "selected" : "")" id="card-enterprise" onclick="selectPlan('Enterprise')">
+                        <input type="radio" name="plan" value="Enterprise" @(planParam == "Enterprise" ? "checked" : "") />
+                        <div>
+                            <div style="font-weight: 600;">Enterprise <span class="plan-badge badge-ent">€29.99/mes</span></div>
+                            <div style="font-size: 0.8rem; color: var(--text-muted);">Gestión completa multi-piso</div>
+                        </div>
+                    </label>
+                </div>
+
+                <div style="margin-bottom: 16px;">
+                    <label style="color: var(--text-secondary); font-size: 0.9rem; margin-bottom: 6px; display: block;">Nombre</label>
+                    <input type="text" name="name" class="form-input" placeholder="Tu nombre" required />
+                </div>
+                <div style="margin-bottom: 16px;">
+                    <label style="color: var(--text-secondary); font-size: 0.9rem; margin-bottom: 6px; display: block;">Correo Electrónico</label>
+                    <input type="email" name="email" class="form-input" placeholder="tu@email.com" required />
+                </div>
+                <div style="margin-bottom: 16px;">
+                    <label style="color: var(--text-secondary); font-size: 0.9rem; margin-bottom: 6px; display: block;">Contraseña</label>
+                    <input type="password" name="password" class="form-input" placeholder="••••••••" required minlength="4" />
+                </div>
+                <div style="margin-bottom: 24px;">
+                    <label style="color: var(--text-secondary); font-size: 0.9rem; margin-bottom: 6px; display: block;">Confirmar Contraseña</label>
+                    <input type="password" name="confirmPassword" class="form-input" placeholder="••••••••" required minlength="4" />
+                </div>
+                <button type="submit" class="btn btn-primary" style="width: 100%; padding: 14px; font-size: 1rem;">Crear Cuenta →</button>
+            </form>
+        </div>
+
+        <p style="text-align: center; margin-top: 20px; color: var(--text-muted);">
+            ¿Ya tienes cuenta? <a href="/Account/Login" style="color: var(--primary-light);">Inicia sesión</a>
+        </p>
+    </div>
+</div>
+
+<script>
+function selectPlan(plan) {
+    ['Basico', 'Profesional', 'Enterprise'].forEach(function(p) {
+        document.getElementById('card-' + p.toLowerCase()).classList.remove('selected');
+    });
+    document.getElementById('card-' + plan.toLowerCase()).classList.add('selected');
+    var input = document.querySelector('input[value="' + plan + '"]');
+    if(input) input.checked = true;
+}
+</script>

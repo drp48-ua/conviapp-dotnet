@@ -1,0 +1,42 @@
+@{
+    ViewData["Title"] = "Acceder";
+}
+
+<div style="min-height: calc(100vh - var(--header-height)); display: flex; align-items: center; justify-content: center; padding: 40px 24px;">
+    <div style="width: 100%; max-width: 420px;">
+        <div style="text-align: center; margin-bottom: 32px;">
+            <h1 style="font-size: 2rem; margin-bottom: 8px;">Bienvenido de vuelta 👋</h1>
+            <p style="color: var(--text-secondary);">Ingresa al Sandbox de ConviApp</p>
+        </div>
+
+        @if (ViewBag.Error != null)
+        {
+            <div class="alert alert-error">
+                ⚠️ @ViewBag.Error
+            </div>
+        }
+
+        <form method="post" action="/Account/Login" class="glass-card" style="display: flex; flex-direction: column; gap: 20px;">
+            <div class="form-group" style="margin-bottom:0;">
+                <label class="form-label">Correo Electrónico</label>
+                <input type="email" name="email" required placeholder="dani@conviapp.com" class="form-input" />
+            </div>
+            <div class="form-group" style="margin-bottom:0;">
+                <label class="form-label">Contraseña</label>
+                <input type="password" name="password" required placeholder="••••" class="form-input" />
+            </div>
+            <button type="submit" class="btn btn-primary" style="justify-content: center; padding: 14px;">
+                Iniciar Sesión →
+            </button>
+        </form>
+
+        <div class="glass-card" style="margin-top: 16px; font-size: 0.85rem; color: var(--text-muted);">
+            <div style="font-weight: 600; color: var(--text-secondary); margin-bottom: 10px;">🔑 Cuentas demo (contraseña: <code style="color: var(--accent);">1234</code>)</div>
+            <div style="display: flex; flex-direction: column; gap: 6px;">
+                <div>🏢 <strong style="color: var(--text-secondary);">Enterprise:</strong> dani@conviapp.com</div>
+                <div>⭐ <strong style="color: var(--text-secondary);">Pro:</strong> lidia@conviapp.com</div>
+                <div>📦 <strong style="color: var(--text-secondary);">Basic:</strong> marina@conviapp.com / nazim@conviapp.com</div>
+            </div>
+        </div>
+    </div>
+</div>

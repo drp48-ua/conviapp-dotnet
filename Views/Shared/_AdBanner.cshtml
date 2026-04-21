@@ -1,0 +1,62 @@
+@* Ad Slider Banner for Basic plan users — rotating carousel *@
+@{
+    var adSlides = new[] {
+        new { Icon = "🏠", Title = "MudanzasExpress.es", Text = "¿Te mudas? Presupuesto gratis en 24h. Mudanzas nacionales desde 199€", Color = "#f59e0b", Cta = "Ver oferta" },
+        new { Icon = "🧹", Title = "LimpiaHogar Pro", Text = "Limpieza profesional de pisos compartidos. Primera limpieza al 50%", Color = "#06d6a0", Cta = "Reservar" },
+        new { Icon = "📦", Title = "StorageBox", Text = "¿Sin espacio? Guarda tus cosas desde 29€/mes. Recogida a domicilio", Color = "#60a5fa", Cta = "Más info" },
+        new { Icon = "🔐", Title = "SeguroPiso.com", Text = "Seguro de hogar para inquilinos desde 8€/mes. Cobertura total garantizada", Color = "#a78bfa", Cta = "Contratar" },
+        new { Icon = "🛋️", Title = "IKEA Estudiantes", Text = "Descuento del 15% en muebles para pisos compartidos. ¡Código CONVI15!", Color = "#f87171", Cta = "Usar código" },
+        new { Icon = "📱", Title = "Fibra&Móvil Pack", Text = "Internet 600Mb + Móvil ilimitado por 29.90€/mes para tu piso", Color = "#34d399", Cta = "Contratar" },
+        new { Icon = "🛒", Title = "Mercadona Online", Text = "Primer pedido con -10€ de descuento. Entrega en 1h para tu piso", Color = "#fbbf24", Cta = "Pedir ahora" },
+        new { Icon = "⚡", Title = "Octopus Energy", Text = "Luz 100% renovable desde 0.09€/kWh. Cambia tu tarifa sin coste", Color = "#818cf8", Cta = "Comparar" }
+    };
+}
+<div class="ad-slider-wrap">
+    <div class="ad-label">PUBLICIDAD</div>
+    <div class="ad-slider" id="adSlider">
+        @for (int i = 0; i < adSlides.Length; i++)
+        {
+            var a = adSlides[i];
+            <div class="ad-slide @(i == 0 ? "active" : "")">
+                <span class="ad-slide-icon">@a.Icon</span>
+                <div class="ad-slide-body">
+                    <strong style="color: @a.Color;">@a.Title</strong>
+                    <span class="ad-slide-text">@a.Text</span>
+                </div>
+                <a href="#" class="btn btn-sm ad-cta-btn" style="border-color:@a.Color; color:@a.Color;">@a.Cta</a>
+            </div>
+        }
+    </div>
+    <div class="ad-dots" id="adDots">
+        @for (int i = 0; i < adSlides.Length; i++)
+        {
+            <span class="ad-dot @(i == 0 ? "active" : "")" onclick="goToAd(@i)"></span>
+        }
+    </div>
+    <div style="text-align: center; margin-top: 8px;">
+        <a href="/#planes" style="color: var(--text-muted); font-size: 0.7rem; text-decoration: underline;">
+            💎 Actualiza a Pro para eliminar publicidad
+        </a>
+    </div>
+</div>
+
+@if (!Context.Items.ContainsKey("AdSliderScriptRendered"))
+{
+    Context.Items["AdSliderScriptRendered"] = true;
+    <script>
+    (function(){
+        let cur = 0;
+        const slides = document.querySelectorAll('#adSlider .ad-slide');
+        const dots = document.querySelectorAll('#adDots .ad-dot');
+        function goTo(n){
+            slides[cur].classList.remove('active');
+            dots[cur].classList.remove('active');
+            cur = (n + slides.length) % slides.length;
+            slides[cur].classList.add('active');
+            dots[cur].classList.add('active');
+        }
+        window.goToAd = goTo;
+        setInterval(() => goTo(cur + 1), 4000);
+    })();
+    </script>
+}

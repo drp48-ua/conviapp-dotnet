@@ -1,0 +1,43 @@
+@{
+    ViewData["Title"] = "Registrarse";
+}
+
+<div class="container" style="min-height: 80vh; display: flex; align-items: center; justify-content: center; padding: 2rem;">
+    <div style="width: 100%; max-width: 480px;">
+        <div style="text-align: center; margin-bottom: 30px;">
+            <h1 style="font-family: 'Outfit', sans-serif; font-size: 2rem;">Crear cuenta 🚀</h1>
+            <p style="color: var(--text-muted);">Empieza gratis con el plan Basic</p>
+        </div>
+
+        <div class="glass-card" style="padding: 32px;">
+            @if (ViewBag.Error != null)
+            {
+                <div class="alert alert-danger" style="margin-bottom: 20px;">⚠️ @ViewBag.Error</div>
+            }
+
+            <form method="post" action="/Account/Register">
+                <div style="margin-bottom: 16px;">
+                    <label style="color: var(--text-secondary); font-size: 0.9rem; margin-bottom: 6px; display: block;">Nombre</label>
+                    <input type="text" name="name" class="form-input" placeholder="Tu nombre" required />
+                </div>
+                <div style="margin-bottom: 16px;">
+                    <label style="color: var(--text-secondary); font-size: 0.9rem; margin-bottom: 6px; display: block;">Correo Electrónico</label>
+                    <input type="email" name="email" class="form-input" placeholder="tu@email.com" required />
+                </div>
+                <div style="margin-bottom: 16px;">
+                    <label style="color: var(--text-secondary); font-size: 0.9rem; margin-bottom: 6px; display: block;">Contraseña</label>
+                    <input type="password" name="password" class="form-input" placeholder="••••••••" required minlength="4" />
+                </div>
+                <div style="margin-bottom: 24px;">
+                    <label style="color: var(--text-secondary); font-size: 0.9rem; margin-bottom: 6px; display: block;">Confirmar Contraseña</label>
+                    <input type="password" name="confirmPassword" class="form-input" placeholder="••••••••" required minlength="4" />
+                </div>
+                <button type="submit" class="btn btn-primary" style="width: 100%; padding: 14px; font-size: 1rem;">Crear Cuenta →</button>
+            </form>
+        </div>
+
+        <p style="text-align: center; margin-top: 20px; color: var(--text-muted);">
+            ¿Ya tienes cuenta? <a href="/Account/Login" style="color: var(--primary-light);">Inicia sesión</a>
+        </p>
+    </div>
+</div>

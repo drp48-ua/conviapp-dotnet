@@ -1,0 +1,137 @@
+﻿<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="ConviApp — Gestión inteligente de piso compartido. Tareas, gastos, reservas y comunicación en una sola plataforma." />
+    <title>@ViewData["Title"] - ConviApp</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="~/css/site.css" />
+</head>
+<body>
+    <!-- ═══ FIXED HEADER ═══ -->
+    <header class="header">
+        <div class="header-inner">
+            <a href="/" class="logo">
+                <div class="logo-icon">🏠</div>
+                ConviApp
+            </a>
+
+            <nav class="nav">
+                <a href="/" class="nav-link @(ViewData["ActivePage"]?.ToString() == "Home" ? "active" : "")">Inicio</a>
+                <a href="/#funciones" class="nav-link">Funciones</a>
+                <a href="/Home/Pisos" class="nav-link @(ViewData["ActivePage"]?.ToString() == "Pisos" ? "active" : "")">Catálogo</a>
+                <a href="/#dashboard" class="nav-link">Demo</a>
+                <a href="/#planes" class="nav-link">Planes</a>
+            </nav>
+
+            <div class="header-actions">
+                @if (Context.Session.GetString("UserEmail") != null)
+                {
+                    <a href="/Dashboard/Index" class="btn btn-primary btn-sm">📊 Mi Dashboard</a>
+                    <a href="/Account/Logout" class="btn btn-outline btn-sm">Salir</a>
+                }
+                else
+                {
+                    <a href="/Account/Register" class="btn btn-outline btn-sm">Registrarse</a>
+                    <a href="/Account/Login" class="btn btn-primary btn-sm">Acceder →</a>
+                }
+            </div>
+        </div>
+    </header>
+
+    <!-- ═══ PAGE CONTENT ═══ -->
+    <div class="page-wrapper">
+        @RenderBody()
+    </div>
+
+    @{
+        var _layoutRole = Context.Session.GetString("UserRole") ?? "";
+        var _showBottomAd = _layoutRole == "Basico";
+    }
+    @if (_showBottomAd)
+    {
+        <div class="container" style="padding: 0 24px 20px;">
+            <div class="ad-slider-wrap ad-bottom">
+                <div class="ad-label">PUBLICIDAD</div>
+                <div class="ad-slider" id="adSliderB">
+                    <div class="ad-slide active"><span class="ad-slide-icon">🏪</span><div class="ad-slide-body"><strong style="color:#f59e0b;">Carrefour Online</strong><span class="ad-slide-text">-5% en tu primera compra del mes. Entrega en 2h para pisos compartidos</span></div><a href="#" class="btn btn-sm ad-cta-btn" style="border-color:#f59e0b;color:#f59e0b;">Ver oferta</a></div>
+                    <div class="ad-slide"><span class="ad-slide-icon">🧺</span><div class="ad-slide-body"><strong style="color:#06d6a0;">Lavandería24.es</strong><span class="ad-slide-text">Recogida y entrega de ropa en 24h. 3kg gratis el primer pedido</span></div><a href="#" class="btn btn-sm ad-cta-btn" style="border-color:#06d6a0;color:#06d6a0;">Probar</a></div>
+                    <div class="ad-slide"><span class="ad-slide-icon">🔑</span><div class="ad-slide-body"><strong style="color:#818cf8;">TuCerrajero.es</strong><span class="ad-slide-text">Duplicado de llaves a domicilio desde 9.90€. Disponible 24/7</span></div><a href="#" class="btn btn-sm ad-cta-btn" style="border-color:#818cf8;color:#818cf8;">Solicitar</a></div>
+                    <div class="ad-slide"><span class="ad-slide-icon">💇</span><div class="ad-slide-body"><strong style="color:#f87171;">Urban Wellness</strong><span class="ad-slide-text">Gimnasio compartido para pisos: 19.99€/mes. Incluye sauna y piscina</span></div><a href="#" class="btn btn-sm ad-cta-btn" style="border-color:#f87171;color:#f87171;">Apuntarse</a></div>
+                    <div class="ad-slide"><span class="ad-slide-icon">📚</span><div class="ad-slide-body"><strong style="color:#34d399;">Wuolah.com</strong><span class="ad-slide-text">Apuntes universitarios gratis. Comparte los tuyos y gana dinero</span></div><a href="#" class="btn btn-sm ad-cta-btn" style="border-color:#34d399;color:#34d399;">Entrar</a></div>
+                </div>
+                <div class="ad-dots" id="adDotsB">
+                    <span class="ad-dot active" onclick="goToAdB(0)"></span>
+                    <span class="ad-dot" onclick="goToAdB(1)"></span>
+                    <span class="ad-dot" onclick="goToAdB(2)"></span>
+                    <span class="ad-dot" onclick="goToAdB(3)"></span>
+                    <span class="ad-dot" onclick="goToAdB(4)"></span>
+                </div>
+                <div style="text-align:center;margin-top:8px;">
+                    <a href="/#planes" style="color:var(--text-muted);font-size:0.7rem;text-decoration:underline;">💎 Actualiza a Pro para eliminar publicidad</a>
+                </div>
+            </div>
+        </div>
+        <script>
+        (function(){
+            let curB=0;
+            const sB=document.querySelectorAll('#adSliderB .ad-slide');
+            const dB=document.querySelectorAll('#adDotsB .ad-dot');
+            function goToAdB(n){sB[curB].classList.remove('active');dB[curB].classList.remove('active');curB=(n+sB.length)%sB.length;sB[curB].classList.add('active');dB[curB].classList.add('active');}
+            window.goToAdB=goToAdB;
+            setInterval(()=>goToAdB(curB+1),5000);
+        })();
+        </script>
+    }
+
+    <!-- ═══ FOOTER ═══ -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-grid">
+                <div class="footer-brand">
+                    <a href="/" class="logo" style="font-size:1.2rem;">
+                        <div class="logo-icon" style="width:32px;height:32px;font-size:1rem;">🏠</div>
+                        ConviApp
+                    </a>
+                    <p>La plataforma definitiva para gestionar tu piso compartido. Tareas, gastos, reservas y comunicación en un solo lugar.</p>
+                </div>
+                <div>
+                    <h4>Plataforma</h4>
+                    <ul class="footer-links">
+                        <li><a href="/#funciones">Funciones</a></li>
+                        <li><a href="/Home/Pisos">Catálogo de Pisos</a></li>
+                        <li><a href="/#planes">Planes y Precios</a></li>
+                        <li><a href="/Account/Login">Acceder</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4>Legal</h4>
+                    <ul class="footer-links">
+                        <li><a href="/Home/Privacidad">Privacidad</a></li>
+                        <li><a href="/Home/Terminos">Términos de Uso</a></li>
+                        <li><a href="/Home/Cookies">Política de Cookies</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4>Contacto</h4>
+                    <ul class="footer-links">
+                        <li><a href="mailto:info@conviapp.com">info@conviapp.com</a></li>
+                        <li><a href="#">Soporte</a></li>
+                        <li><a href="#">GitHub</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <span>© 2026 ConviApp. Todos los derechos reservados.</span>
+                <span>Hecho con ❤️ para convivir mejor</span>
+            </div>
+        </div>
+    </footer>
+
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>

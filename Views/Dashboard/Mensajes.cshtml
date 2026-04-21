@@ -1,0 +1,55 @@
+@model List<ConviAppWeb.Models.Message>
+@{
+    ViewData["Title"] = "Mensajes";
+    var userRole = ViewBag.UserRole as string ?? "Basico";
+    var showAds = ConviAppWeb.Services.PlanService.ShowAds(userRole);
+}
+
+<div class="container" style="padding-top: 2rem; padding-bottom: 4rem;">
+    <div class="dash-tabs">
+        <a href="/Dashboard/Index" class="dash-tab">📊 Resumen</a>
+        <a href="/Dashboard/Tareas" class="dash-tab">✅ Tareas</a>
+        <a href="/Dashboard/Gastos" class="dash-tab">💸 Gastos</a>
+        <a href="/Dashboard/Mensajes" class="dash-tab active">💬 Mensajes</a>
+        <a href="/Dashboard/Reservas" class="dash-tab">📅 Reservas</a>
+        <a href="/Dashboard/Incidencias" class="dash-tab">🔧 Incidencias</a>
+        <a href="/Dashboard/ContratosYPagos" class="dash-tab">📄 Contratos</a>
+        <a href="/Dashboard/Documentos" class="dash-tab">📎 Documentos</a>
+        <a href="/Dashboard/MisPisos" class="dash-tab">🏠 Mis Pisos</a>
+    </div>
+
+    @if (showAds) { <partial name="_AdBanner" /> }
+
+    <h2 style="margin-bottom: 20px;">💬 Chat del Piso</h2>
+
+    <div style="max-width: 700px;">
+        @if (Model != null && Model.Any())
+        {
+            <div style="display: flex; flex-direction: column; gap: 12px; margin-bottom: 20px; max-height: 500px; overflow-y: auto; padding-right: 8px;">
+                @foreach (var m in Model)
+                {
+                    <div class="glass-card" style="padding: 14px 18px;">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
+                            <span style="font-weight: 700; color: var(--primary-light);">@(m.Sender?.Name ?? m.Sender?.Email ?? "Anónimo")</span>
+                            <span style="color: var(--text-muted); font-size: 0.8rem;">@m.Timestamp.ToString("g")</span>
+                        </div>
+                        <p style="margin: 0; color: var(--text-primary);">@m.Text</p>
+                    </div>
+                }
+            </div>
+        }
+        else
+        {
+            <div class="glass-card" style="text-align: center; padding: 3rem; color: var(--text-muted); margin-bottom: 20px;">
+                <div style="font-size: 3rem; margin-bottom: 16px;">💬</div>
+                <p>No hay mensajes aún. ¡Sé el primero en escribir!</p>
+            </div>
+        }
+
+        <!-- Send Message Form -->
+        <form method="post" action="/Dashboard/SendMessage" style="display: flex; gap: 12px;">
+            <input type="text" name="text" class="form-input" placeholder="Escribe un mensaje..." required style="flex: 1;" />
+            <button type="submit" class="btn btn-primary btn-sm">Enviar →</button>
+        </form>
+    </div>
+</div>

@@ -1,0 +1,98 @@
+@model List<ConviAppWeb.Models.ENDocumento>
+@{
+    ViewData["Title"] = "Documentos";
+    var userRole = ViewBag.UserRole as string ?? "Basico";
+    var showAds = ConviAppWeb.Services.PlanService.ShowAds(userRole);
+    var locked = ViewBag.Locked == true;
+}
+
+<div class="container" style="padding-top: 2rem; padding-bottom: 4rem;">
+    <div class="dash-tabs">
+        <a href="/Dashboard/Index" class="dash-tab">📊 Resumen</a>
+        <a href="/Dashboard/Tareas" class="dash-tab">✅ Tareas</a>
+        <a href="/Dashboard/Gastos" class="dash-tab">💸 Gastos</a>
+        <a href="/Dashboard/Mensajes" class="dash-tab">💬 Mensajes</a>
+        <a href="/Dashboard/Reservas" class="dash-tab">📅 Reservas</a>
+        <a href="/Dashboard/Incidencias" class="dash-tab">🔧 Incidencias</a>
+        <a href="/Dashboard/ContratosYPagos" class="dash-tab">📄 Contratos</a>
+        <a href="/Dashboard/Documentos" class="dash-tab active">📎 Documentos</a>
+        <a href="/Dashboard/MisPisos" class="dash-tab">🏠 Mis Pisos</a>
+    </div>
+
+    @if (showAds) { <partial name="_AdBanner" /> }
+
+    <h2 style="margin-bottom: 20px;">📎 Documentos</h2>
+
+    @if (locked)
+    {
+        <partial name="_PlanLock" />
+    }
+    else
+    {
+        <!-- Upload Document Form -->
+        <div class="glass-card" style="margin-bottom: 24px;">
+            <h4 style="margin-top: 0; color: var(--primary-light);">📤 Subir documento</h4>
+            <form method="post" action="/Dashboard/UploadDocumento" enctype="multipart/form-data" style="display: flex; gap: 12px; flex-wrap: wrap; align-items: end;">
+                <div style="flex: 2; min-width: 200px;">
+                    <label style="color: var(--text-muted); font-size: 0.8rem; margin-bottom: 4px; display: block;">Archivo</label>
+                    <input type="file" name="file" class="form-input" required accept=".pdf,.png,.jpg,.jpeg,.doc,.docx" />
+                </div>
+                <select name="type" class="form-input" style="flex: 1; min-width: 150px;">
+                    <option value="contrato">📋 Contrato</option>
+                    <option value="recibo">🧾 Recibo</option>
+                    <option value="factura">📄 Factura</option>
+                    <option value="dni">🪪 DNI/NIE</option>
+                    <option value="otro">📎 Otro</option>
+                </select>
+                <input type="text" name="description" class="form-input" placeholder="Descripción (opcional)" style="flex: 1; min-width: 150px;" />
+                <button type="submit" class="btn btn-primary btn-sm">Subir</button>
+            </form>
+        </div>
+
+        @if (Model == null || !Model.Any())
+        {
+            <div class="glass-card" style="text-align: center; padding: 3rem; color: var(--text-muted);">
+                <div style="font-size: 3rem; margin-bottom: 16px;">📎</div>
+                <p>No hay documentos subidos.</p>
+            </div>
+        }
+        else
+        {
+            <div class="glass-card" style="padding: 0; overflow: hidden;">
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>Archivo</th>
+                            <th>Tipo</th>
+                            <th>Descripción</th>
+                            <th>Tamaño</th>
+                            <th>Fecha</th>
+                            <th style="width: 120px;">Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var d in Model)
+                        {
+                            <tr>
+                                <td style="font-weight: 500;">
+                                    @(d.IsPdf() ? "📄" : d.IsImage() ? "🖼️" : "📎") @d.FileName
+                                </td>
+                                <td><span class="status-badge active" style="font-size: 0.75rem;">@d.Type</span></td>
+                                <td style="color: var(--text-muted);">@(d.Description ?? "—")</td>
+                                <td style="color: var(--text-muted);">@d.FileSizeFormatted()</td>
+                                <td style="color: var(--text-muted);">@d.UploadDate.ToShortDateString()</td>
+                                <td>
+                                    <a href="/Dashboard/DownloadDocumento/@d.Id" class="btn btn-sm" style="background: rgba(99,102,241,0.1); color: var(--primary); border: 1px solid rgba(99,102,241,0.3);">📥</a>
+                                    <form method="post" action="/Dashboard/DeleteDocumento" style="display: inline;">
+                                        <input type="hidden" name="id" value="@d.Id" />
+                                        <button type="submit" class="btn btn-sm" style="background: rgba(248,113,113,0.1); color: #f87171; border: 1px solid rgba(248,113,113,0.3);" onclick="return confirm('¿Eliminar?')">🗑</button>
+                                    </form>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        }
+    }
+</div>

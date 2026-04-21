@@ -1,0 +1,125 @@
+@model ConviAppWeb.Controllers.ContratosViewModel
+@{
+    ViewData["Title"] = "Contratos y Pagos";
+    var userRole = ViewBag.UserRole as string ?? "Basico";
+    var showAds = ConviAppWeb.Services.PlanService.ShowAds(userRole);
+    var locked = ViewBag.Locked == true;
+}
+
+<div class="container" style="padding-top: 2rem; padding-bottom: 4rem;">
+    <div class="dash-tabs">
+        <a href="/Dashboard/Index" class="dash-tab">📊 Resumen</a>
+        <a href="/Dashboard/Tareas" class="dash-tab">✅ Tareas</a>
+        <a href="/Dashboard/Gastos" class="dash-tab">💸 Gastos</a>
+        <a href="/Dashboard/Mensajes" class="dash-tab">💬 Mensajes</a>
+        <a href="/Dashboard/Reservas" class="dash-tab">📅 Reservas</a>
+        <a href="/Dashboard/Incidencias" class="dash-tab">🔧 Incidencias</a>
+        <a href="/Dashboard/ContratosYPagos" class="dash-tab active">📄 Contratos</a>
+        <a href="/Dashboard/Documentos" class="dash-tab">📎 Documentos</a>
+        <a href="/Dashboard/MisPisos" class="dash-tab">🏠 Mis Pisos</a>
+    </div>
+
+    @if (showAds) { <partial name="_AdBanner" /> }
+
+    <h2 style="margin-bottom: 20px;">📄 Contratos y Pagos</h2>
+
+    @if (locked)
+    {
+        <partial name="_PlanLock" />
+    }
+    else
+    {
+        <!-- Add Contract Form -->
+        <div class="glass-card" style="margin-bottom: 24px;">
+            <h4 style="margin-top: 0; color: var(--primary-light);">➕ Nuevo contrato</h4>
+            <form method="post" action="/Dashboard/AddContrato" style="display: flex; gap: 12px; flex-wrap: wrap;">
+                <select name="type" class="form-input" style="flex: 1; min-width: 150px;">
+                    <option value="arrendamiento">📋 Arrendamiento</option>
+                    <option value="temporal">⏱️ Temporal</option>
+                    <option value="subarriendo">🔄 Subarriendo</option>
+                </select>
+                <input type="date" name="startDate" class="form-input" required style="flex: 1; min-width: 140px;" />
+                <input type="date" name="endDate" class="form-input" required style="flex: 1; min-width: 140px;" />
+                <input type="number" name="monthlyRent" class="form-input" placeholder="Renta/mes €" step="0.01" required style="flex: 1; min-width: 120px;" />
+                <input type="number" name="depositAmount" class="form-input" placeholder="Fianza €" step="0.01" style="flex: 1; min-width: 120px;" />
+                <button type="submit" class="btn btn-primary btn-sm">Crear</button>
+            </form>
+        </div>
+
+        <!-- Contracts List -->
+        @if (Model?.Contratos != null && Model.Contratos.Any())
+        {
+            <h3 style="color: var(--primary-light); margin-bottom: 12px;">📋 Mis Contratos</h3>
+            <ul class="task-list" style="margin-bottom: 30px;">
+                @foreach (var c in Model.Contratos)
+                {
+                    var sClass = c.Status == "activo" ? "active" : (c.Status == "vencido" ? "pending" : "done");
+                    <li class="task-item">
+                        <div class="task-info">
+                            <div class="task-name">@c.Type.ToUpper() — @c.MonthlyRent.ToString("C")/mes</div>
+                            <div class="task-meta">@c.StartDate.ToShortDateString() → @c.EndDate.ToShortDateString() · @(c.Property?.Name ?? "Piso")</div>
+                        </div>
+                        <span class="status-badge @sClass">@c.Status</span>
+                        <form method="post" action="/Dashboard/DeleteContrato" style="display: inline;">
+                            <input type="hidden" name="id" value="@c.Id" />
+                            <button type="submit" class="btn btn-sm" style="background: rgba(248,113,113,0.1); color: #f87171; border: 1px solid rgba(248,113,113,0.3);" onclick="return confirm('¿Eliminar contrato?')">🗑</button>
+                        </form>
+                    </li>
+                }
+            </ul>
+
+            <!-- Add Payment Form -->
+            <div class="glass-card" style="margin-bottom: 24px;">
+                <h4 style="margin-top: 0; color: var(--accent);">➕ Registrar pago</h4>
+                <form method="post" action="/Dashboard/AddPago" style="display: flex; gap: 12px; flex-wrap: wrap;">
+                    <select name="contratoId" class="form-input" required style="flex: 1; min-width: 200px;">
+                        @foreach (var c in Model.Contratos.Where(c => c.Status == "activo"))
+                        {
+                            <option value="@c.Id">@c.Type — @c.MonthlyRent.ToString("C")/mes</option>
+                        }
+                    </select>
+                    <input type="number" name="amount" class="form-input" placeholder="Importe €" step="0.01" required style="flex: 1; min-width: 120px;" />
+                    <select name="method" class="form-input" style="flex: 1; min-width: 140px;">
+                        <option value="transferencia">🏦 Transferencia</option>
+                        <option value="bizum">📱 Bizum</option>
+                        <option value="tarjeta">💳 Tarjeta</option>
+                        <option value="efectivo">💵 Efectivo</option>
+                    </select>
+                    <input type="text" name="concept" class="form-input" placeholder="Concepto" style="flex: 1; min-width: 150px;" />
+                    <button type="submit" class="btn btn-accent btn-sm">Pagar</button>
+                </form>
+            </div>
+        }
+
+        <!-- Payments History -->
+        @if (Model?.Pagos != null && Model.Pagos.Any())
+        {
+            <h3 style="color: var(--accent); margin-bottom: 12px;">💳 Historial de Pagos</h3>
+            <div class="glass-card" style="padding: 0; overflow: hidden;">
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>Concepto</th>
+                            <th>Método</th>
+                            <th>Fecha</th>
+                            <th>Estado</th>
+                            <th style="text-align: right;">Importe</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var p in Model.Pagos)
+                        {
+                            <tr>
+                                <td style="font-weight: 500;">@(p.Concept ?? "Pago")</td>
+                                <td style="color: var(--text-secondary);">@p.Method</td>
+                                <td style="color: var(--text-muted);">@p.Date.ToShortDateString()</td>
+                                <td><span class="status-badge @(p.IsPaid() ? "done" : "pending")">@p.Status</span></td>
+                                <td style="text-align: right; font-weight: 700; color: var(--accent);">@p.Amount.ToString("C")</td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        }
+    }
+</div>

@@ -1,0 +1,54 @@
+@{
+    ViewData["Title"] = "Contacto - Plan Enterprise";
+}
+
+<div class="container" style="min-height: 80vh; display: flex; align-items: center; justify-content: center; padding: 2rem;">
+    <div style="width: 100%; max-width: 560px;">
+        <div style="text-align: center; margin-bottom: 30px;">
+            <h1 style="font-family: 'Outfit', sans-serif; font-size: 2rem;">Solicitar Plan Enterprise 🏢</h1>
+            <p style="color: var(--text-muted);">Para inmobiliarias y gestores profesionales</p>
+        </div>
+
+        @if (ViewBag.Message != null)
+        {
+            <div class="glass-card" style="text-align: center; padding: 3rem; margin-bottom: 20px;">
+                <div style="font-size: 3rem; margin-bottom: 16px;">🎉</div>
+                <p style="color: var(--accent); font-weight: 600;">@ViewBag.Message</p>
+                <a href="/" class="btn btn-primary" style="margin-top: 16px;">Volver al inicio</a>
+            </div>
+        }
+        else
+        {
+            <div class="glass-card" style="padding: 32px;">
+                <form method="post" action="/Home/Contacto">
+                    <div style="margin-bottom: 16px;">
+                        <label style="color: var(--text-secondary); font-size: 0.9rem; margin-bottom: 6px; display: block;">Nombre completo</label>
+                        <input type="text" name="name" class="form-input" placeholder="Tu nombre" required />
+                    </div>
+                    <div style="margin-bottom: 16px;">
+                        <label style="color: var(--text-secondary); font-size: 0.9rem; margin-bottom: 6px; display: block;">Email de contacto</label>
+                        <input type="email" name="email" class="form-input" placeholder="tu@empresa.com" required />
+                    </div>
+                    <div style="margin-bottom: 16px;">
+                        <label style="color: var(--text-secondary); font-size: 0.9rem; margin-bottom: 6px; display: block;">Nombre de empresa / Inmobiliaria</label>
+                        <input type="text" name="company" class="form-input" placeholder="Nombre de tu empresa" required />
+                    </div>
+                    <div style="margin-bottom: 24px;">
+                        <label style="color: var(--text-secondary); font-size: 0.9rem; margin-bottom: 6px; display: block;">Mensaje</label>
+                        <textarea name="message" class="form-input" rows="4" placeholder="Cuéntanos sobre tus necesidades..." required style="resize: vertical;"></textarea>
+                    </div>
+                    <button type="submit" class="btn btn-primary" style="width: 100%; padding: 14px; font-size: 1rem;">
+                        Enviar solicitud →
+                    </button>
+                </form>
+            </div>
+
+            <div class="glass-card" style="margin-top: 20px; padding: 20px; text-align: center;">
+                <p style="color: var(--text-muted); margin: 0;">
+                    📧 También puedes escribirnos a
+                    <a href="mailto:daniramonpoveda@gmail.com" style="color: var(--primary-light);">daniramonpoveda@gmail.com</a>
+                </p>
+            </div>
+        }
+    </div>
+</div>

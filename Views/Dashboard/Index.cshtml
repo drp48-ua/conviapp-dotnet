@@ -1,0 +1,84 @@
+@model ConviAppWeb.Models.Property
+@{
+    ViewData["Title"] = "Dashboard";
+    var userRole = ViewBag.UserRole as string ?? "Basico";
+    var userName = ViewBag.UserName as string ?? "Usuario";
+    var showAds = ConviAppWeb.Services.PlanService.ShowAds(userRole);
+}
+
+<div class="container" style="padding-top: 2rem; padding-bottom: 4rem;">
+    <div class="dash-tabs">
+        <a href="/Dashboard/Index" class="dash-tab active">📊 Resumen</a>
+        <a href="/Dashboard/Tareas" class="dash-tab">✅ Tareas</a>
+        <a href="/Dashboard/Gastos" class="dash-tab">💸 Gastos</a>
+        <a href="/Dashboard/Mensajes" class="dash-tab">💬 Mensajes</a>
+        <a href="/Dashboard/Reservas" class="dash-tab">📅 Reservas</a>
+        <a href="/Dashboard/Incidencias" class="dash-tab">🔧 Incidencias</a>
+        <a href="/Dashboard/ContratosYPagos" class="dash-tab">📄 Contratos</a>
+        <a href="/Dashboard/Documentos" class="dash-tab">📎 Documentos</a>
+        <a href="/Dashboard/MisPisos" class="dash-tab">🏠 Mis Pisos</a>
+    </div>
+
+    @if (showAds) { <partial name="_AdBanner" /> }
+
+    <div class="stats-grid" style="margin-top: 20px;">
+        <div class="dash-stat">
+            <div class="dash-stat-icon">👥</div>
+            <div class="dash-stat-value" style="color: var(--primary);">@(Model?.Tenants?.Count ?? 0)</div>
+            <div class="dash-stat-label">Inquilinos</div>
+        </div>
+        <div class="dash-stat">
+            <div class="dash-stat-icon">🏠</div>
+            <div class="dash-stat-value" style="color: var(--accent);">@(Model != null ? "100%" : "0%")</div>
+            <div class="dash-stat-label">Ocupación</div>
+        </div>
+        <div class="dash-stat">
+            <div class="dash-stat-icon">💳</div>
+            <div class="dash-stat-value" style="color: var(--primary-light);">0%</div>
+            <div class="dash-stat-label">Morosidad</div>
+        </div>
+        <div class="dash-stat">
+            <div class="dash-stat-icon">🔧</div>
+            <div class="dash-stat-value" style="color: var(--warning);">0</div>
+            <div class="dash-stat-label">Incidencias Abiertas</div>
+        </div>
+    </div>
+
+    <div class="glass-card" style="margin-top: 24px;">
+        <h3 style="margin-top: 0;">Bienvenido, @userName 👋</h3>
+        <p style="color: var(--text-muted); margin-bottom: 8px;">
+            Plan: <span style="@ConviAppWeb.Services.PlanService.PlanColor(userRole); font-weight: 700;">
+                @ConviAppWeb.Services.PlanService.DisplayName(userRole)
+            </span>
+        </p>
+        @if (Model != null)
+        {
+            <p style="color: var(--text-secondary); margin-bottom: 0;">
+                📍 @Model.Name — @Model.Location
+            </p>
+        }
+        else
+        {
+            <p style="color: var(--text-muted); margin-bottom: 0;">No tienes ningún piso asignado aún.</p>
+        }
+    </div>
+
+    <h4 style="text-transform: uppercase; letter-spacing: 2px; font-size: 0.8rem; color: var(--text-muted); margin-top: 30px;">ACCESO RÁPIDO</h4>
+    <div class="features-grid" style="margin-top: 12px;">
+        <a href="/Dashboard/Tareas" class="feature-card" style="text-decoration: none;">
+            <div class="feature-icon">✅</div>
+            <h4>Tareas</h4>
+            <p>Gestiona las tareas del hogar</p>
+        </a>
+        <a href="/Dashboard/Gastos" class="feature-card" style="text-decoration: none;">
+            <div class="feature-icon">💸</div>
+            <h4>Gastos</h4>
+            <p>Control de gastos comunes</p>
+        </a>
+        <a href="/Dashboard/Reservas" class="feature-card" style="text-decoration: none;">
+            <div class="feature-icon">📅</div>
+            <h4>Reservas</h4>
+            <p>Reserva zonas comunes</p>
+        </a>
+    </div>
+</div>

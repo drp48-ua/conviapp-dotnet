@@ -1,0 +1,84 @@
+@model List<ConviAppWeb.Models.Property>
+@{
+    ViewData["Title"] = "Mis Pisos";
+    var userRole = ViewBag.UserRole as string ?? "Basico";
+    var showAds = ConviAppWeb.Services.PlanService.ShowAds(userRole);
+    var locked = ViewBag.Locked == true;
+}
+
+<div class="container" style="padding-top: 2rem; padding-bottom: 4rem;">
+    <div class="dash-tabs">
+        <a href="/Dashboard/Index" class="dash-tab">📊 Resumen</a>
+        <a href="/Dashboard/Tareas" class="dash-tab">✅ Tareas</a>
+        <a href="/Dashboard/Gastos" class="dash-tab">💸 Gastos</a>
+        <a href="/Dashboard/Mensajes" class="dash-tab">💬 Mensajes</a>
+        <a href="/Dashboard/Reservas" class="dash-tab">📅 Reservas</a>
+        <a href="/Dashboard/Incidencias" class="dash-tab">🔧 Incidencias</a>
+        <a href="/Dashboard/ContratosYPagos" class="dash-tab">📄 Contratos</a>
+        <a href="/Dashboard/Documentos" class="dash-tab">📎 Documentos</a>
+        <a href="/Dashboard/MisPisos" class="dash-tab active">🏠 Mis Pisos</a>
+    </div>
+
+    @if (showAds) { <partial name="_AdBanner" /> }
+
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+        <h2>🏠 Mis Pisos</h2>
+        <span class="status-badge active" style="font-size: 0.8rem;">@ConviAppWeb.Services.PlanService.DisplayName(userRole)</span>
+    </div>
+
+    @if (locked)
+    {
+        <partial name="_PlanLock" />
+    }
+    else
+    {
+        @if (TempData["Error"] != null)
+        {
+            <div class="alert alert-danger" style="margin-bottom: 20px;">⚠️ @TempData["Error"]</div>
+        }
+
+        <!-- Add Property Form -->
+        <div class="glass-card" style="margin-bottom: 24px;">
+            <h4 style="margin-top: 0; color: var(--primary-light);">➕ Añadir piso</h4>
+            <form method="post" action="/Dashboard/AddProperty" style="display: flex; gap: 12px; flex-wrap: wrap;">
+                <input type="text" name="name" class="form-input" placeholder="Nombre del piso" required style="flex: 2; min-width: 200px;" />
+                <input type="text" name="location" class="form-input" placeholder="📍 Dirección" required style="flex: 2; min-width: 200px;" />
+                <input type="number" name="rooms" class="form-input" placeholder="Habitaciones" min="1" required style="flex: 1; min-width: 100px;" />
+                <input type="number" name="price" class="form-input" placeholder="Precio €/mes" step="0.01" required style="flex: 1; min-width: 120px;" />
+                <button type="submit" class="btn btn-primary btn-sm">Añadir</button>
+            </form>
+        </div>
+
+        @if (Model == null || !Model.Any())
+        {
+            <div class="glass-card" style="text-align: center; padding: 3rem; color: var(--text-muted);">
+                <div style="font-size: 3rem; margin-bottom: 16px;">🏠</div>
+                <p>No tienes pisos gestionados todavía.</p>
+                <a href="/Home/Pisos" class="btn btn-primary btn-sm" style="margin-top: 16px;">Ver Catálogo</a>
+            </div>
+        }
+        else
+        {
+            <div class="listings-grid">
+                @foreach (var p in Model)
+                {
+                    <div class="listing-card">
+                        <div class="listing-img">
+                            🏠
+                            <span class="listing-badge">Activo</span>
+                        </div>
+                        <div class="listing-body">
+                            <div class="listing-price">@p.Price.ToString("C") <span>/mes</span></div>
+                            <div class="listing-title">@p.Name</div>
+                            <div class="listing-location">📍 @p.Location</div>
+                            <div class="listing-tags">
+                                <span class="listing-tag">🛏 @p.Rooms hab.</span>
+                                <span class="listing-tag">👥 @(p.Tenants?.Count ?? 0) inquilinos</span>
+                            </div>
+                        </div>
+                    </div>
+                }
+            </div>
+        }
+    }
+</div>

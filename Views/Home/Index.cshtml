@@ -1,0 +1,276 @@
+﻿@model List<ConviAppWeb.Models.Property>
+@{
+    ViewData["Title"] = "Inicio";
+    ViewData["ActivePage"] = "Home";
+}
+
+<!-- ═══ HERO ═══ -->
+<section class="hero" id="inicio">
+    <div class="container">
+        <div class="hero-content">
+            <div class="hero-badge">✨ Plataforma de gestión de convivencia</div>
+            <h1>La convivencia<br/><span class="text-gradient">inteligente</span> empieza aquí</h1>
+            <p>Gestiona tu piso compartido de forma sencilla: tareas, gastos, reservas y comunicación, todo en una sola plataforma pensada para inmobiliarias y compañeros de piso.</p>
+            <div class="hero-buttons">
+                <a href="/Home/Pisos" class="btn btn-primary btn-lg">Explorar pisos</a>
+                <a href="#funciones" class="btn btn-outline btn-lg">Ver funciones</a>
+            </div>
+            <div class="hero-stats">
+                <div class="hero-stat">
+                    <h3 class="text-gradient">2,400+</h3>
+                    <p>Pisos gestionados</p>
+                </div>
+                <div class="hero-stat">
+                    <h3 class="text-gradient">12K</h3>
+                    <p>Usuarios activos</p>
+                </div>
+                <div class="hero-stat">
+                    <h3 class="text-gradient">98%</h3>
+                    <p>Satisfacción</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<div class="section-divider"></div>
+
+<!-- ═══ FEATURES ═══ -->
+<section class="section" id="funciones">
+    <div class="container">
+        <div class="section-header">
+            <h2>Todo lo que tu piso <span class="text-gradient">necesita</span></h2>
+            <p>Una suite completa de herramientas diseñada para que la convivencia sea fácil, justa y organizada.</p>
+        </div>
+        <div class="features-grid">
+            <div class="feature-card">
+                <div class="feature-icon">✅</div>
+                <h3>Gestión de Tareas</h3>
+                <p>Asigna turnos de limpieza, compras comunes y responsabilidades domésticas de forma equitativa entre todos los compañeros.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">💸</div>
+                <h3>Control de Gastos</h3>
+                <p>Registra gastos compartidos (luz, agua, internet), categorízalos y lleva un balance claro de quién debe qué.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">📅</div>
+                <h3>Reserva de Espacios</h3>
+                <p>Gestiona zonas comunes como lavandería, cocina o sala de estudio con un sistema de reservas para evitar conflictos.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">💬</div>
+                <h3>Mensajería Interna</h3>
+                <p>Comunícate con tus compañeros sin salir de la app. Mensajes directos y avisos del piso al instante.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">🔧</div>
+                <h3>Incidencias</h3>
+                <p>Reporta averías o problemas del inmueble con seguimiento en tiempo real del estado de cada incidencia.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">📄</div>
+                <h3>Contratos y Pagos</h3>
+                <p>Formaliza alquileres, sube documentación y gestiona pagos mensuales desde una plataforma segura.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<div class="section-divider"></div>
+
+<!-- ═══ PISOS DESTACADOS ═══ -->
+<section class="section" id="pisos-destacados">
+    <div class="container">
+        <div class="section-header">
+            <h2>Pisos <span class="text-gradient">destacados</span></h2>
+            <p>Explora las viviendas gestionadas por nuestras inmobiliarias colaboradoras.</p>
+        </div>
+
+        @if (Model != null && Model.Any())
+        {
+            <div class="listings-grid">
+                @foreach (var piso in Model)
+                {
+                    <a href="/Home/PisoDetail/@piso.Id" class="listing-card">
+                        <div class="listing-img">
+                            @if (!string.IsNullOrWhiteSpace(piso.ImageFile))
+                            {
+                                <img src="/img/@piso.ImageFile" alt="@piso.Name" style="width:100%;height:100%;object-fit:cover;position:absolute;inset:0;" />
+                            }
+                            else
+                            {
+                                <span style="font-size:4rem;">🏠</span>
+                            }
+                            <span class="listing-badge">Disponible</span>
+                            <button class="wishlist-btn" onclick="event.preventDefault();">♡</button>
+                        </div>
+                        <div class="listing-body">
+                            <div class="listing-price">@piso.Price.ToString("0")€ <span>/mes por habitación</span></div>
+                            <div class="listing-title">@piso.Name</div>
+                            <div class="listing-location">📍 @piso.Location</div>
+                            <div class="listing-tags">
+                                <span class="listing-tag">🛏️ @piso.Rooms hab.</span>
+                                <span class="listing-tag">Ver detalles →</span>
+                            </div>
+                        </div>
+                    </a>
+                }
+            </div>
+            <div style="text-align: center; margin-top: 40px;">
+                <a href="/Home/Pisos" class="btn btn-outline btn-lg">Ver todos los pisos →</a>
+            </div>
+        }
+        else
+        {
+            <div class="glass-card" style="text-align: center; padding: 3rem; color: var(--text-muted);">
+                <div style="font-size: 3rem; margin-bottom: 16px;">🏘️</div>
+                <p>No hay pisos disponibles en este momento.</p>
+                <a href="/Home/Pisos" class="btn btn-primary btn-sm" style="margin-top: 16px;">Ver catálogo completo</a>
+            </div>
+        }
+    </div>
+</section>
+
+<div class="section-divider"></div>
+
+<!-- ═══ DASHBOARD PREVIEW ═══ -->
+<section class="section" id="dashboard">
+    <div class="container">
+        <div class="section-header">
+            <h2>Tu panel de <span class="text-gradient">convivencia</span></h2>
+            <p>Así es como gestiona ConviApp tu piso: estadísticas, tareas, gastos y mensajes en un solo vistazo.</p>
+        </div>
+        <div class="glass-card" style="padding: 2rem;">
+            <div class="dash-grid">
+                <div class="dash-stat">
+                    <div class="icon">👥</div>
+                    <div class="value text-gradient">4</div>
+                    <div class="label">Inquilinos</div>
+                </div>
+                <div class="dash-stat">
+                    <div class="icon">✅</div>
+                    <div class="value" style="color: var(--accent);">12</div>
+                    <div class="label">Tareas activas</div>
+                </div>
+                <div class="dash-stat">
+                    <div class="icon">💸</div>
+                    <div class="value" style="color: var(--warning);">€240</div>
+                    <div class="label">Gastos del mes</div>
+                </div>
+                <div class="dash-stat">
+                    <div class="icon">📅</div>
+                    <div class="value" style="color: var(--primary-light);">3</div>
+                    <div class="label">Reservas</div>
+                </div>
+            </div>
+            <ul class="task-list" style="margin-top: 20px;">
+                <li class="task-item">
+                    <div class="task-info">
+                        <div class="task-name">Limpiar baño principal</div>
+                        <div class="task-meta">Asignado a: Dani · Vence hoy</div>
+                    </div>
+                    <span class="task-priority high">Alta</span>
+                </li>
+                <li class="task-item">
+                    <div class="task-info">
+                        <div class="task-name">Comprar papel higiénico</div>
+                        <div class="task-meta">Asignado a: Lidia · Vence mañana</div>
+                    </div>
+                    <span class="task-priority medium">Media</span>
+                </li>
+                <li class="task-item completed">
+                    <div class="task-info">
+                        <div class="task-name">Pagar el WiFi</div>
+                        <div class="task-meta">Completado por: Marina</div>
+                    </div>
+                    <span class="task-priority low">Baja</span>
+                </li>
+            </ul>
+        </div>
+    </div>
+</section>
+
+<div class="section-divider"></div>
+
+<!-- ═══ PRICING ═══ -->
+<section class="section" id="planes">
+    <div class="container">
+        <div class="section-header">
+            <h2>Planes de <span class="text-gradient">suscripción</span></h2>
+            <p>Elige el plan que mejor se adapte a tu inmobiliaria o grupo de convivencia.</p>
+        </div>
+        <div class="pricing-grid">
+            <div class="pricing-card">
+                <div class="pricing-name">Basic</div>
+                <div class="pricing-price">€0 <span>/mes</span></div>
+                <div class="pricing-desc">Para pisos pequeños que quieren empezar</div>
+                <ul class="pricing-features">
+                    <li>1 piso / hasta 4 usuarios</li>
+                    <li>Gestión de tareas básica</li>
+                    <li>Mensajería interna</li>
+                    <li>Registro de gastos</li>
+                </ul>
+                <a href="/Account/Register" class="btn btn-outline" style="width:100%; justify-content:center;">Empezar gratis</a>
+            </div>
+            <div class="pricing-card featured">
+                <div class="pricing-name">Pro</div>
+                <div class="pricing-price">€4.99 <span>/mes</span></div>
+                <div class="pricing-desc">Para pisos que quieren el control total</div>
+                <ul class="pricing-features">
+                    <li>Hasta 10 pisos / usuarios ilimitados</li>
+                    <li>Reserva de zonas comunes</li>
+                    <li>Gestión de incidencias</li>
+                    <li>Contratos y documentación</li>
+                    <li>Gestión de pagos integrada</li>
+                    <li>Soporte prioritario</li>
+                </ul>
+                <a href="/Account/Register" class="btn btn-primary" style="width:100%; justify-content:center;">Elegir Pro</a>
+            </div>
+            <div class="pricing-card">
+                <div class="pricing-name">Enterprise</div>
+                <div class="pricing-price">€19.99 <span>/mes</span></div>
+                <div class="pricing-desc">Para propietarios e inmobiliarias</div>
+                <ul class="pricing-features">
+                    <li>Pisos ilimitados</li>
+                    <li>Panel de analítica avanzado</li>
+                    <li>API de integración</li>
+                    <li>White-label personalizable</li>
+                    <li>Soporte 24/7 dedicado</li>
+                    <li>SLA garantizado</li>
+                </ul>
+                <a href="/Home/Contacto" class="btn btn-outline" style="width:100%; justify-content:center;">Contactar</a>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ═══ COOKIE BANNER ═══ -->
+<div id="cookie-banner" style="display: none; position: fixed; bottom: 0; left: 0; right: 0; z-index: 9999; background: rgba(15,15,26,0.97); backdrop-filter: blur(12px); border-top: 1px solid var(--border); padding: 20px 24px;">
+    <div class="container" style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 16px;">
+        <p style="color: var(--text-secondary); font-size: 0.88rem; margin: 0; flex: 1;">
+            Usamos cookies necesarias para el funcionamiento de la plataforma.
+            <a href="/Home/Cookies" style="color: var(--primary-light);">Política de cookies</a> ·
+            <a href="/Home/Privacidad" style="color: var(--primary-light);">Privacidad</a>
+        </p>
+        <div style="display: flex; gap: 12px;">
+            <button onclick="dismissCookies()" class="btn btn-outline btn-sm">Configurar</button>
+            <button onclick="acceptCookies()" class="btn btn-primary btn-sm">Aceptar</button>
+        </div>
+    </div>
+</div>
+
+<script>
+    (function() {
+        if (!localStorage.getItem('cookies-accepted')) {
+            document.getElementById('cookie-banner').style.display = 'block';
+        }
+    })();
+    function acceptCookies() {
+        localStorage.setItem('cookies-accepted', 'true');
+        document.getElementById('cookie-banner').style.display = 'none';
+    }
+    function dismissCookies() {
+        document.getElementById('cookie-banner').style.display = 'none';
+    }
+</script>

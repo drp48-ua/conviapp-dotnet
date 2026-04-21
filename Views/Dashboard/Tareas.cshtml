@@ -1,0 +1,75 @@
+@model List<ConviAppWeb.Models.TaskItem>
+@{
+    ViewData["Title"] = "Tareas";
+    var userRole = ViewBag.UserRole as string ?? "Basico";
+    var showAds = ConviAppWeb.Services.PlanService.ShowAds(userRole);
+}
+
+<div class="container" style="padding-top: 2rem; padding-bottom: 4rem;">
+    <div class="dash-tabs">
+        <a href="/Dashboard/Index" class="dash-tab">📊 Resumen</a>
+        <a href="/Dashboard/Tareas" class="dash-tab active">✅ Tareas</a>
+        <a href="/Dashboard/Gastos" class="dash-tab">💸 Gastos</a>
+        <a href="/Dashboard/Mensajes" class="dash-tab">💬 Mensajes</a>
+        <a href="/Dashboard/Reservas" class="dash-tab">📅 Reservas</a>
+        <a href="/Dashboard/Incidencias" class="dash-tab">🔧 Incidencias</a>
+        <a href="/Dashboard/ContratosYPagos" class="dash-tab">📄 Contratos</a>
+        <a href="/Dashboard/Documentos" class="dash-tab">📎 Documentos</a>
+        <a href="/Dashboard/MisPisos" class="dash-tab">🏠 Mis Pisos</a>
+    </div>
+
+    @if (showAds) { <partial name="_AdBanner" /> }
+
+    <h2 style="margin-bottom: 20px;">✅ Tareas del Piso</h2>
+
+    <!-- Add Task Form -->
+    <div class="glass-card" style="margin-bottom: 24px;">
+        <h4 style="margin-top: 0; color: var(--primary-light);">➕ Nueva tarea</h4>
+        <form method="post" action="/Dashboard/AddTask" style="display: flex; gap: 12px; flex-wrap: wrap;">
+            <input type="text" name="title" class="form-input" placeholder="Título de la tarea" required style="flex: 2; min-width: 200px;" />
+            <input type="text" name="description" class="form-input" placeholder="Descripción (opcional)" style="flex: 2; min-width: 200px;" />
+            <select name="priority" class="form-input" style="flex: 1; min-width: 120px;">
+                <option value="Baja">🟢 Baja</option>
+                <option value="Media" selected>🟡 Media</option>
+                <option value="Alta">🔴 Alta</option>
+            </select>
+            <button type="submit" class="btn btn-primary btn-sm">Añadir</button>
+        </form>
+    </div>
+
+    @if (Model == null || !Model.Any())
+    {
+        <div class="glass-card" style="text-align: center; padding: 3rem; color: var(--text-muted);">
+            <div style="font-size: 3rem; margin-bottom: 16px;">✅</div>
+            <p>No hay tareas pendientes. ¡Todo al día!</p>
+        </div>
+    }
+    else
+    {
+        <ul class="task-list">
+            @foreach (var t in Model)
+            {
+                <li class="task-item @(t.IsCompleted ? "completed" : "")">
+                    <form method="post" action="/Dashboard/CompleteTask" style="display: inline;">
+                        <input type="hidden" name="id" value="@t.Id" />
+                        <button type="submit" style="background: none; border: none; cursor: pointer; font-size: 1.2rem; padding: 0 8px;">
+                            @(t.IsCompleted ? "✅" : "⬜")
+                        </button>
+                    </form>
+                    <div class="task-info">
+                        <div class="task-name" style="@(t.IsCompleted ? "text-decoration: line-through; opacity: 0.5;" : "")">@t.Title</div>
+                        <div class="task-meta">@(t.Description ?? "") · @(t.Assignee?.Name ?? t.Assignee?.Email ?? "Sin asignar")</div>
+                    </div>
+                    @{
+                        var pc = t.Priority?.ToLower() == "alta" ? "high" : (t.Priority?.ToLower() == "media" ? "medium" : "low");
+                    }
+                    <span class="task-priority @pc">@(t.Priority ?? "Normal")</span>
+                    <form method="post" action="/Dashboard/DeleteTask" style="display: inline;">
+                        <input type="hidden" name="id" value="@t.Id" />
+                        <button type="submit" class="btn btn-sm" style="background: rgba(248,113,113,0.1); color: #f87171; border: 1px solid rgba(248,113,113,0.3);" onclick="return confirm('¿Eliminar esta tarea?')">🗑</button>
+                    </form>
+                </li>
+            }
+        </ul>
+    }
+</div>

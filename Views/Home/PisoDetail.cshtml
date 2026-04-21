@@ -1,0 +1,101 @@
+@model ConviAppWeb.Models.Property
+@{
+    ViewData["Title"] = Model?.Name ?? "Detalle del piso";
+}
+
+<div class="container" style="padding-top: 2rem; padding-bottom: 4rem; max-width: 860px;">
+    <!-- Back -->
+    <a href="/Home/Pisos" style="display: inline-flex; align-items: center; gap: 8px; color: var(--text-muted); font-size: 0.9rem; margin-bottom: 28px;">
+        ← Volver al catálogo
+    </a>
+
+    @if (Model == null)
+    {
+        <div class="glass-card" style="text-align: center; padding: 4rem; color: var(--text-muted);">
+            <p>Piso no encontrado.</p>
+        </div>
+    }
+    else
+    {
+        <!-- Hero image placeholder -->
+        <div style="height: 320px; border-radius: var(--radius-lg); overflow: hidden; margin-bottom: 32px; position: relative; background: var(--bg-elevated); border: 1px solid var(--border); display: flex; align-items: center; justify-content: center;">
+            @if (!string.IsNullOrWhiteSpace(Model.ImageFile))
+            {
+                <img src="/img/@Model.ImageFile" alt="@Model.Name" style="width:100%;height:100%;object-fit:cover;" />
+            }
+            else
+            {
+                <span style="font-size:6rem;">🏠</span>
+            }
+            <span class="listing-badge" style="font-size: 0.85rem; position: absolute; top: 16px; left: 16px;">Disponible</span>
+        </div>
+
+        <div style="display: grid; grid-template-columns: 1fr 320px; gap: 32px; align-items: start;">
+            <!-- Main info -->
+            <div>
+                <h1 style="font-size: 2rem; margin-bottom: 8px;">@Model.Name</h1>
+                <p style="color: var(--text-muted); margin-bottom: 24px; display: flex; align-items: center; gap: 8px;">
+                    📍 @Model.Location
+                </p>
+
+                <div style="display: flex; gap: 16px; margin-bottom: 28px; flex-wrap: wrap;">
+                    <div class="glass-card" style="padding: 16px 24px; text-align: center; flex: 1;">
+                        <div style="font-size: 1.5rem; margin-bottom: 4px;">🛏️</div>
+                        <div style="font-weight: 700; font-size: 1.2rem;">@Model.Rooms</div>
+                        <div style="color: var(--text-muted); font-size: 0.8rem;">Habitaciones</div>
+                    </div>
+                    <div class="glass-card" style="padding: 16px 24px; text-align: center; flex: 1;">
+                        <div style="font-size: 1.5rem; margin-bottom: 4px;">💰</div>
+                        <div style="font-weight: 700; font-size: 1.2rem;">@Model.Price.ToString("0")€</div>
+                        <div style="color: var(--text-muted); font-size: 0.8rem;">/mes</div>
+                    </div>
+                    <div class="glass-card" style="padding: 16px 24px; text-align: center; flex: 1;">
+                        <div style="font-size: 1.5rem; margin-bottom: 4px;">✅</div>
+                        <div style="font-weight: 700; font-size: 1.2rem;">Disponible</div>
+                        <div style="color: var(--text-muted); font-size: 0.8rem;">Estado</div>
+                    </div>
+                </div>
+
+                @if (!string.IsNullOrWhiteSpace(Model.Description))
+                {
+                    <div class="glass-card" style="margin-bottom: 24px;">
+                        <h3 style="margin-top: 0; color: var(--primary-light);">📋 Descripción</h3>
+                        <p style="color: var(--text-secondary);">@Model.Description</p>
+                    </div>
+                }
+
+                <div class="glass-card">
+                    <h3 style="margin-top: 0; color: var(--primary-light);">🏡 Características</h3>
+                    <ul style="list-style: none; padding: 0;">
+                        <li style="padding: 8px 0; border-bottom: 1px solid var(--border); color: var(--text-secondary);">🛏️ @Model.Rooms habitaciones disponibles</li>
+                        <li style="padding: 8px 0; border-bottom: 1px solid var(--border); color: var(--text-secondary);">📍 Ubicado en @Model.Location</li>
+                        <li style="padding: 8px 0; color: var(--text-secondary);">✅ Gestión digital incluida con ConviApp</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Sidebar -->
+            <div>
+                <div class="glass-card" style="position: sticky; top: 90px;">
+                    <div class="listing-price" style="font-size: 2rem; margin-bottom: 4px;">@Model.Price.ToString("0")€</div>
+                    <div style="color: var(--text-muted); font-size: 0.85rem; margin-bottom: 20px;">/mes por habitación</div>
+
+                    @if (Context.Session.GetString("UserEmail") != null)
+                    {
+                        <a href="/Dashboard/Index" class="btn btn-primary" style="width: 100%; justify-content: center; margin-bottom: 12px;">📊 Ir a mi Dashboard</a>
+                    }
+                    else
+                    {
+                        <a href="/Account/Register" class="btn btn-primary" style="width: 100%; justify-content: center; margin-bottom: 12px;">Registrarse para gestionar →</a>
+                        <a href="/Account/Login" class="btn btn-outline" style="width: 100%; justify-content: center;">Iniciar sesión</a>
+                    }
+
+                    <hr style="border: none; border-top: 1px solid var(--border); margin: 20px 0;" />
+                    <p style="color: var(--text-muted); font-size: 0.8rem; text-align: center;">
+                        🔒 Gestionado con ConviApp
+                    </p>
+                </div>
+            </div>
+        </div>
+    }
+</div>

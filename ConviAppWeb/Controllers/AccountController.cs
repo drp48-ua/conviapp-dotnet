@@ -84,6 +84,63 @@ namespace ConviAppWeb.Controllers
         }
 
         [HttpGet]
+        public IActionResult Upgrade(string plan)
+        {
+            var email = HttpContext.Session.GetString("UserEmail");
+            if (email == null)
+            {
+                // Usuario no logueado -> va al registro normal
+                return RedirectToAction("Register", new { plan = plan });
+            }
+
+            var user = _context.Users.FirstOrDefault(u => u.Email == email);
+            if (user == null) return RedirectToAction("Login");
+
+            ViewBag.Plan = plan;
+            ViewBag.UserName = user.Name;
+            ViewBag.UserEmail = user.Email;
+            return View();
+        }
+
+        [HttpPost]
+        public IActionResult Upgrade(string email, string name, string accountNumber, string plan)
+        {
+            var sessionEmail = HttpContext.Session.GetString("UserEmail");
+            if (sessionEmail == null) return RedirectToAction("Login");
+
+            var user = _context.Users.FirstOrDefault(u => u.Email == sessionEmail);
+            if (user == null) return RedirectToAction("Login");
+
+            if (user.Email != email || user.Name != name)
+            {
+                ViewBag.Error = "Los datos no coinciden con tu cuenta actual.";
+                ViewBag.Plan = plan;
+                ViewBag.UserName = user.Name;
+                ViewBag.UserEmail = user.Email;
+                return View();
+            }
+
+            if (string.IsNullOrWhiteSpace(accountNumber) || accountNumber.Length < 10)
+            {
+                ViewBag.Error = "Número de cuenta inválido. Ponga una cuenta simulada (ej. ES1234...).";
+                ViewBag.Plan = plan;
+                ViewBag.UserName = user.Name;
+                ViewBag.UserEmail = user.Email;
+                return View();
+            }
+
+            // Cambiar el plan del usuario
+            var validPlans = new[] { "Basico", "Profesional", "Enterprise" };
+            user.Role = validPlans.Contains(plan) ? plan : "Basico";
+            _context.SaveChanges();
+
+            // Refrescar sesión
+            HttpContext.Session.SetString("UserRole", user.Role);
+
+            return RedirectToAction("Index", "Dashboard");
+        }
+
+        [HttpGet]
         public IActionResult Logout()
         {
             HttpContext.Session.Clear();

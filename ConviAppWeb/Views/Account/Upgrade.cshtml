@@ -1,0 +1,86 @@
+@{
+    ViewData["Title"] = "Actualizar Plan";
+    var plan = ViewBag.Plan as string ?? "Profesional";
+    var email = ViewBag.UserEmail as string;
+    var name = ViewBag.UserName as string;
+    
+    // Configurar precios según plan
+    var price = plan == "Enterprise" ? "19.99" : "4.99";
+    var planColor = plan == "Enterprise" ? "var(--accent)" : "var(--primary)";
+}
+
+<div class="container" style="min-height: 80vh; display: flex; align-items: center; justify-content: center; padding: 3rem 1rem;">
+    <div style="width: 100%; max-width: 600px;">
+        
+        <div style="text-align: center; margin-bottom: 2rem;">
+            <h1 style="font-family: 'Outfit', sans-serif; font-size: 2.2rem;">Actualizar a <span style="color: @planColor">@plan</span> 🚀</h1>
+            <p style="color: var(--text-muted); font-size: 1.1rem;">Estás a un paso de desbloquear todo el potencial de ConviApp.</p>
+        </div>
+
+        <div class="glass-card" style="padding: 2.5rem; border-top: 4px solid @planColor;">
+            
+            <div style="display: flex; justify-content: space-between; align-items: center; padding-bottom: 1.5rem; border-bottom: 1px solid var(--border); margin-bottom: 1.5rem;">
+                <div>
+                    <div style="font-size: 1.2rem; font-weight: 600;">Plan @plan</div>
+                    <div style="color: var(--text-muted); font-size: 0.9rem;">Facturación mensual recurrente</div>
+                </div>
+                <div style="font-size: 2rem; font-weight: 700; color: @planColor;">
+                    €@price<span style="font-size: 1rem; color: var(--text-muted); font-weight: 400;">/mes</span>
+                </div>
+            </div>
+
+            @if (ViewBag.Error != null)
+            {
+                <div class="alert alert-danger" style="margin-bottom: 1.5rem; padding: 1rem; border-radius: 8px; background: rgba(239, 68, 68, 0.1); color: #ef4444; border: 1px solid rgba(239, 68, 68, 0.2);">
+                    ⚠️ @ViewBag.Error
+                </div>
+            }
+
+            <form method="post" action="/Account/Upgrade">
+                <input type="hidden" name="plan" value="@plan" />
+
+                <div style="margin-bottom: 1.5rem;">
+                    <h3 style="font-size: 1.1rem; margin-bottom: 1rem;">Verifica tus datos</h3>
+                    
+                    <div style="margin-bottom: 12px;">
+                        <label style="color: var(--text-secondary); font-size: 0.85rem; margin-bottom: 6px; display: block;">Nombre de la cuenta</label>
+                        <input type="text" name="name" class="form-input" value="@name" required style="background: rgba(255,255,255,0.05);" />
+                    </div>
+                    
+                    <div style="margin-bottom: 16px;">
+                        <label style="color: var(--text-secondary); font-size: 0.85rem; margin-bottom: 6px; display: block;">Correo de facturación</label>
+                        <input type="email" name="email" class="form-input" value="@email" required style="background: rgba(255,255,255,0.05);" />
+                    </div>
+                </div>
+
+                <div style="margin-bottom: 2rem;">
+                    <h3 style="font-size: 1.1rem; margin-bottom: 1rem;">Método de Pago Simulador</h3>
+                    
+                    <div style="margin-bottom: 16px;">
+                        <label style="color: var(--text-secondary); font-size: 0.85rem; margin-bottom: 6px; display: block;">Número de Cuenta (IBAN Simulado)</label>
+                        <div style="position: relative;">
+                            <span style="position: absolute; left: 14px; top: 12px; font-size: 1.2rem;">🏦</span>
+                            <input type="text" name="accountNumber" class="form-input" placeholder="Ej: ES12 3456 7890..." required minlength="10" style="padding-left: 45px;" />
+                        </div>
+                        <p style="color: var(--text-muted); font-size: 0.75rem; margin-top: 6px;">
+                            * Esto es un simulador seguro. Escribe cualquier IBAN ficticio mayor a 10 caracteres para proceder.
+                        </p>
+                    </div>
+                </div>
+
+                <button type="submit" class="btn btn-primary" style="width: 100%; padding: 1.2rem; font-size: 1.1rem; font-weight: 600; background: @planColor; border-color: @planColor; display: flex; justify-content: center; gap: 8px;">
+                    <span>Pagar y Actualizar Plan</span>
+                    <span>→</span>
+                </button>
+                
+                <p style="text-align: center; margin-top: 1.5rem; color: var(--text-muted); font-size: 0.85rem;">
+                    Al confirmar, aceptas nuestros Términos de Servicio y autorizas los cargos mensuales. Cancela en cualquier momento.
+                </p>
+            </form>
+        </div>
+        
+        <div style="text-align: center; margin-top: 1.5rem;">
+            <a href="/Dashboard/Index" style="color: var(--text-muted); text-decoration: none;">&larr; Volver al panel, quizás más tarde</a>
+        </div>
+    </div>
+</div>

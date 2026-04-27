@@ -48,14 +48,28 @@
         </div>
         <div class="header-bottom">
             <div class="container" style="display:flex; gap:8px; width:100%; max-width:100%;">
-                <a href="#tab-inicio" onclick="switchMainTab('inicio')" class="nav-link active">🏠 Inicio</a>
-                <a href="/Home/Pisos" class="nav-link">🏢 Pisos</a>
-                <a href="#tab-contratos" onclick="switchMainTab('contratos')" class="nav-link">📄 Contratos</a>
-                <a href="#tab-tareas" onclick="switchMainTab('tareas')" class="nav-link">✅ Tareas</a>
-                <a href="#tab-gastos" onclick="switchMainTab('gastos')" class="nav-link">💶 Gastos</a>
-                <a href="#tab-reservas" onclick="switchMainTab('reservas')" class="nav-link">📅 Reservas</a>
-                <a href="#tab-mensajes" onclick="switchMainTab('mensajes')" class="nav-link">✉️ Mensajes</a>
-                <a href="#tab-perfil" onclick="switchMainTab('perfil')" class="nav-link">👤 Perfil</a>
+                @if (Context.Session.GetString("UserEmail") != null)
+                {
+                    <a href="/Dashboard/Index" class="nav-link">📊 General</a>
+                    <a href="/Home/Pisos" class="nav-link">🏢 Catálogo</a>
+                    <a href="/Dashboard/Tareas" class="nav-link">✅ Tareas</a>
+                    <a href="/Dashboard/Gastos" class="nav-link">💶 Gastos</a>
+                    <a href="/Dashboard/Reservas" class="nav-link">📅 Reservas</a>
+                    <a href="/Dashboard/Incidencias" class="nav-link">🔧 Incidencias</a>
+                    <a href="/Dashboard/ContratosYPagos" class="nav-link">📄 Contratos</a>
+                    <a href="/Dashboard/Documentos" class="nav-link">📎 Documentos</a>
+                    <a href="/Dashboard/MisPisos" class="nav-link">🏠 Mis Pisos</a>
+                }
+                else
+                {
+                    <a href="/#tab-inicio" class="nav-link active" onclick="if(window.switchMainTab) switchMainTab('inicio')">🏠 Inicio</a>
+                    <a href="/Home/Pisos" class="nav-link">🏢 Pisos</a>
+                    <a href="/#tab-contratos" class="nav-link" onclick="if(window.switchMainTab) switchMainTab('contratos')">📄 Contratos</a>
+                    <a href="/#tab-tareas" class="nav-link" onclick="if(window.switchMainTab) switchMainTab('tareas')">✅ Tareas</a>
+                    <a href="/#tab-gastos" class="nav-link" onclick="if(window.switchMainTab) switchMainTab('gastos')">💶 Gastos</a>
+                    <a href="/#tab-reservas" class="nav-link" onclick="if(window.switchMainTab) switchMainTab('reservas')">📅 Reservas</a>
+                    <a href="/#tab-mensajes" class="nav-link" onclick="if(window.switchMainTab) switchMainTab('mensajes')">✉️ Mensajes</a>
+                }
             </div>
         </div>
     </header>

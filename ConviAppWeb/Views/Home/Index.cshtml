@@ -287,40 +287,208 @@
 
         <!-- MOCK TABS FOR THE UI DEMO -->
         <div id="tab-pisos" class="tab-content flat-card">
-            <h2 style="margin-bottom:16px;">Mis pisos</h2>
-            <p>Aquí se listarán tus pisos gestionados con la estructura MVC. <a href="/Dashboard/MisPisos">Ir a Dashboard/MisPisos</a></p>
-            <button onclick="switchMainTab('inicio')" class="btn btn-outline" style="margin-top:20px;">← Volver</button>
+            <h2 style="margin-bottom:16px;">🏢 Tus Propiedades</h2>
+            <div class="dash-grid" style="grid-template-columns: 1fr 1fr; margin-bottom: 24px;">
+                <div class="dash-stat" style="background: linear-gradient(135deg, rgba(59, 130, 246, 0.1), transparent);">
+                    <div class="icon">🏘️</div>
+                    <div class="value">2</div>
+                    <div class="label">Pisos Registrados</div>
+                </div>
+                <div class="dash-stat" style="background: linear-gradient(135deg, rgba(16, 185, 129, 0.1), transparent);">
+                    <div class="icon">✅</div>
+                    <div class="value">100%</div>
+                    <div class="label">Ocupación Actual</div>
+                </div>
+            </div>
+            <div class="glass-card" style="padding:0; overflow:hidden; border: 1px solid var(--border);">
+                <table class="data-table" style="width: 100%; border-collapse: collapse; text-align: left;">
+                    <thead style="background: var(--bg-input);">
+                        <tr><th style="padding:12px 16px;">Dirección</th><th style="padding:12px 16px;">Ciudad</th><th style="padding:12px 16px;">Habitaciones</th><th style="padding:12px 16px;">Mantenimiento</th></tr>
+                    </thead>
+                    <tbody>
+                        <tr style="border-bottom: 1px solid var(--border);">
+                            <td style="padding: 12px 16px; font-weight: 500;">Av. Marni, 14, 2A</td>
+                            <td style="padding: 12px 16px;">Valencia</td>
+                            <td style="padding: 12px 16px;">🛏️ 3 hab.</td>
+                            <td style="padding: 12px 16px;"><span class="status-badge" style="background:rgba(16, 185, 129, 0.1); color:#10b981;">Al día</span></td>
+                        </tr>
+                        <tr>
+                            <td style="padding: 12px 16px; font-weight: 500;">Calle Mayor, 100</td>
+                            <td style="padding: 12px 16px;">Alicante</td>
+                            <td style="padding: 12px 16px;">🛏️ 4 hab.</td>
+                            <td style="padding: 12px 16px;"><span class="status-badge pending">1 Incidencia</span></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-top: 24px;">
+                <p style="color:var(--text-muted); margin:0; font-size:0.9rem;">(Demo) Regístrate para añadir tus propios pisos reales.</p>
+                <a href="/Account/Register" class="btn btn-primary btn-sm">Añadir piso</a>
+            </div>
         </div>
+
         <div id="tab-tareas" class="tab-content flat-card">
-            <h2 style="margin-bottom:16px;">Tareas del hogar</h2>
-            <p>Lista interactiva de tareas pendientes... <a href="/Dashboard/Tareas">Ir a Dashboard/Tareas</a></p>
-            <button onclick="switchMainTab('inicio')" class="btn btn-outline" style="margin-top:20px;">← Volver</button>
+            <h2 style="margin-bottom:16px;">✅ Tareas del Hogar</h2>
+            <ul class="task-list">
+                <li class="task-item">
+                    <span style="font-size: 1.2rem;">🧹</span>
+                    <div class="task-info">
+                        <div class="task-name">Limpieza de baño semanal</div>
+                        <div class="task-meta">Asignado a: Carlos · Vence hoy</div>
+                    </div>
+                    <span class="status-badge pending">Pendiente</span>
+                </li>
+                <li class="task-item">
+                    <span style="font-size: 1.2rem;">🗑️</span>
+                    <div class="task-info">
+                        <div class="task-name">Bajar la basura y reciclaje</div>
+                        <div class="task-meta">Asignado a: Lucía · Vence mañana</div>
+                    </div>
+                    <span class="status-badge pending">Pendiente</span>
+                </li>
+                <li class="task-item completed" style="opacity: 0.7;">
+                    <span style="font-size: 1.2rem;">🍽️</span>
+                    <div class="task-info">
+                        <div class="task-name" style="text-decoration: line-through;">Limpiar la cocina a fondo</div>
+                        <div class="task-meta">Completado por: Dani</div>
+                    </div>
+                    <span class="status-badge" style="background: rgba(16, 185, 129, 0.1); color: #10b981;">Hecho</span>
+                </li>
+            </ul>
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-top: 24px;">
+                <p style="color:var(--text-muted); margin:0; font-size:0.9rem;">(Demo) Evita peleas: centraliza turnos y avisos.</p>
+                <a href="/Account/Register" class="btn btn-primary btn-sm">Probar Tareas Gratis</a>
+            </div>
         </div>
+
         <div id="tab-gastos" class="tab-content flat-card">
-            <h2 style="margin-bottom:16px;">Gastos del mes</h2>
-            <p>Control de gastos detallado... <a href="/Dashboard/Gastos">Ir a Dashboard/Gastos</a></p>
-            <button onclick="switchMainTab('inicio')" class="btn btn-outline" style="margin-top:20px;">← Volver</button>
+            <h2 style="margin-bottom:16px;">💶 Centro de Gastos</h2>
+            <div class="dash-grid" style="grid-template-columns: 1fr 1fr; margin-bottom: 24px;">
+                <div class="dash-stat">
+                    <div class="icon">⚡</div>
+                    <div class="value">84.50 €</div>
+                    <div class="label">Recibo Luz (Enero)</div>
+                </div>
+                <div class="dash-stat">
+                    <div class="icon">💧</div>
+                    <div class="value">32.20 €</div>
+                    <div class="label">Recibo Agua</div>
+                </div>
+            </div>
+            <div class="glass-card" style="padding:0; overflow:hidden; border: 1px solid var(--border);">
+                <table class="data-table" style="width: 100%; border-collapse: collapse; text-align: left;">
+                    <thead style="background: var(--bg-input);">
+                        <tr><th style="padding:12px 16px;">Concepto</th><th style="padding:12px 16px;">Importe Total</th><th style="padding:12px 16px;">Tu Parte</th><th style="padding:12px 16px;">Estado</th></tr>
+                    </thead>
+                    <tbody>
+                        <tr style="border-bottom: 1px solid var(--border);">
+                            <td style="padding: 12px 16px; font-weight: 500;">Factura Iberdrola</td>
+                            <td style="padding: 12px 16px;">84.50 €</td>
+                            <td style="padding: 12px 16px; font-weight: bold; color: var(--danger);">21.12 €</td>
+                            <td style="padding: 12px 16px;"><span class="status-badge pending">A Pagar</span></td>
+                        </tr>
+                        <tr>
+                            <td style="padding: 12px 16px; font-weight: 500;">Compra Supermercado común</td>
+                            <td style="padding: 12px 16px;">30.00 €</td>
+                            <td style="padding: 12px 16px; font-weight: bold;">—</td>
+                            <td style="padding: 12px 16px;"><span class="status-badge" style="background: rgba(16, 185, 129, 0.1); color: #10b981;">Tú pagaste</span></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-top: 24px;">
+                <p style="color:var(--text-muted); margin:0; font-size:0.9rem;">(Demo) Reparte cuentas como un profesional.</p>
+                <a href="/Account/Register" class="btn btn-primary btn-sm">Dividir Gastos</a>
+            </div>
         </div>
+
         <div id="tab-contratos" class="tab-content flat-card">
-            <h2 style="margin-bottom:16px;">Contratos y Pagos</h2>
-            <p>Gestión de documentos integrados con ADO.NET.</p>
-            <button onclick="switchMainTab('inicio')" class="btn btn-outline" style="margin-top:20px;">← Volver</button>
+            <h2 style="margin-bottom:16px;">📄 Contratos y Documentos</h2>
+            <div class="glass-card" style="padding:0; overflow:hidden; border: 1px solid var(--border);">
+                <table class="data-table" style="width: 100%; border-collapse: collapse; text-align: left;">
+                    <thead style="background: var(--bg-input);">
+                        <tr><th style="padding:12px 16px;">Archivo</th><th style="padding:12px 16px;">Tipo</th><th style="padding:12px 16px;">Vigencia / Fecha</th></tr>
+                    </thead>
+                    <tbody>
+                        <tr style="border-bottom: 1px solid var(--border);">
+                            <td style="padding: 12px 16px; font-weight: 500;">📄 contrato_arrendamiento_firmado.pdf</td>
+                            <td style="padding: 12px 16px;"><span class="status-badge active" style="font-size:0.75rem;">Contrato</span></td>
+                            <td style="padding: 12px 16px; color: var(--text-muted);">Hasta Ago 2027</td>
+                        </tr>
+                        <tr>
+                            <td style="padding: 12px 16px; font-weight: 500;">🧾 justificante_transferencia_fianza.jpg</td>
+                            <td style="padding: 12px 16px;"><span class="status-badge active" style="font-size:0.75rem; background: var(--accent);">Recibo</span></td>
+                            <td style="padding: 12px 16px; color: var(--text-muted);">Subido: Ayer</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-top: 24px;">
+                <p style="color:var(--text-muted); margin:0; font-size:0.9rem;">(Demo) Sube o descarga documentos en la nube a un clic.</p>
+                <a href="/Account/Register" class="btn btn-primary btn-sm">Subir mi primer documento</a>
+            </div>
         </div>
+
         <div id="tab-reservas" class="tab-content flat-card">
-            <h2 style="margin-bottom:16px;">Reservas de zonas comunes</h2>
-            <p>Calendario y disponibilidad...</p>
-            <button onclick="switchMainTab('inicio')" class="btn btn-outline" style="margin-top:20px;">← Volver</button>
+            <h2 style="margin-bottom:16px;">📅 Reservas de Zonas Comunes</h2>
+            <div style="display: flex; gap: 16px; flex-wrap: wrap;">
+                <div class="feature-card" style="flex: 1; padding: 20px; text-align: center;">
+                    <div style="font-size: 2rem;">📺</div>
+                    <h4 style="margin: 10px 0 5px;">Salón / Televisión</h4>
+                    <p style="font-size: 0.8rem; color: var(--text-muted);">1 Reserva hoy</p>
+                    <button class="btn btn-outline btn-sm" style="margin-top: 10px; pointer-events: none;">Reservar</button>
+                </div>
+                <div class="feature-card" style="flex: 1; padding: 20px; text-align: center;">
+                    <div style="font-size: 2rem;">🧺</div>
+                    <h4 style="margin: 10px 0 5px;">Lavadora</h4>
+                    <p style="font-size: 0.8rem; color: var(--text-muted);">Disponible</p>
+                    <button class="btn btn-primary btn-sm" style="margin-top: 10px; pointer-events: none;">Reservar</button>
+                </div>
+            </div>
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-top: 24px;">
+                <p style="color:var(--text-muted); margin:0; font-size:0.9rem;">(Demo) Evita choques a la hora de poner la lavadora.</p>
+                <a href="/Account/Register" class="btn btn-primary btn-sm">Usar Reservas</a>
+            </div>
         </div>
+
         <div id="tab-mensajes" class="tab-content flat-card">
-            <h2 style="margin-bottom:16px;">Mensajes</h2>
-            <p>Bandeja de entrada de comunicaciones...</p>
-            <button onclick="switchMainTab('inicio')" class="btn btn-outline" style="margin-top:20px;">← Volver</button>
+            <h2 style="margin-bottom:16px;">💬 Mensajes e Incidencias</h2>
+            <div style="border: 1px solid var(--border); border-radius: var(--radius-md); overflow:hidden;">
+                <div style="background: rgba(239, 68, 68, 0.05); border-bottom: 1px solid var(--border); padding: 16px; border-left: 4px solid var(--danger);">
+                    <div style="display: flex; justify-content: space-between;">
+                        <strong style="color: var(--text-primary);">Dani</strong>
+                        <span style="font-size: 0.75rem; color: var(--text-muted);">Ayer, 20:45</span>
+                    </div>
+                    <p style="font-size: 0.88rem; margin: 4px 0 0; color: var(--text-secondary);">Chicos, el grifo de la cocina gotea muchísimo. ¿Alguien puede avisar al casero?</p>
+                </div>
+                <div style="background: var(--bg-card); padding: 16px; padding-left: 32px; border-left: 4px solid transparent;">
+                    <div style="display: flex; justify-content: space-between;">
+                        <strong style="color: var(--primary);">Casero Administrador</strong>
+                        <span style="font-size: 0.75rem; color: var(--text-muted);">Hoy, 09:12</span>
+                    </div>
+                    <p style="font-size: 0.88rem; margin: 4px 0 0; color: var(--text-secondary);">Leídas las quejas. Envío al fontanero mañana a las 10:00 AM.</p>
+                </div>
+            </div>
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-top: 24px;">
+                <p style="color:var(--text-muted); margin:0; font-size:0.9rem;">(Demo) Comunicación directa y registro legal.</p>
+                <a href="/Account/Register" class="btn btn-outline btn-sm">Abrir Foro</a>
+            </div>
         </div>
+
         <div id="tab-perfil" class="tab-content flat-card">
-            <h2 style="margin-bottom:16px;">Mi Perfil</h2>
-            <p>Edita tus datos, sube una foto, revisa tu plan...</p>
-            <a href="/Account/Upgrade?plan=Profesional" class="btn btn-primary">Actualizar Plan</a>
-            <button onclick="switchMainTab('inicio')" class="btn btn-outline" style="margin-top:20px;">← Volver</button>
+            <h2 style="margin-bottom:16px;">👤 Mi Perfil ConviApp</h2>
+            <div style="display: flex; gap: 24px; align-items: center; margin-bottom: 24px;">
+                <img src="https://i.pravatar.cc/150?u=demo" alt="Demo Avatar" style="width: 80px; height: 80px; border-radius: 50%; border: 3px solid var(--primary-light);">
+                <div>
+                    <h3 style="margin: 0; font-size: 1.5rem;">Usuario Invitado</h3>
+                    <p style="color: var(--text-muted); margin: 4px 0;">Plan Actual: <span style="color: var(--primary-light); font-weight: bold;">FREE</span></p>
+                </div>
+            </div>
+            <div class="pricing-card featured" style="padding: 24px; text-align: left; transform: none;">
+                <h3 style="color: var(--primary); margin-bottom: 8px;">Plan Profesional</h3>
+                <p style="color: var(--text-secondary); margin-bottom: 16px;">Potencia tu gestión subiendo a Pro para tener documentos ilimitados, cero anuncios y prioridad telefónica.</p>
+                <a href="/Account/Register" class="btn btn-primary" style="width: 100%; justify-content: center;">Suscríbete ahora por 4.99€/mes</a>
+            </div>
         </div>
     </div>
 
@@ -352,7 +520,36 @@
         }
         
         // Match nav links globally to add bold/active style
-        var relatedNav = document.querySelector('a.nav-link[onclick*="' + tabId + '"]');
-        if(relatedNav) relatedNav.classList.add('active');
+        var relatedNav = document.querySelectorAll('a.nav-link[onclick*="' + tabId + '"]');
+        if(relatedNav) relatedNav.forEach(el => el.classList.add('active'));
+        
+        // Update URL hash for sharing/back button friendly
+        if(history.pushState) {
+            history.pushState(null, null, '#' + 'tab-' + tabId);
+        } else {
+            location.hash = '#tab-' + tabId;
+        }
     }
+
+    // Auto-open tab on load if hash is present
+    document.addEventListener('DOMContentLoaded', function() {
+        if (window.location.hash) {
+            var tabId = window.location.hash.replace('#tab-', '');
+            if (document.getElementById('tab-' + tabId)) {
+                switchMainTab(tabId);
+            }
+        }
+    });
+
+    // Support browser back/forward buttons
+    window.addEventListener('hashchange', function() {
+        if (window.location.hash) {
+            var tabId = window.location.hash.replace('#tab-', '');
+            if (document.getElementById('tab-' + tabId)) {
+                switchMainTab(tabId);
+            }
+        } else {
+            switchMainTab('inicio');
+        }
+    });
 </script>

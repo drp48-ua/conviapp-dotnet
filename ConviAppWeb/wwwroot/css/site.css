@@ -289,7 +289,7 @@ h5 {
 
 /* ═══════════════════ MAIN CONTENT WRAPPER ═══════════════════ */
 .page-wrapper {
-  padding-top: var(--header-height);
+  padding-top: calc(var(--header-height) + var(--subheader-height));
   min-height: 100vh;
   position: relative;
   z-index: 1;

@@ -125,11 +125,11 @@
     {
         <!-- RIGHT LOGGED IN SIDEBAR -->
         <div class="sidebar-left">
-            <div class="flat-card profile-card">
-                <img src="https://i.pravatar.cc/100?u=moni" alt="Usuario" />
-                <h4>Moni</h4>
-                <p>@userEmail</p>
-                <button class="btn btn-outline btn-sm" style="width:100%">Editar perfil</button>
+            <div class="flat-card profile-card" style="text-align:center;">
+                <img src="https://ui-avatars.com/api/?name=U&background=f3f4f6&color=1e3a8a&rounded=true&size=128" alt="Usuario" style="width: 80px; height: 80px; border-radius: 50%; margin: 0 auto 12px; display: block;" />
+                <h4 style="margin-bottom: 4px;">Hola, @(userEmail?.Split('@')[0] ?? "Usuario")</h4>
+                <p style="color:var(--text-muted); font-size:0.85rem; margin-bottom:16px;">@userEmail</p>
+                <a href="#" onclick="switchMainTab('perfil'); return false;" class="btn btn-outline btn-sm" style="width:100%; justify-content:center;">Editar perfil</a>
             </div>
             
             <div class="flat-card" style="padding: 16px;">
@@ -148,83 +148,116 @@
         <div id="tab-inicio" class="tab-content active">
             @if (isLoggedIn)
             {
-                <div class="welcome-banner">
-                    <div>
-                        <h2>¡Bienvenida a FlatManager!</h2>
-                        <p>La forma más fácil de gestionar tu piso compartido de manera organizada.</p>
+                <div class="welcome-banner" style="background: url('https://images.unsplash.com/photo-1556910103-1c02745aae4f?q=80&w=1500&auto=format&fit=crop') center/cover; position:relative; overflow:hidden;">
+                    <div style="position:absolute; top:0; left:0; width:100%; height:100%; background:linear-gradient(90deg, rgba(255,255,255,0.95) 0%, rgba(255,255,255,0.8) 100%); z-index:1;"></div>
+                    <div style="position:relative; z-index:2; width:100%;">
+                        <h2 style="color: #1e3a8a !important; margin-bottom:8px; font-size: 2rem;">¡Bienvenida a ConviApp!</h2>
+                        <p style="color: #4b5563 !important; max-width: 500px; font-size:1.1rem; margin-bottom:20px;">La forma más fácil de gestionar tu piso compartido de manera organizada y eficiente.</p>
                         <div style="display: flex; gap: 12px;">
-                            <button onclick="switchMainTab('pisos')" class="btn btn-primary">Ver mis pisos</button>
-                            <button onclick="switchMainTab('tareas')" class="btn btn-outline" style="background:white">Ir a mis tareas</button>
+                            <a href="/Dashboard/MisPisos" class="btn btn-primary">Ver mis pisos</a>
+                            <a href="/Dashboard/Tareas" class="btn btn-outline" style="background:white; color:#1e3a8a;">Ir a mis tareas</a>
                         </div>
                     </div>
                 </div>
                 
-                <h3 style="font-size: 1.1rem; margin-bottom: 16px; color: #1e3a8a;">Servicios principales</h3>
-                
+                <h3 style="font-size: 1.1rem; margin-bottom: 16px; color: #1e3a8a !important;">Servicios principales</h3>
                 <div class="services-grid">
-                    <a href="#" onclick="switchMainTab('pisos'); return false;" class="service-card">
-                        <div class="service-icon">🏠</div>
+                    <a href="#" onclick="switchMainTab('pisos'); return false;" class="service-card" style="border: 1px solid var(--border);">
+                        <div class="service-icon" style="color: #3b82f6;">🏠</div>
                         <h4>Pisos</h4>
-                        <p>Consulta y gestiona los pisos disponibles.</p>
+                        <p>Consulta y gestiona pisos disponibles.</p>
+                        <span style="font-size: 0.75rem; color: #3b82f6; margin-top:8px; font-weight:600;">Ver pisos →</span>
                     </a>
-                    <a href="#" onclick="switchMainTab('contratos'); return false;" class="service-card">
-                        <div class="service-icon">📄</div>
+                    <a href="#" onclick="switchMainTab('contratos'); return false;" class="service-card" style="border: 1px solid var(--border);">
+                        <div class="service-icon" style="color: #10b981;">📄</div>
                         <h4>Contratos</h4>
-                        <p>Gestiona los contratos y documentos.</p>
+                        <p>Documentos y pagos del piso.</p>
+                        <span style="font-size: 0.75rem; color: #10b981; margin-top:8px; font-weight:600;">Ver contratos →</span>
                     </a>
-                    <a href="#" onclick="switchMainTab('tareas'); return false;" class="service-card">
-                        <div class="service-icon">✅</div>
+                    <a href="#" onclick="switchMainTab('tareas'); return false;" class="service-card" style="border: 1px solid var(--border);">
+                        <div class="service-icon" style="color: #f59e0b;">✅</div>
                         <h4>Tareas</h4>
-                        <p>Organiza y asigna tareas del hogar.</p>
+                        <p>Organiza roles del hogar.</p>
+                        <span style="font-size: 0.75rem; color: #f59e0b; margin-top:8px; font-weight:600;">Ver tareas →</span>
                     </a>
-                    <a href="#" onclick="switchMainTab('gastos'); return false;" class="service-card">
-                        <div class="service-icon">💶</div>
+                    <a href="#" onclick="switchMainTab('gastos'); return false;" class="service-card" style="border: 1px solid var(--border);">
+                        <div class="service-icon" style="color: #8b5cf6;">💶</div>
                         <h4>Gastos</h4>
-                        <p>Controla los gastos y pagos del piso.</p>
+                        <p>Controla los pagos.</p>
+                        <span style="font-size: 0.75rem; color: #8b5cf6; margin-top:8px; font-weight:600;">Ver gastos →</span>
                     </a>
-                    <a href="#" onclick="switchMainTab('reservas'); return false;" class="service-card">
-                        <div class="service-icon">📅</div>
+                    <a href="#" onclick="switchMainTab('reservas'); return false;" class="service-card" style="border: 1px solid var(--border);">
+                        <div class="service-icon" style="color: #06b6d4;">📅</div>
                         <h4>Reservas</h4>
-                        <p>Reserva zonas y espacios comunes.</p>
+                        <p>Reserva zonas comunes.</p>
+                        <span style="font-size: 0.75rem; color: #06b6d4; margin-top:8px; font-weight:600;">Ver reservas →</span>
                     </a>
-                    <a href="#" class="service-card">
-                        <div class="service-icon">🔔</div>
+                    <a href="#" onclick="switchMainTab('mensajes'); return false;" class="service-card" style="border: 1px solid var(--border);">
+                        <div class="service-icon" style="color: #f43f5e;">🔔</div>
                         <h4>Notificaciones</h4>
-                        <p>Mantente al día con todo lo importante.</p>
+                        <p>Mensajes e incidencias.</p>
+                        <span style="font-size: 0.75rem; color: #f43f5e; margin-top:8px; font-weight:600;">Ver todas →</span>
                     </a>
                 </div>
                 
-                <div class="flat-card">
-                    <h3 style="font-size: 1.1rem; margin-bottom: 16px; color: #1e3a8a;">Resumen del mes</h3>
-                    <div class="summary-grid">
-                        <div class="summary-item">
-                            <div class="label">Gastos totales</div>
-                            <div class="value">450 €</div>
-                            <div class="trend">+12% que el mes pasado</div>
-                        </div>
-                        <div class="summary-item">
-                            <div class="label">Tareas completadas</div>
-                            <div class="value">12</div>
-                            <div class="trend" style="color:#6b7280">+3 esta semana</div>
-                        </div>
-                        <div class="summary-item">
-                            <div class="label">Incidencias abiertas</div>
-                            <div class="value" style="color:#ef4444">2</div>
-                            <div class="trend" style="color:#ef4444">-1 que el mes pasado</div>
-                        </div>
-                        <div class="summary-item">
-                            <div class="label">Reservas este mes</div>
-                            <div class="value">5</div>
-                            <div class="trend" style="color:#3b82f6"><a href="#" onclick="switchMainTab('reservas')">Ver calendario</a></div>
+                <div style="display:grid; grid-template-columns: 2fr 1fr; gap:24px; margin-bottom:24px;">
+                    <div class="flat-card" style="margin-bottom:0;">
+                        <h3 style="font-size: 1.1rem; margin-bottom: 16px; color: #1e3a8a !important;">Resumen del mes</h3>
+                        <div class="summary-grid" style="grid-template-columns: 1fr 1fr; margin-bottom:0;">
+                            <div class="summary-item">
+                                <div class="label">Gastos totales</div>
+                                <div class="value">450 €</div>
+                                <div class="trend">+12% que el mes pasado</div>
+                            </div>
+                            <div class="summary-item">
+                                <div class="label">Tareas completadas</div>
+                                <div class="value">12</div>
+                                <div class="trend" style="color:#6b7280">+3 esta semana</div>
+                            </div>
+                            <div class="summary-item">
+                                <div class="label">Incidencias abiertas</div>
+                                <div class="value" style="color:#ef4444 !important;">2</div>
+                                <div class="trend" style="color:#ef4444">-1 que el mes pasado</div>
+                            </div>
+                            <div class="summary-item">
+                                <div class="label">Reservas este mes</div>
+                                <div class="value">5</div>
+                                <div class="trend" style="color:#3b82f6"><a href="#" onclick="switchMainTab('reservas'); return false;">Ver calendario</a></div>
+                            </div>
                         </div>
                     </div>
+                    <div class="flat-card" style="margin-bottom:0;">
+                         <h3 style="font-size: 1.1rem; margin-bottom: 16px; color: #1e3a8a !important;">Última actividad</h3>
+                         <ul style="list-style:none; padding:0; margin:0;">
+                             <li style="display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid var(--border); padding:8px 0; font-size:0.85rem;">
+                                 <div><span style="color:#3b82f6; margin-right:6px;">◉</span> Has pagado el gasto de luz</div>
+                                 <div style="color:var(--text-muted) !important; font-size:0.75rem;">Hace 2 h</div>
+                             </li>
+                             <li style="display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid var(--border); padding:8px 0; font-size:0.85rem;">
+                                 <div><span style="color:#10b981; margin-right:6px;">◉</span> Incidencia: Fregadero...</div>
+                                 <div style="color:var(--text-muted) !important; font-size:0.75rem;">Hace 5 h</div>
+                             </li>
+                             <li style="display:flex; justify-content:space-between; align-items:center; padding:8px 0; font-size:0.85rem;">
+                                 <div style="text-decoration:line-through; color:var(--text-muted) !important;"><span style="color:var(--border); margin-right:6px;">○</span> Tarea completada: Baño</div>
+                                 <div style="color:var(--text-muted) !important; font-size:0.75rem;">Ayer</div>
+                             </li>
+                         </ul>
+                    </div>
+                </div>
+
+                <div class="welcome-banner" style="display:flex; justify-content:space-between; align-items:center; background:#f0f9ff; border:1px solid #bae6fd; padding:32px; border-radius:8px;">
+                     <div>
+                         <h3 style="color:#0369a1 !important; margin:0 0 8px; font-size:1.5rem;">¿Necesitas muebles para tu piso?</h3>
+                         <p style="margin:0; font-size:1rem; color:#0c4a6e !important;">Descuentos exclusivos para pisos compartidos en IKEA y Maisons du Monde.</p>
+                     </div>
+                     <button class="btn btn-primary" style="background:#0ea5e9; border:none;">Ver ofertas</button>
                 </div>
             }
             else
             {
                 <!-- MARKETING LANDING PREVIEW WHEN NOT LOGGED IN -->
                 <div class="welcome-banner" style="text-align:center; display:block;">
-                    <h2 style="font-size:2.5rem; margin-bottom:16px;">La convivencia inteligente empieza aquí</h2>
+                    <h2 style="font-size:2.5rem; margin-bottom:16px; color: #1e3a8a !important;">La convivencia inteligente empieza aquí</h2>
                     <p style="margin:0 auto 24px;">Gestiona tu piso compartido de forma sencilla: tareas, gastos, reservas y comunicación.</p>
                     <a href="/Account/Register" class="btn btn-primary btn-lg">Empezar gratis</a>
                 </div>
@@ -478,34 +511,52 @@
         <div id="tab-perfil" class="tab-content flat-card">
             <h2 style="margin-bottom:16px;">👤 Mi Perfil ConviApp</h2>
             <div style="display: flex; gap: 24px; align-items: center; margin-bottom: 24px;">
-                <img src="https://i.pravatar.cc/150?u=demo" alt="Demo Avatar" style="width: 80px; height: 80px; border-radius: 50%; border: 3px solid var(--primary-light);">
+                <img src="https://ui-avatars.com/api/?name=U&background=f3f4f6&color=1e3a8a&rounded=true&size=150" alt="Demo Avatar" style="width: 80px; height: 80px; border-radius: 50%; border: 3px solid var(--primary-light); margin: 0;">
                 <div>
                     <h3 style="margin: 0; font-size: 1.5rem;">Usuario Invitado</h3>
-                    <p style="color: var(--text-muted); margin: 4px 0;">Plan Actual: <span style="color: var(--primary-light); font-weight: bold;">FREE</span></p>
+                    <p style="color: var(--text-muted) !important; margin: 4px 0;">Plan Actual: <span style="color: var(--primary-light); font-weight: bold;">FREE</span></p>
                 </div>
             </div>
             <div class="pricing-card featured" style="padding: 24px; text-align: left; transform: none;">
-                <h3 style="color: var(--primary); margin-bottom: 8px;">Plan Profesional</h3>
-                <p style="color: var(--text-secondary); margin-bottom: 16px;">Potencia tu gestión subiendo a Pro para tener documentos ilimitados, cero anuncios y prioridad telefónica.</p>
+                <h3 style="color: var(--primary) !important; margin-bottom: 8px;">Plan Profesional</h3>
+                <p style="color: var(--text-secondary) !important; margin-bottom: 16px;">Potencia tu gestión subiendo a Pro para tener documentos ilimitados, cero anuncios y prioridad telefónica.</p>
                 <a href="/Account/Register" class="btn btn-primary" style="width: 100%; justify-content: center;">Suscríbete ahora por 4.99€/mes</a>
             </div>
         </div>
     </div>
 
+    @if (isLoggedIn)
+    {
     <!-- RIGHT FIXED ADVERTISEMENTS (PUBLICIDAD) -->
     <div class="sidebar-right">
-        <div class="flat-card" style="background: linear-gradient(to bottom, #1e3a8a, #3b82f6); color: white; padding: 24px; text-align: center;">
-            <h3 style="font-size: 1.2rem; margin-bottom: 8px;">Limpieza a domicilio</h3>
-            <p style="font-size: 0.85rem; color: #dbeafe; margin-bottom: 16px;">Deja tu piso impecable.</p>
-            <button class="btn btn-outline btn-sm" style="color:white; border-color:rgba(255,255,255,0.4);">Ver ofertas</button>
+        <div class="flat-card" style="padding: 0; overflow:hidden; border:none; border-radius:12px; margin-bottom:16px;">
+            <div style="background: linear-gradient(to bottom, #1e3a8a, #3b82f6); color: white; padding: 24px 20px; position:relative;">
+                <img src="https://images.unsplash.com/photo-1527515637462-cff94eecc1ac?auto=format&fit=crop&w=300&q=80" alt="Limpieza" style="position:absolute; right: -20px; top:-20px; width:140px; border-radius:50%; opacity:0.4; mix-blend-mode: overlay;">
+                <h3 style="font-size: 1.25rem; font-weight:700; margin-bottom: 8px; position:relative; z-index:2; color: white !important;">Limpieza a domicilio</h3>
+                <p style="font-size: 0.9rem; color: #dbeafe !important; margin-bottom: 16px; position:relative; z-index:2;">Deja tu piso impecable.</p>
+                <button class="btn btn-sm" style="background:rgba(255,255,255,0.2); color:white !important; border:1px solid rgba(255,255,255,0.4); z-index:2; position:relative;">Ver ofertas</button>
+            </div>
         </div>
         
-        <div class="flat-card" style="background: #ecfdf5; border-color: #a7f3d0; padding: 24px; text-align: center;">
-            <h3 style="font-size: 1.2rem; color: #065f46; margin-bottom: 8px;">Muebles para compartir</h3>
-            <p style="font-size: 0.85rem; color: #047857; margin-bottom: 16px;">Precios increíbles para nuevas camas y escritorios.</p>
-            <button class="btn btn-primary btn-sm" style="background:#10b981;">Descubrir</button>
+        <div class="flat-card" style="padding: 0; overflow:hidden; border:none; border-radius:12px; margin-bottom:16px; box-shadow: 0 4px 6px rgba(0,0,0,0.05);">
+            <div style="padding: 24px 20px; background: #ecfdf5; position:relative;">
+                <img src="https://images.unsplash.com/photo-1616486338812-3dadae4b4ace?auto=format&fit=crop&w=300&q=80" alt="Muebles" style="position:absolute; right: -30px; bottom:-30px; width:130px; border-radius:50%; opacity:0.8; mix-blend-mode: multiply;">
+                <h3 style="font-size: 1.25rem; font-weight:700; color: #065f46 !important; margin-bottom: 8px; position:relative; z-index:2;">Muebles para compartir</h3>
+                <p style="font-size: 0.9rem; color: #047857 !important; margin-bottom: 16px; position:relative; z-index:2;">Precios increíbles para nuevas camas y escritorios.</p>
+                <button class="btn btn-sm" style="background:#10b981; color:white !important; border:none; position:relative; z-index:2;">Descubrir</button>
+            </div>
+        </div>
+
+        <div class="flat-card" style="padding: 0; overflow:hidden; border:none; border-radius:12px; box-shadow: 0 4px 6px rgba(0,0,0,0.05);">
+            <div style="padding: 24px 20px; background: #fffbeb; position:relative;">
+                <div style="position:absolute; right: 10px; bottom: 10px; font-size:3.5rem; opacity:0.8;">🏡</div>
+                <h3 style="font-size: 1.25rem; font-weight:700; color: #b45309 !important; margin-bottom: 8px; position:relative; z-index:2;">Seguros para tu hogar</h3>
+                <p style="font-size: 0.9rem; color: #92400e !important; margin-bottom: 16px; position:relative; z-index:2;">Protege lo que más te importa.</p>
+                <button class="btn btn-sm" style="background:#f59e0b; color:white !important; border:none; position:relative; z-index:2;">Más información</button>
+            </div>
         </div>
     </div>
+    }
 </div>
 
 <script>

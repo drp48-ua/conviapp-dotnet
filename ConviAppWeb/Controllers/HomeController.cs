@@ -1,44 +1,42 @@
 using Microsoft.AspNetCore.Mvc;
 using ConviAppWeb.Models;
 using ConviAppWeb.Services;
-using System.Linq;
+using ConviAppWeb.DataAccess;
 
 namespace ConviAppWeb.Controllers
 {
     public class HomeController : Controller
     {
-        private readonly ApplicationDbContext _context;
         private readonly EmailService _emailService;
 
-        public HomeController(ApplicationDbContext context, EmailService emailService)
+        public HomeController(EmailService emailService)
         {
-            _context = context;
             _emailService = emailService;
         }
 
         public IActionResult Index()
         {
-            var featuredProperties = _context.Properties.Take(6).ToList();
-            return View(featuredProperties);
+            var properties = new CADPiso().ListarTodos();
+            return View(properties);
         }
 
         public IActionResult Pisos()
         {
-            var properties = _context.Properties.ToList();
+            var properties = new CADPiso().ListarTodos();
             return View(properties);
         }
 
         public IActionResult PisoDetail(int id)
         {
-            var property = _context.Properties.FirstOrDefault(p => p.Id == id);
-            if (property == null) return NotFound();
-            return View(property);
+            var piso = new CADPiso().LeerPiso(id);
+            if (piso == null) return NotFound();
+            return View(piso);
         }
 
         // ═══ LEGAL PAGES ═══
         public IActionResult Privacidad() => View();
-        public IActionResult Terminos() => View();
-        public IActionResult Cookies() => View();
+        public IActionResult Terminos()   => View();
+        public IActionResult Cookies()    => View();
 
         // ═══ CONTACT / ENTERPRISE APPLICATION ═══
         public IActionResult Contacto() => View();
@@ -53,5 +51,7 @@ namespace ConviAppWeb.Controllers
                 : "✅ Solicitud registrada. Te contactaremos en breve.";
             return View();
         }
+
+        public IActionResult Error() => View();
     }
 }

@@ -1,4 +1,4 @@
-@model ConviAppWeb.Models.Property
+﻿@model ConviAppWeb.Models.ENPiso
 @{
     ViewData["Title"] = "Dashboard";
     var userRole = ViewBag.UserRole as string ?? "Basico";
@@ -24,7 +24,7 @@
     <div class="stats-grid" style="margin-top: 20px;">
         <div class="dash-stat">
             <div class="dash-stat-icon">👥</div>
-            <div class="dash-stat-value" style="color: var(--primary);">@(Model?.Tenants?.Count ?? 0)</div>
+            <div class="dash-stat-value" style="color: var(--primary);">0</div>
             <div class="dash-stat-label">Inquilinos</div>
         </div>
         <div class="dash-stat">
@@ -54,7 +54,7 @@
         @if (Model != null)
         {
             <p style="color: var(--text-secondary); margin-bottom: 0;">
-                📍 @Model.Name — @Model.Location
+                📍 @(Model.Direccion ?? "Piso") — @(Model.Ciudad ?? "")
             </p>
         }
         else

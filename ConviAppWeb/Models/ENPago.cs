@@ -84,7 +84,7 @@ namespace ConviAppWeb.Models
             get => _userId;
             set => _userId = value;
         }
-        public User? User { get; set; }
+        // User nav eliminada (sin EF)
 
         // ─── Métodos de negocio ───
         public bool IsPaid() => _status == "pagado";

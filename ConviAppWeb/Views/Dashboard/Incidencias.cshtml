@@ -1,4 +1,4 @@
-@model List<ConviAppWeb.Models.Incident>
+@model List<ConviAppWeb.Models.ENIncidencia>
 @{
     ViewData["Title"] = "Incidencias";
     var userRole = ViewBag.UserRole as string ?? "Basico";
@@ -33,8 +33,8 @@
         <div class="glass-card" style="margin-bottom: 24px;">
             <h4 style="margin-top: 0; color: var(--primary-light);">➕ Reportar incidencia</h4>
             <form method="post" action="/Dashboard/ReportIncident" style="display: flex; gap: 12px; flex-wrap: wrap;">
-                <input type="text" name="title" class="form-input" placeholder="Título" required style="flex: 1; min-width: 200px;" />
-                <input type="text" name="description" class="form-input" placeholder="Descripción detallada" required style="flex: 2; min-width: 200px;" />
+                <input type="text" name="titulo" class="form-input" placeholder="Título" required style="flex: 1; min-width: 200px;" />
+                <input type="text" name="descripcion" class="form-input" placeholder="Descripción detallada" required style="flex: 2; min-width: 200px;" />
                 <button type="submit" class="btn btn-primary btn-sm">Reportar</button>
             </form>
         </div>
@@ -51,27 +51,27 @@
             <ul class="task-list">
                 @foreach (var i in Model)
                 {
-                    var badgeClass = i.Status?.ToLower() == "cerrada" ? "done" :
-                                     i.Status?.ToLower() == "en proceso" ? "pending" : "open";
+                    var badgeClass = i.Estado?.ToLower() == "resuelta" ? "done" :
+                                     i.Estado?.ToLower() == "en_progreso" ? "pending" : "open";
                     <li class="task-item">
                         <div class="task-info">
-                            <div class="task-name">@i.Title</div>
-                            <div class="task-meta">@(i.Description ?? "") · @i.DateReported.ToShortDateString()</div>
+                            <div class="task-name">@i.Titulo</div>
+                            <div class="task-meta">@(i.Descripcion ?? "") · @i.FechaReporte.ToShortDateString()</div>
                         </div>
-                        <span class="status-badge @badgeClass">@(i.Status ?? "Abierta")</span>
-                        @if (i.Status != "cerrada")
+                        <span class="status-badge @badgeClass">@(i.Estado ?? "abierta")</span>
+                        @if (i.Estado != "resuelta")
                         {
                             <form method="post" action="/Dashboard/UpdateIncidentStatus" style="display: inline;">
                                 <input type="hidden" name="id" value="@i.Id" />
-                                @if (i.Status == "abierta")
+                                @if (i.Estado == "abierta")
                                 {
-                                    <input type="hidden" name="status" value="en proceso" />
-                                    <button type="submit" class="btn btn-sm" style="background: rgba(245,158,11,0.1); color: #f59e0b; border: 1px solid rgba(245,158,11,0.3);">▶ En proceso</button>
+                                    <input type="hidden" name="status" value="en_progreso" />
+                                    <button type="submit" class="btn btn-sm" style="background: rgba(245,158,11,0.1); color: #f59e0b; border: 1px solid rgba(245,158,11,0.3);">▶ En progreso</button>
                                 }
                                 else
                                 {
-                                    <input type="hidden" name="status" value="cerrada" />
-                                    <button type="submit" class="btn btn-sm" style="background: rgba(52,211,153,0.1); color: #34d399; border: 1px solid rgba(52,211,153,0.3);">✓ Cerrar</button>
+                                    <input type="hidden" name="status" value="resuelta" />
+                                    <button type="submit" class="btn btn-sm" style="background: rgba(52,211,153,0.1); color: #34d399; border: 1px solid rgba(52,211,153,0.3);">✓ Resolver</button>
                                 }
                             </form>
                         }

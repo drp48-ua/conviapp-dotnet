@@ -32,8 +32,6 @@ namespace ConviAppWeb.Models
         public bool PuedeVerContratos { get => _puedeVerContratos; set => _puedeVerContratos = value; }
         public bool PuedeGestionarUsuarios { get => _puedeGestionarUsuarios; set => _puedeGestionarUsuarios = value; }
 
-        // ─── Navegación ───
-        public ICollection<ENUsuario> Usuarios { get; set; } = new List<ENUsuario>();
 
         // ─── Métodos de negocio ───
         public bool EsAdministrador() => _nombre.ToLower() == "administrador";

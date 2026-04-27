@@ -97,14 +97,14 @@ namespace ConviAppWeb.Models
             get => _propertyId;
             set => _propertyId = value;
         }
-        public Property? Property { get; set; }
+        // Property nav eliminada (sin EF)
 
         public int UserId
         {
             get => _userId;
             set => _userId = value;
         }
-        public User? User { get; set; }
+        // User nav eliminada (sin EF)
 
         // ─── Navegación ───
         public ICollection<ENPago> Pagos { get; set; } = new List<ENPago>();

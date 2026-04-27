@@ -41,7 +41,6 @@ namespace ConviAppWeb.Models
 
         // ─── Clave foránea ───
         public int UsuarioId { get => _usuarioId; set => _usuarioId = value; }
-        public ENUsuario? Usuario { get; set; }
 
         // ─── Métodos de negocio ───
         public bool EsValida() => _activa && _fechaFin >= DateTime.Now;

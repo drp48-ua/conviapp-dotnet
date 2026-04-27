@@ -57,7 +57,7 @@
                     <li class="task-item">
                         <div class="task-info">
                             <div class="task-name">@c.Type.ToUpper() — @c.MonthlyRent.ToString("C")/mes</div>
-                            <div class="task-meta">@c.StartDate.ToShortDateString() → @c.EndDate.ToShortDateString() · @(c.Property?.Name ?? "Piso")</div>
+                            <div class="task-meta">@c.StartDate.ToShortDateString() → @c.EndDate.ToShortDateString() · ID Piso: @c.PropertyId</div>
                         </div>
                         <span class="status-badge @sClass">@c.Status</span>
                         <form method="post" action="/Dashboard/DeleteContrato" style="display: inline;">

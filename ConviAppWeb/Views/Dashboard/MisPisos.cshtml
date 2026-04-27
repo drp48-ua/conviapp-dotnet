@@ -1,4 +1,4 @@
-@model List<ConviAppWeb.Models.Property>
+﻿@model List<ConviAppWeb.Models.ENPiso>
 @{
     ViewData["Title"] = "Mis Pisos";
     var userRole = ViewBag.UserRole as string ?? "Basico";
@@ -41,10 +41,10 @@
         <div class="glass-card" style="margin-bottom: 24px;">
             <h4 style="margin-top: 0; color: var(--primary-light);">➕ Añadir piso</h4>
             <form method="post" action="/Dashboard/AddProperty" style="display: flex; gap: 12px; flex-wrap: wrap;">
-                <input type="text" name="name" class="form-input" placeholder="Nombre del piso" required style="flex: 2; min-width: 200px;" />
-                <input type="text" name="location" class="form-input" placeholder="📍 Dirección" required style="flex: 2; min-width: 200px;" />
-                <input type="number" name="rooms" class="form-input" placeholder="Habitaciones" min="1" required style="flex: 1; min-width: 100px;" />
-                <input type="number" name="price" class="form-input" placeholder="Precio €/mes" step="0.01" required style="flex: 1; min-width: 120px;" />
+                <input type="text" name="direccion" class="form-input" placeholder="Dirección" required style="flex: 2; min-width: 200px;" />
+                <input type="text" name="ciudad" class="form-input" placeholder="📍 Ciudad" required style="flex: 2; min-width: 200px;" />
+                <input type="number" name="habitaciones" class="form-input" placeholder="Habitaciones" min="1" required style="flex: 1; min-width: 100px;" />
+                <input type="number" name="precioTotal" class="form-input" placeholder="Precio Total €/mes" step="0.01" required style="flex: 1; min-width: 120px;" />
                 <button type="submit" class="btn btn-primary btn-sm">Añadir</button>
             </form>
         </div>
@@ -68,12 +68,12 @@
                             <span class="listing-badge">Activo</span>
                         </div>
                         <div class="listing-body">
-                            <div class="listing-price">@p.Price.ToString("C") <span>/mes</span></div>
-                            <div class="listing-title">@p.Name</div>
-                            <div class="listing-location">📍 @p.Location</div>
+                            <div class="listing-price">@p.PrecioTotal.ToString("C") <span>/mes</span></div>
+                            <div class="listing-title">@(p.Direccion ?? "Piso")</div>
+                            <div class="listing-location">📍 @(p.Ciudad ?? "")</div>
                             <div class="listing-tags">
-                                <span class="listing-tag">🛏 @p.Rooms hab.</span>
-                                <span class="listing-tag">👥 @(p.Tenants?.Count ?? 0) inquilinos</span>
+                                <span class="listing-tag">🛏 @p.NumeroHabitaciones hab.</span>
+                                <span class="listing-tag">👥 @(0) inquilinos</span>
                             </div>
                         </div>
                     </div>

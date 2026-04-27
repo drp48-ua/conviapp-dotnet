@@ -1,4 +1,4 @@
-@model List<ConviAppWeb.Models.Reservation>
+@model List<ConviAppWeb.Models.ENReserva>
 @{
     ViewData["Title"] = "Reservas";
     var userRole = ViewBag.UserRole as string ?? "Basico";
@@ -33,17 +33,9 @@
         <div class="glass-card" style="margin-bottom: 24px;">
             <h4 style="margin-top: 0; color: var(--primary-light);">➕ Nueva reserva</h4>
             <form method="post" action="/Dashboard/AddReservation" style="display: flex; gap: 12px; flex-wrap: wrap;">
-                <select name="commonArea" class="form-input" required style="flex: 1; min-width: 150px;">
-                    <option value="">Selecciona zona</option>
-                    <option value="Lavadora">🧺 Lavadora</option>
-                    <option value="Secadora">♨️ Secadora</option>
-                    <option value="Salón">🛋️ Salón</option>
-                    <option value="Terraza">☀️ Terraza</option>
-                    <option value="Parking">🅿️ Parking</option>
-                    <option value="Trastero">📦 Trastero</option>
-                </select>
-                <input type="datetime-local" name="startTime" class="form-input" required style="flex: 1; min-width: 180px;" />
-                <input type="datetime-local" name="endTime" class="form-input" required style="flex: 1; min-width: 180px;" />
+                <input type="text" name="motivo" class="form-input" placeholder="Zona o motivo (ej: Lavadora, Salón)" required style="flex: 1; min-width: 150px;" />
+                <input type="datetime-local" name="fechaInicio" class="form-input" required style="flex: 1; min-width: 180px;" />
+                <input type="datetime-local" name="fechaFin" class="form-input" required style="flex: 1; min-width: 180px;" />
                 <button type="submit" class="btn btn-primary btn-sm">Reservar</button>
             </form>
         </div>
@@ -62,10 +54,10 @@
                 {
                     <li class="task-item">
                         <div class="task-info">
-                            <div class="task-name">📍 @r.CommonArea</div>
-                            <div class="task-meta">@r.StartTime.ToString("g") → @r.EndTime.ToString("g") · @(r.User?.Name ?? r.User?.Email ?? "")</div>
+                            <div class="task-name">📍 @(r.Motivo ?? "Zona común")</div>
+                            <div class="task-meta">@r.FechaInicio.ToString("g") → @r.FechaFin.ToString("g")</div>
                         </div>
-                        <span class="status-badge active">Confirmada</span>
+                        <span class="status-badge active">@(r.Estado ?? "confirmada")</span>
                         <form method="post" action="/Dashboard/CancelReservation" style="display: inline;">
                             <input type="hidden" name="id" value="@r.Id" />
                             <button type="submit" class="btn btn-sm" style="background: rgba(248,113,113,0.1); color: #f87171; border: 1px solid rgba(248,113,113,0.3);" onclick="return confirm('¿Cancelar reserva?')">✕</button>

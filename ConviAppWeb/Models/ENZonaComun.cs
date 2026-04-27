@@ -35,14 +35,10 @@ namespace ConviAppWeb.Models
 
         // ─── Clave foránea ───
         public int? PisoId { get => _pisoId; set => _pisoId = value; }
-        public ENPiso? Piso { get; set; }
-
-        // ─── Navegación ───
-        public ICollection<ENReserva> Reservas { get; set; } = new List<ENReserva>();
 
         // ─── Métodos de negocio ───
         public bool EstaDisponible() => _disponible;
-        public int TotalReservas() => Reservas?.Count ?? 0;
+        public int TotalReservas() => 0; // Se calcularía con una consulta ADO.NET
 
         public ENZonaComun() { _disponible = true; _capacidad = 1; }
     }

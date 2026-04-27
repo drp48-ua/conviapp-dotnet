@@ -1,142 +1,122 @@
 using Microsoft.AspNetCore.Mvc;
 using ConviAppWeb.Models;
 using ConviAppWeb.Services;
-using Microsoft.EntityFrameworkCore;
-using System;
+using ConviAppWeb.DataAccess;
 using System.IO;
-using System.Linq;
 
 namespace ConviAppWeb.Controllers
 {
     public class DashboardController : Controller
     {
-        private readonly ApplicationDbContext _context;
-
-        public DashboardController(ApplicationDbContext context)
-        {
-            _context = context;
-        }
-
-        private User GetCurrentUser()
+        private ENUsuario? GetCurrentUser()
         {
             var email = HttpContext.Session.GetString("UserEmail");
             if (email == null) return null;
-            return _context.Users.FirstOrDefault(u => u.Email == email);
+            return new CADUsuario().BuscarPorEmail(email);
         }
 
-        private IActionResult RequireLogin()
+        private IActionResult? RequireLogin()
         {
             if (GetCurrentUser() == null)
                 return RedirectToAction("Login", "Account");
             return null;
         }
 
-        // ═══ RESUMEN ═══
+        private int GetUserPisoId() => 1; // Piso por defecto
+
+        // ═══ INICIO / RESUMEN ════════════════════════════════════════
         public IActionResult Index()
         {
             var r = RequireLogin(); if (r != null) return r;
-            var user = GetCurrentUser();
-            ViewBag.UserRole = user.Role;
-            ViewBag.UserName = user.Name ?? user.Email;
-            var property = user.PropertyId.HasValue
-                ? _context.Properties.Include(p => p.Tenants).FirstOrDefault(p => p.Id == user.PropertyId)
-                : _context.Properties.Include(p => p.Tenants).FirstOrDefault();
-            return View(property);
+            var user = GetCurrentUser()!;
+            ViewBag.UserRole = user.Rol?.Nombre ?? "Basico";
+            ViewBag.UserName = user.Nombre ?? user.Email;
+
+            var piso = new CADPiso().LeerPiso(GetUserPisoId());
+            return View(piso);
         }
 
-        // ═══ TAREAS ═══
+        // ═══ TAREAS ══════════════════════════════════════════════════
         public IActionResult Tareas()
         {
             var r = RequireLogin(); if (r != null) return r;
-            ViewBag.UserRole = GetCurrentUser().Role;
-            var user = GetCurrentUser();
-            var tasks = _context.TaskItems.Include(t => t.Assignee)
-                .Where(t => user.PropertyId == null || t.PropertyId == user.PropertyId)
-                .ToList();
+            var user = GetCurrentUser()!;
+            ViewBag.UserRole = user.Rol?.Nombre ?? "Basico";
+            var tasks = new CADTarea().ListarTodas(GetUserPisoId());
             return View(tasks);
         }
 
         [HttpPost]
-        public IActionResult AddTask(string title, string description, string priority)
+        public IActionResult AddTask(string titulo, string descripcion, string prioridad)
         {
             var user = GetCurrentUser();
             if (user == null) return RedirectToAction("Login", "Account");
-            _context.TaskItems.Add(new TaskItem
+            new CADTarea().CrearTarea(new ENTarea
             {
-                Title = title,
-                Description = description,
-                Priority = priority ?? "Media",
-                PropertyId = user.PropertyId ?? 1,
-                AssigneeId = user.Id
+                Titulo      = titulo,
+                Descripcion = descripcion,
+                Prioridad   = prioridad ?? "media",
+                Estado      = "pendiente",
+                CreadaPorId = user.Id,
+                PisoId      = GetUserPisoId()
             });
-            _context.SaveChanges();
             return RedirectToAction("Tareas");
         }
 
         [HttpPost]
         public IActionResult CompleteTask(int id)
         {
-            var task = _context.TaskItems.Find(id);
-            if (task != null) { task.IsCompleted = !task.IsCompleted; _context.SaveChanges(); }
+            new CADTarea().ToggleEstado(id);
             return RedirectToAction("Tareas");
         }
 
         [HttpPost]
         public IActionResult DeleteTask(int id)
         {
-            var task = _context.TaskItems.Find(id);
-            if (task != null) { _context.TaskItems.Remove(task); _context.SaveChanges(); }
+            new CADTarea().BorrarTarea(new ENTarea { Id = id });
             return RedirectToAction("Tareas");
         }
 
-        // ═══ GASTOS ═══
+        // ═══ GASTOS ══════════════════════════════════════════════════
         public IActionResult Gastos()
         {
             var r = RequireLogin(); if (r != null) return r;
-            ViewBag.UserRole = GetCurrentUser().Role;
-            var user = GetCurrentUser();
-            var expenses = _context.Expenses.Include(e => e.Payer)
-                .Where(e => user.PropertyId == null || e.PropertyId == user.PropertyId)
-                .OrderByDescending(e => e.Date)
-                .ToList();
+            var user = GetCurrentUser()!;
+            ViewBag.UserRole = user.Rol?.Nombre ?? "Basico";
+            var expenses = new CADGasto().ListarTodos(GetUserPisoId());
             return View(expenses);
         }
 
         [HttpPost]
-        public IActionResult AddExpense(string description, decimal amount)
+        public IActionResult AddExpense(string concepto, decimal importe)
         {
             var user = GetCurrentUser();
             if (user == null) return RedirectToAction("Login", "Account");
-            _context.Expenses.Add(new Expense
+            new CADGasto().CrearGasto(new ENGasto
             {
-                Description = description,
-                Amount = amount,
-                Date = DateTime.Now,
-                PayerId = user.Id,
-                PropertyId = user.PropertyId ?? 1
+                Concepto        = concepto,
+                Importe         = importe,
+                Fecha           = DateTime.Now,
+                RegistradoPorId = user.Id,
+                PisoId          = GetUserPisoId()
             });
-            _context.SaveChanges();
             return RedirectToAction("Gastos");
         }
 
         [HttpPost]
         public IActionResult DeleteExpense(int id)
         {
-            var exp = _context.Expenses.Find(id);
-            if (exp != null) { _context.Expenses.Remove(exp); _context.SaveChanges(); }
+            new CADGasto().BorrarGasto(new ENGasto { Id = id });
             return RedirectToAction("Gastos");
         }
 
-        // ═══ MENSAJES ═══
+        // ═══ MENSAJES ════════════════════════════════════════════════
         public IActionResult Mensajes()
         {
             var r = RequireLogin(); if (r != null) return r;
-            ViewBag.UserRole = GetCurrentUser().Role;
-            var user = GetCurrentUser();
-            var messages = _context.Messages.Include(m => m.Sender)
-                .Where(m => user.PropertyId == null || m.PropertyId == user.PropertyId)
-                .OrderBy(m => m.Timestamp)
-                .ToList();
+            var user = GetCurrentUser()!;
+            ViewBag.UserRole = user.Rol?.Nombre ?? "Basico";
+            var messages = new CADMensaje().ListarTodos(GetUserPisoId());
             return View(messages);
         }
 
@@ -145,118 +125,107 @@ namespace ConviAppWeb.Controllers
         {
             var user = GetCurrentUser();
             if (user == null || string.IsNullOrEmpty(text)) return RedirectToAction("Mensajes");
-            _context.Messages.Add(new Message
+            new CADMensaje().CrearMensaje(new ENMensaje
             {
-                Text = text,
-                Timestamp = DateTime.Now,
-                SenderId = user.Id,
-                PropertyId = user.PropertyId ?? 1
+                Contenido  = text,
+                FechaEnvio = DateTime.Now,
+                EmisorId   = user.Id,
+                PisoId     = GetUserPisoId()
             });
-            _context.SaveChanges();
             return RedirectToAction("Mensajes");
         }
 
-        // ═══ RESERVAS ═══
+        // ═══ RESERVAS ════════════════════════════════════════════════
         public IActionResult Reservas()
         {
             var r = RequireLogin(); if (r != null) return r;
-            var user = GetCurrentUser();
-            ViewBag.UserRole = user.Role;
-            if (!PlanService.CanAccessReservas(user.Role))
+            var user = GetCurrentUser()!;
+            ViewBag.UserRole = user.Rol?.Nombre ?? "Basico";
+            if (!PlanService.CanAccessReservas(user.Rol?.Nombre ?? "Basico"))
             {
                 ViewBag.Locked = true;
-                return View(new System.Collections.Generic.List<Reservation>());
+                return View(new List<ENReserva>());
             }
-            var reservations = _context.Reservations.Include(rv => rv.User)
-                .Where(rv => user.PropertyId == null || rv.PropertyId == user.PropertyId)
-                .OrderBy(rv => rv.StartTime)
-                .ToList();
+            var reservations = new CADReserva().ListarTodas(user.Id);
             return View(reservations);
         }
 
         [HttpPost]
-        public IActionResult AddReservation(string commonArea, DateTime startTime, DateTime endTime)
+        public IActionResult AddReservation(string motivo, DateTime fechaInicio, DateTime fechaFin)
         {
             var user = GetCurrentUser();
-            if (user == null || !PlanService.CanAccessReservas(user.Role)) return RedirectToAction("Reservas");
-            _context.Reservations.Add(new Reservation
+            if (user == null || !PlanService.CanAccessReservas(user.Rol?.Nombre ?? "Basico")) return RedirectToAction("Reservas");
+            new CADReserva().CrearReserva(new ENReserva
             {
-                CommonArea = commonArea,
-                StartTime = startTime,
-                EndTime = endTime,
-                UserId = user.Id,
-                PropertyId = user.PropertyId ?? 1
+                Motivo      = motivo,
+                FechaInicio = fechaInicio,
+                FechaFin    = fechaFin,
+                Estado      = "confirmada",
+                UsuarioId   = user.Id,
+                ZonaComunId = 1
             });
-            _context.SaveChanges();
             return RedirectToAction("Reservas");
         }
 
         [HttpPost]
         public IActionResult CancelReservation(int id)
         {
-            var res = _context.Reservations.Find(id);
-            if (res != null) { _context.Reservations.Remove(res); _context.SaveChanges(); }
+            new CADReserva().CancelarReserva(new ENReserva { Id = id });
             return RedirectToAction("Reservas");
         }
 
-        // ═══ INCIDENCIAS ═══
+        // ═══ INCIDENCIAS ═════════════════════════════════════════════
         public IActionResult Incidencias()
         {
             var r = RequireLogin(); if (r != null) return r;
-            var user = GetCurrentUser();
-            ViewBag.UserRole = user.Role;
-            if (!PlanService.CanAccessIncidencias(user.Role))
+            var user = GetCurrentUser()!;
+            ViewBag.UserRole = user.Rol?.Nombre ?? "Basico";
+            if (!PlanService.CanAccessIncidencias(user.Rol?.Nombre ?? "Basico"))
             {
                 ViewBag.Locked = true;
-                return View(new System.Collections.Generic.List<Incident>());
+                return View(new List<ENIncidencia>());
             }
-            var incidents = _context.Incidents
-                .Where(i => user.PropertyId == null || i.PropertyId == user.PropertyId)
-                .OrderByDescending(i => i.DateReported)
-                .ToList();
+            var incidents = new CADIncidencia().ListarTodas(GetUserPisoId());
             return View(incidents);
         }
 
         [HttpPost]
-        public IActionResult ReportIncident(string title, string description)
+        public IActionResult ReportIncident(string titulo, string descripcion)
         {
             var user = GetCurrentUser();
-            if (user == null || !PlanService.CanAccessIncidencias(user.Role)) return RedirectToAction("Incidencias");
-            _context.Incidents.Add(new Incident
+            if (user == null || !PlanService.CanAccessIncidencias(user.Rol?.Nombre ?? "Basico")) return RedirectToAction("Incidencias");
+            new CADIncidencia().CrearIncidencia(new ENIncidencia
             {
-                Title = title,
-                Description = description,
-                Status = "abierta",
-                DateReported = DateTime.Now,
-                PropertyId = user.PropertyId ?? 1
+                Titulo         = titulo,
+                Descripcion    = descripcion,
+                Estado         = "abierta",
+                FechaReporte   = DateTime.Now,
+                ReportadaPorId = user.Id,
+                PisoId         = GetUserPisoId()
             });
-            _context.SaveChanges();
             return RedirectToAction("Incidencias");
         }
 
         [HttpPost]
         public IActionResult UpdateIncidentStatus(int id, string status)
         {
-            var inc = _context.Incidents.Find(id);
-            if (inc != null) { inc.Status = status; _context.SaveChanges(); }
+            new CADIncidencia().ActualizarEstado(id, status);
             return RedirectToAction("Incidencias");
         }
 
-        // ═══ CONTRATOS Y PAGOS (EN/CAD — Entrega 3 Dani) ═══
+        // ═══ CONTRATOS Y PAGOS ═══════════════════════════════════════
         public IActionResult ContratosYPagos()
         {
             var r = RequireLogin(); if (r != null) return r;
-            var user = GetCurrentUser();
-            ViewBag.UserRole = user.Role;
-            if (!PlanService.CanAccessContratos(user.Role))
+            var user = GetCurrentUser()!;
+            ViewBag.UserRole = user.Rol?.Nombre ?? "Basico";
+            if (!PlanService.CanAccessContratos(user.Rol?.Nombre ?? "Basico"))
             {
                 ViewBag.Locked = true;
                 return View(new ContratosViewModel());
             }
-            var cadContrato = new CADContrato(_context);
-            var cadPago = new CADPago(_context);
-            var contratos = cadContrato.ReadByUser(user.Id);
-            var pagos = cadPago.ReadByUser(user.Id);
+            var contratos = new CADContrato().ListarTodos(user.Id);
+            var pagos     = new CADPago().ListarTodos();
             return View(new ContratosViewModel { Contratos = contratos, Pagos = pagos });
         }
 
@@ -264,18 +233,17 @@ namespace ConviAppWeb.Controllers
         public IActionResult AddContrato(string type, DateTime startDate, DateTime endDate, decimal monthlyRent, decimal depositAmount)
         {
             var user = GetCurrentUser();
-            if (user == null || !PlanService.CanAccessContratos(user.Role)) return RedirectToAction("ContratosYPagos");
-            var cadContrato = new CADContrato(_context);
-            cadContrato.Create(new ENContrato
+            if (user == null || !PlanService.CanAccessContratos(user.Rol?.Nombre ?? "Basico")) return RedirectToAction("ContratosYPagos");
+            new CADContrato().CrearContrato(new ENContrato
             {
-                Type = type,
-                StartDate = startDate,
-                EndDate = endDate,
-                MonthlyRent = monthlyRent,
+                Type          = type,
+                StartDate     = startDate,
+                EndDate       = endDate,
+                MonthlyRent   = monthlyRent,
                 DepositAmount = depositAmount,
-                Status = "activo",
-                PropertyId = user.PropertyId ?? 1,
-                UserId = user.Id
+                Status        = "activo",
+                PropertyId    = GetUserPisoId(),
+                UserId        = user.Id
             });
             return RedirectToAction("ContratosYPagos");
         }
@@ -284,17 +252,16 @@ namespace ConviAppWeb.Controllers
         public IActionResult AddPago(int contratoId, decimal amount, string method, string concept)
         {
             var user = GetCurrentUser();
-            if (user == null || !PlanService.CanAccessContratos(user.Role)) return RedirectToAction("ContratosYPagos");
-            var cadPago = new CADPago(_context);
-            cadPago.Create(new ENPago
+            if (user == null || !PlanService.CanAccessContratos(user.Rol?.Nombre ?? "Basico")) return RedirectToAction("ContratosYPagos");
+            new CADPago().CrearPago(new ENPago
             {
-                Amount = amount,
-                Date = DateTime.Now,
-                Method = method,
-                Status = "pagado",
-                Concept = concept,
+                Amount     = amount,
+                Date       = DateTime.Now,
+                Method     = method,
+                Status     = "pagado",
+                Concept    = concept,
                 ContratoId = contratoId,
-                UserId = user.Id
+                UserId     = user.Id
             });
             return RedirectToAction("ContratosYPagos");
         }
@@ -302,24 +269,22 @@ namespace ConviAppWeb.Controllers
         [HttpPost]
         public IActionResult DeleteContrato(int id)
         {
-            var cadContrato = new CADContrato(_context);
-            cadContrato.Delete(id);
+            new CADContrato().BorrarContrato(new ENContrato { Id = id });
             return RedirectToAction("ContratosYPagos");
         }
 
-        // ═══ DOCUMENTOS ═══
+        // ═══ DOCUMENTOS ══════════════════════════════════════════════
         public IActionResult Documentos()
         {
             var r = RequireLogin(); if (r != null) return r;
-            var user = GetCurrentUser();
-            ViewBag.UserRole = user.Role;
-            if (!PlanService.CanUploadDocuments(user.Role))
+            var user = GetCurrentUser()!;
+            ViewBag.UserRole = user.Rol?.Nombre ?? "Basico";
+            if (!PlanService.CanUploadDocuments(user.Rol?.Nombre ?? "Basico"))
             {
                 ViewBag.Locked = true;
-                return View(new System.Collections.Generic.List<ENDocumento>());
+                return View(new List<ENDocumento>());
             }
-            var cadDoc = new CADDocumento(_context);
-            var docs = cadDoc.ReadByUser(user.Id);
+            var docs = new CADDocumento().ListarPorUsuario(user.Id);
             return View(docs);
         }
 
@@ -327,88 +292,85 @@ namespace ConviAppWeb.Controllers
         public IActionResult UploadDocumento(IFormFile file, string type, string description)
         {
             var user = GetCurrentUser();
-            if (user == null || !PlanService.CanUploadDocuments(user.Role) || file == null) return RedirectToAction("Documentos");
+            if (user == null || !PlanService.CanUploadDocuments(user.Rol?.Nombre ?? "Basico") || file == null)
+                return RedirectToAction("Documentos");
 
             using var ms = new MemoryStream();
             file.CopyTo(ms);
-
-            var cadDoc = new CADDocumento(_context);
-            cadDoc.Create(new ENDocumento
+            new CADDocumento().CrearDocumento(new ENDocumento
             {
-                FileName = file.FileName,
-                FileData = ms.ToArray(),
+                FileName    = file.FileName,
+                FileData    = ms.ToArray(),
                 ContentType = file.ContentType,
-                FileSize = file.Length,
-                Type = type ?? "otro",
+                FileSize    = file.Length,
+                Type        = type ?? "otro",
                 Description = description,
-                UploadDate = DateTime.Now,
-                PropertyId = user.PropertyId,
-                UserId = user.Id
+                UploadDate  = DateTime.Now,
+                PropertyId  = GetUserPisoId(),
+                UserId      = user.Id
             });
             return RedirectToAction("Documentos");
         }
 
         public IActionResult DownloadDocumento(int id)
         {
-            var cadDoc = new CADDocumento(_context);
-            var doc = cadDoc.Download(id);
+            var doc = new CADDocumento().LeerDocumento(id);
             if (doc == null || doc.FileData == null) return NotFound();
-            return File(doc.FileData, doc.ContentType, doc.FileName);
+            return File(doc.FileData, doc.ContentType ?? "application/octet-stream", doc.FileName);
         }
 
         [HttpPost]
         public IActionResult DeleteDocumento(int id)
         {
-            var cadDoc = new CADDocumento(_context);
-            cadDoc.Delete(id);
+            new CADDocumento().BorrarDocumento(new ENDocumento { Id = id });
             return RedirectToAction("Documentos");
         }
 
-        // ═══ MIS PISOS ═══
+        // ═══ MIS PISOS ═══════════════════════════════════════════════
         public IActionResult MisPisos()
         {
             var r = RequireLogin(); if (r != null) return r;
-            var user = GetCurrentUser();
-            ViewBag.UserRole = user.Role;
-            if (!PlanService.CanManageProperties(user.Role))
+            var user = GetCurrentUser()!;
+            ViewBag.UserRole = user.Rol?.Nombre ?? "Basico";
+            if (!PlanService.CanManageProperties(user.Rol?.Nombre ?? "Basico"))
             {
                 ViewBag.Locked = true;
-                return View(new System.Collections.Generic.List<Property>());
+                return View(new List<ENPiso>());
             }
-            var properties = _context.Properties.Include(p => p.Tenants).ToList();
-            return View(properties);
+            var pisos = new CADPiso().ListarTodos();
+            return View(pisos);
         }
 
         [HttpPost]
-        public IActionResult AddProperty(string name, string location, int rooms, decimal price, string description)
+        public IActionResult AddProperty(string direccion, string ciudad, int habitaciones, decimal precioTotal, string descripcion)
         {
             var user = GetCurrentUser();
-            if (user == null || !PlanService.CanManageProperties(user.Role)) return RedirectToAction("MisPisos");
+            if (user == null || !PlanService.CanManageProperties(user.Rol?.Nombre ?? "Basico")) return RedirectToAction("MisPisos");
 
-            var count = _context.Properties.Count();
-            if (count >= PlanService.MaxProperties(user.Role))
+            var pisos = new CADPiso().ListarTodos();
+            if (pisos.Count >= PlanService.MaxProperties(user.Rol?.Nombre ?? "Basico"))
             {
-                TempData["Error"] = $"Has alcanzado el límite de pisos para tu plan ({PlanService.DisplayName(user.Role)})";
+                TempData["Error"] = $"Has alcanzado el límite de pisos para tu plan ({PlanService.DisplayName(user.Rol?.Nombre ?? "Basico")})";
                 return RedirectToAction("MisPisos");
             }
 
-            _context.Properties.Add(new Property
+            new CADPiso().CrearPiso(new ENPiso
             {
-                Name = name,
-                Location = location,
-                Rooms = rooms,
-                Price = price,
-                Description = description
+                Direccion           = direccion,
+                Ciudad              = ciudad,
+                NumeroHabitaciones  = habitaciones,
+                PrecioTotal         = precioTotal,
+                Descripcion         = descripcion,
+                Disponible          = true
             });
-            _context.SaveChanges();
             return RedirectToAction("MisPisos");
         }
     }
 
-    // ViewModel for Contratos page
+    // ViewModel para la página de Contratos
     public class ContratosViewModel
     {
-        public System.Collections.Generic.List<ENContrato> Contratos { get; set; } = new();
-        public System.Collections.Generic.List<ENPago> Pagos { get; set; } = new();
+        public List<ENContrato> Contratos { get; set; } = new();
+        public List<ENPago>     Pagos     { get; set; } = new();
     }
 }

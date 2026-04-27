@@ -1,4 +1,4 @@
-@model List<ConviAppWeb.Models.Expense>
+@model List<ConviAppWeb.Models.ENGasto>
 @{
     ViewData["Title"] = "Gastos";
     var userRole = ViewBag.UserRole as string ?? "Basico";
@@ -25,7 +25,7 @@
         @if (Model != null && Model.Any())
         {
             <div style="font-size: 1.5rem; font-weight: 800; font-family: 'Outfit', sans-serif; color: var(--danger);">
-                Total: @Model.Sum(e => e.Amount).ToString("C")
+                Total: @Model.Sum(e => e.Importe).ToString("C")
             </div>
         }
     </div>
@@ -34,8 +34,8 @@
     <div class="glass-card" style="margin-bottom: 24px;">
         <h4 style="margin-top: 0; color: var(--primary-light);">➕ Nuevo gasto</h4>
         <form method="post" action="/Dashboard/AddExpense" style="display: flex; gap: 12px; flex-wrap: wrap;">
-            <input type="text" name="description" class="form-input" placeholder="Descripción" required style="flex: 2; min-width: 200px;" />
-            <input type="number" name="amount" step="0.01" min="0.01" class="form-input" placeholder="Importe (€)" required style="flex: 1; min-width: 120px;" />
+            <input type="text" name="concepto" class="form-input" placeholder="Concepto" required style="flex: 2; min-width: 200px;" />
+            <input type="number" name="importe" step="0.01" min="0.01" class="form-input" placeholder="Importe (€)" required style="flex: 1; min-width: 120px;" />
             <button type="submit" class="btn btn-primary btn-sm">Añadir</button>
         </form>
     </div>
@@ -53,9 +53,9 @@
             <table class="data-table">
                 <thead>
                     <tr>
-                        <th>Descripción</th>
-                        <th>Pagado por</th>
+                        <th>Concepto</th>
                         <th>Fecha</th>
+                        <th>Estado</th>
                         <th style="text-align: right;">Importe</th>
                         <th style="width: 50px;"></th>
                     </tr>
@@ -64,10 +64,10 @@
                     @foreach (var e in Model)
                     {
                         <tr>
-                            <td style="font-weight: 500;">@e.Description</td>
-                            <td style="color: var(--text-secondary);">@(e.Payer?.Name ?? e.Payer?.Email ?? "Desconocido")</td>
-                            <td style="color: var(--text-muted);">@e.Date.ToShortDateString()</td>
-                            <td style="text-align: right; font-weight: 700; color: var(--danger);">@e.Amount.ToString("C")</td>
+                            <td style="font-weight: 500;">@e.Concepto</td>
+                            <td style="color: var(--text-muted);">@e.Fecha.ToShortDateString()</td>
+                            <td><span style="color: @(e.Pagado ? "var(--success)" : "var(--warning)")">@(e.Pagado ? "✅ Pagado" : "⏳ Pendiente")</span></td>
+                            <td style="text-align: right; font-weight: 700; color: var(--danger);">@e.Importe.ToString("C")</td>
                             <td>
                                 <form method="post" action="/Dashboard/DeleteExpense" style="display: inline;">
                                     <input type="hidden" name="id" value="@e.Id" />

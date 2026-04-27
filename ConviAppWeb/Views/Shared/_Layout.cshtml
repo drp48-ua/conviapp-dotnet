@@ -13,31 +13,49 @@
 <body>
     <!-- ═══ FIXED HEADER ═══ -->
     <header class="header">
-        <div class="header-inner">
+        <div class="header-top container" style="max-width:100%; width:100%">
             <a href="/" class="logo">
-                <div class="logo-icon">🏠</div>
-                ConviApp
+                <div class="logo-icon" style="background:white; color:var(--primary); font-size:1.5rem">🏠</div>
+                FlatManager
             </a>
-
-            <nav class="nav">
-                <a href="/" class="nav-link @(ViewData["ActivePage"]?.ToString() == "Home" ? "active" : "")">Inicio</a>
-                <a href="/#funciones" class="nav-link">Funciones</a>
-                <a href="/Home/Pisos" class="nav-link @(ViewData["ActivePage"]?.ToString() == "Pisos" ? "active" : "")">Catálogo</a>
-                <a href="/#dashboard" class="nav-link">Demo</a>
-                <a href="/#planes" class="nav-link">Planes</a>
-            </nav>
+            
+            <div style="flex:1; max-width:600px; margin: 0 40px; display:flex; align-items:center; background:rgba(255,255,255,0.9); border-radius:100px; padding:8px 16px;">
+                <span style="color:#6b7280; margin-right:8px">🔍</span>
+                <input type="text" placeholder="Buscar pisos, gastos, tareas..." style="border:none; background:transparent; width:100%; outline:none; color:#111827">
+            </div>
 
             <div class="header-actions">
                 @if (Context.Session.GetString("UserEmail") != null)
                 {
-                    <a href="/Dashboard/Index" class="btn btn-primary btn-sm">📊 Mi Dashboard</a>
-                    <a href="/Account/Logout" class="btn btn-outline btn-sm">Salir</a>
+                    <div style="display:flex; align-items:center; gap:16px;">
+                        <span style="color:white; font-size:1.2rem; position:relative;">
+                            🔔
+                            <span style="position:absolute; top:-4px; right:-4px; background:#ef4444; width:10px; height:10px; border-radius:50%;"></span>
+                        </span>
+                        <img src="https://i.pravatar.cc/100?u=moni" alt="Avatar" style="width:36px; height:36px; border-radius:50%; object-fit:cover;">
+                        <div style="color:white; font-size:0.9rem; line-height:1.2;">
+                            <div style="font-weight:600;">@Context.Session.GetString("UserEmail")</div>
+                            <a href="/Account/Logout" style="color:var(--accent-light); font-size:0.8rem; text-decoration:none;">Cerrar sesión</a>
+                        </div>
+                    </div>
                 }
                 else
                 {
-                    <a href="/Account/Register" class="btn btn-outline btn-sm">Registrarse</a>
-                    <a href="/Account/Login" class="btn btn-primary btn-sm">Acceder →</a>
+                    <a href="/Account/Register" class="btn btn-outline btn-sm" style="color:white; border-color:rgba(255,255,255,0.3);">Registrarse</a>
+                    <a href="/Account/Login" class="btn btn-sm" style="background:white; color:var(--primary); font-weight:600;">Acceder →</a>
                 }
+            </div>
+        </div>
+        <div class="header-bottom">
+            <div class="container" style="display:flex; gap:8px; width:100%; max-width:100%;">
+                <a href="#tab-inicio" onclick="switchMainTab('inicio')" class="nav-link active">🏠 Inicio</a>
+                <a href="/Home/Pisos" class="nav-link">🏢 Pisos</a>
+                <a href="#tab-contratos" onclick="switchMainTab('contratos')" class="nav-link">📄 Contratos</a>
+                <a href="#tab-tareas" onclick="switchMainTab('tareas')" class="nav-link">✅ Tareas</a>
+                <a href="#tab-gastos" onclick="switchMainTab('gastos')" class="nav-link">💶 Gastos</a>
+                <a href="#tab-reservas" onclick="switchMainTab('reservas')" class="nav-link">📅 Reservas</a>
+                <a href="#tab-mensajes" onclick="switchMainTab('mensajes')" class="nav-link">✉️ Mensajes</a>
+                <a href="#tab-perfil" onclick="switchMainTab('perfil')" class="nav-link">👤 Perfil</a>
             </div>
         </div>
     </header>

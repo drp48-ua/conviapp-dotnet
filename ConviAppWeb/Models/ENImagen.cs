@@ -35,10 +35,7 @@ namespace ConviAppWeb.Models
 
         // ─── Claves foráneas ───
         public int? HabitacionId { get => _habitacionId; set => _habitacionId = value; }
-        public ENHabitacion? Habitacion { get; set; }
-
         public int? PisoId { get => _pisoId; set => _pisoId = value; }
-        public ENPiso? Piso { get; set; }
 
         // ─── Métodos de negocio ───
         public bool EsImagenPrincipal() => _esPrincipal;

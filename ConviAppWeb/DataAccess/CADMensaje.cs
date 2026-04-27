@@ -1,21 +1,70 @@
+using System;
+using System.Data;
+using System.Data.SQLite;
 using System.Collections.Generic;
-using System.Linq;
+using ConviAppWeb.Models;
 
-namespace ConviAppWeb.Models
+namespace ConviAppWeb.DataAccess
 {
-    /// <summary>CADMensaje — Clase de Acceso a Datos para mensajes internos (Maca).</summary>
     public class CADMensaje
     {
-        private readonly ApplicationDbContext _context;
-        public CADMensaje(ApplicationDbContext context) => _context = context;
+        private string constring => DbConfig.ConnectionString;
 
-        public ENMensaje Create(ENMensaje m) { _context.Mensajes.Add(m); _context.SaveChanges(); return m; }
-        public ENMensaje ReadById(int id) => _context.Mensajes.Find(id);
-        public List<ENMensaje> ReadByEmisor(int emisorId) => _context.Mensajes.Where(m => m.EmisorId == emisorId).OrderByDescending(m => m.FechaEnvio).ToList();
-        public List<ENMensaje> ReadByReceptor(int receptorId) => _context.Mensajes.Where(m => m.ReceptorId == receptorId).OrderByDescending(m => m.FechaEnvio).ToList();
-        public List<ENMensaje> ReadByPiso(int pisoId) => _context.Mensajes.Where(m => m.PisoId == pisoId).OrderByDescending(m => m.FechaEnvio).ToList();
-        public List<ENMensaje> ReadNoLeidos(int receptorId) => _context.Mensajes.Where(m => m.ReceptorId == receptorId && !m.Leido).ToList();
-        public bool Delete(int id) { var m = _context.Mensajes.Find(id); if (m == null) return false; _context.Mensajes.Remove(m); _context.SaveChanges(); return true; }
-        public int CountNoLeidos(int receptorId) => _context.Mensajes.Count(m => m.ReceptorId == receptorId && !m.Leido);
+        // CREATE — método desconectado
+        public bool CrearMensaje(ENMensaje en)
+        {
+            bool creado = false;
+            DataSet bdVirtual = new DataSet();
+            SQLiteConnection c = new SQLiteConnection(constring);
+            try
+            {
+                SQLiteDataAdapter da = new SQLiteDataAdapter("SELECT * FROM Mensaje LIMIT 0", c);
+                da.Fill(bdVirtual, "mensaje");
+                DataTable t = bdVirtual.Tables["mensaje"];
+                DataRow nueva = t.NewRow();
+                nueva["contenido"]   = en.Contenido ?? (object)DBNull.Value;
+                nueva["fecha_envio"] = en.FechaEnvio.ToString("o");
+                nueva["leido"]       = en.Leido ? 1 : 0;
+                nueva["emisor_id"]   = en.EmisorId;
+                nueva["piso_id"]     = en.PisoId.HasValue ? (object)en.PisoId.Value : DBNull.Value;
+                t.Rows.Add(nueva);
+                SQLiteCommandBuilder cb = new SQLiteCommandBuilder(da);
+                da.Update(bdVirtual, "mensaje");
+                creado = true;
+            }
+            catch (Exception) { creado = false; }
+            finally { c.Close(); }
+            return creado;
+        }
+
+        // READ ALL — método conectado
+        public List<ENMensaje> ListarTodos(int? pisoId = null)
+        {
+            var lista = new List<ENMensaje>();
+            SQLiteConnection c = new SQLiteConnection(constring);
+            try
+            {
+                c.Open();
+                var sql = pisoId.HasValue ? "SELECT * FROM Mensaje WHERE piso_id=@p ORDER BY fecha_envio ASC" : "SELECT * FROM Mensaje ORDER BY fecha_envio ASC";
+                SQLiteCommand com = new SQLiteCommand(sql, c);
+                if (pisoId.HasValue) com.Parameters.AddWithValue("@p", pisoId.Value);
+                SQLiteDataReader dr = com.ExecuteReader();
+                while (dr.Read()) lista.Add(MapRow(dr));
+                dr.Close();
+            }
+            catch (Exception) { lista = new List<ENMensaje>(); }
+            finally { c.Close(); }
+            return lista;
+        }
+
+        private ENMensaje MapRow(SQLiteDataReader dr) => new ENMensaje
+        {
+            Id         = Convert.ToInt32(dr["id"]),
+            Contenido  = dr["contenido"] != DBNull.Value ? dr["contenido"].ToString() : null,
+            FechaEnvio = dr["fecha_envio"] != DBNull.Value ? Convert.ToDateTime(dr["fecha_envio"]) : DateTime.Now,
+            Leido      = dr["leido"] != DBNull.Value && Convert.ToInt32(dr["leido"]) == 1,
+            EmisorId   = dr["emisor_id"] != DBNull.Value ? Convert.ToInt32(dr["emisor_id"]) : 0,
+            PisoId     = dr["piso_id"] != DBNull.Value ? (int?)Convert.ToInt32(dr["piso_id"]) : null,
+        };
     }
 }

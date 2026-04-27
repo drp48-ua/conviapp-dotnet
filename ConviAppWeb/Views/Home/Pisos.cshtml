@@ -1,4 +1,4 @@
-@model List<ConviAppWeb.Models.Property>
+﻿@model List<ConviAppWeb.Models.ENPiso>
 @{
     ViewData["Title"] = "Catálogo de Pisos";
     ViewData["ActivePage"] = "Pisos";
@@ -6,20 +6,20 @@
     var minPrice = Context.Request.Query["min"].ToString();
     var maxPrice = Context.Request.Query["max"].ToString();
 
-    var filtered = Model ?? new List<ConviAppWeb.Models.Property>();
+    var filtered = Model ?? new List<ConviAppWeb.Models.ENPiso>();
     if (!string.IsNullOrWhiteSpace(city))
-        filtered = filtered.Where(p => p.Location != null && p.Location.Contains(city, StringComparison.OrdinalIgnoreCase)).ToList();
+        filtered = filtered.Where(p => p.Ciudad != null && p.Ciudad.Contains(city, StringComparison.OrdinalIgnoreCase)).ToList();
     if (decimal.TryParse(minPrice, out var mn))
-        filtered = filtered.Where(p => p.Price >= mn).ToList();
+        filtered = filtered.Where(p => p.PrecioTotal >= mn).ToList();
     if (decimal.TryParse(maxPrice, out var mx))
-        filtered = filtered.Where(p => p.Price <= mx).ToList();
+        filtered = filtered.Where(p => p.PrecioTotal <= mx).ToList();
 }
 
 <div class="container" style="padding-top: 2rem; padding-bottom: 4rem;">
     <!-- Header -->
     <div style="margin-bottom: 32px;">
         <h1 style="font-size: 2.5rem; margin-bottom: 8px;">Encuentra tu piso ideal</h1>
-        <p style="color: var(--text-muted);">@Model?.Count piso@(Model?.Count != 1 ? "s" : "") disponibles en la plataforma. Usa los filtros para afinar tu búsqueda.</p>
+        <p style="color: var(--text-muted);">@Model?.Count piso@(Model?.Count != 1 ? "s" : "") disponibles en la plataforma.</p>
     </div>
 
     <!-- Filters -->
@@ -47,12 +47,10 @@
         </div>
     </form>
 
-    <!-- Results count -->
     <p style="color: var(--text-muted); margin-bottom: 24px; font-size: 0.9rem;">
         Mostrando <strong style="color: var(--text-primary);">@filtered.Count</strong> piso@(filtered.Count != 1 ? "s" : "")@(!string.IsNullOrWhiteSpace(city) ? $" en {city}" : "")
     </p>
 
-    <!-- Grid -->
     @if (!filtered.Any())
     {
         <div class="glass-card" style="text-align: center; padding: 4rem; color: var(--text-muted);">
@@ -69,23 +67,16 @@
             {
                 <a href="/Home/PisoDetail/@piso.Id" class="listing-card">
                     <div class="listing-img">
-                        @if (!string.IsNullOrWhiteSpace(piso.ImageFile))
-                        {
-                            <img src="/img/@piso.ImageFile" alt="@piso.Name" style="width:100%;height:100%;object-fit:cover;position:absolute;inset:0;" />
-                        }
-                        else
-                        {
-                            <span style="font-size:4rem;">🏠</span>
-                        }
-                        <span class="listing-badge">Disponible</span>
+                        <span style="font-size:4rem;">🏠</span>
+                        <span class="listing-badge">@(piso.Disponible ? "Disponible" : "Ocupado")</span>
                         <button class="wishlist-btn" onclick="event.preventDefault();">♡</button>
                     </div>
                     <div class="listing-body">
-                        <div class="listing-price">@piso.Price.ToString("0")€ <span>/mes</span></div>
-                        <div class="listing-title">@piso.Name</div>
-                        <div class="listing-location">📍 @piso.Location</div>
+                        <div class="listing-price">@piso.PrecioTotal.ToString("0")€ <span>/mes</span></div>
+                        <div class="listing-title">@(piso.Direccion ?? "Piso")</div>
+                        <div class="listing-location">📍 @(piso.Ciudad ?? "Ciudad")</div>
                         <div class="listing-tags">
-                            <span class="listing-tag">🛏️ @piso.Rooms hab.</span>
+                            <span class="listing-tag">🛏️ @piso.NumeroHabitaciones hab.</span>
                             <span class="listing-tag listing-tag-arrow">Ver detalles →</span>
                         </div>
                     </div>

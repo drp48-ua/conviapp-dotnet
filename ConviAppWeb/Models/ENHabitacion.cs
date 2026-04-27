@@ -44,12 +44,6 @@ namespace ConviAppWeb.Models
 
         // ─── Clave foránea ───
         public int PisoId { get => _pisoId; set => _pisoId = value; }
-        public ENPiso? Piso { get; set; }
-
-        // ─── Navegación ───
-        public ICollection<ENImagen> Imagenes { get; set; } = new List<ENImagen>();
-        public ICollection<ENContrato> Contratos { get; set; } = new List<ENContrato>();
-        public ICollection<ENFavorito> Favoritos { get; set; } = new List<ENFavorito>();
 
         // ─── Métodos de negocio ───
         public bool EstaLibre() => _disponible;

@@ -1,8 +1,9 @@
-@model List<ConviAppWeb.Models.Message>
+@model List<ConviAppWeb.Models.ENMensaje>
 @{
     ViewData["Title"] = "Mensajes";
     var userRole = ViewBag.UserRole as string ?? "Basico";
     var showAds = ConviAppWeb.Services.PlanService.ShowAds(userRole);
+    var currentUserId = Context.Session.GetInt32("UserId") ?? 0;
 }
 
 <div class="container" style="padding-top: 2rem; padding-bottom: 4rem;">
@@ -28,12 +29,13 @@
             <div style="display: flex; flex-direction: column; gap: 12px; margin-bottom: 20px; max-height: 500px; overflow-y: auto; padding-right: 8px;">
                 @foreach (var m in Model)
                 {
-                    <div class="glass-card" style="padding: 14px 18px;">
+                    var isMine = m.EmisorId == currentUserId;
+                    <div class="glass-card" style="padding: 14px 18px; @(isMine ? "border-left: 3px solid var(--primary-light);" : "")">
                         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
-                            <span style="font-weight: 700; color: var(--primary-light);">@(m.Sender?.Name ?? m.Sender?.Email ?? "Anónimo")</span>
-                            <span style="color: var(--text-muted); font-size: 0.8rem;">@m.Timestamp.ToString("g")</span>
+                            <span style="font-weight: 700; color: var(--primary-light);">@(isMine ? "Tú" : $"Usuario #{m.EmisorId}")</span>
+                            <span style="color: var(--text-muted); font-size: 0.8rem;">@m.FechaEnvio.ToString("g")</span>
                         </div>
-                        <p style="margin: 0; color: var(--text-primary);">@m.Text</p>
+                        <p style="margin: 0; color: var(--text-primary);">@m.Contenido</p>
                     </div>
                 }
             </div>

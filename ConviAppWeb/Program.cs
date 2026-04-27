@@ -1,12 +1,9 @@
 using ConviAppWeb.Models;
 using ConviAppWeb.Services;
-using Microsoft.EntityFrameworkCore;
-using System;
+using ConviAppWeb.DataAccess;
+using System.Data.SQLite;
 
 var builder = WebApplication.CreateBuilder(args);
-
-builder.Services.AddDbContext<ApplicationDbContext>(options =>
-    options.UseSqlite(builder.Configuration.GetConnectionString("DefaultConnection")));
 
 builder.Services.AddControllersWithViews();
 
@@ -24,117 +21,12 @@ builder.Services.AddSingleton<EmailService>();
 
 var app = builder.Build();
 
-// Seed database
-using (var scope = app.Services.CreateScope())
-{
-    var db = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
-    db.Database.EnsureDeleted();
-    db.Database.EnsureCreated();
-
-    // Seed Properties
-    if (!db.Properties.Any())
-    {
-        var prop1 = new Property { Name = "Piso Centro Madrid", Description = "Amplio piso en el corazón de Madrid con 4 habitaciones", Location = "Calle Gran Vía 42, Madrid", Price = 1200, Rooms = 4, ImageFile = "piso_madrid.jpg" };
-        var prop2 = new Property { Name = "Apartamento Playa Valencia", Description = "Apartamento luminoso cerca de la playa de la Malvarrosa", Location = "Av. Malvarrosa 15, Valencia", Price = 850, Rooms = 3, ImageFile = "piso_valencia.jpg" };
-        var prop3 = new Property { Name = "Piso Universitario Alicante", Description = "Piso ideal para estudiantes cerca de la UA", Location = "Calle San Vicente 88, Alicante", Price = 600, Rooms = 3, ImageFile = "piso_alicante.jpg" };
-        db.Properties.AddRange(prop1, prop2, prop3);
-        db.SaveChanges();
-
-        // Seed Users
-        var users = new[]
-        {
-            new User { Email = "dani@conviapp.com", Password = "1234", Name = "Dani", Role = "Enterprise", PropertyId = prop1.Id },
-            new User { Email = "lidia@conviapp.com", Password = "1234", Name = "Lidia", Role = "Profesional", PropertyId = prop1.Id },
-            new User { Email = "marina@conviapp.com", Password = "1234", Name = "Marina", Role = "Basico", PropertyId = prop2.Id },
-            new User { Email = "nazim@conviapp.com", Password = "1234", Name = "Nazim", Role = "Basico", PropertyId = prop2.Id }
-        };
-        db.Users.AddRange(users);
-        db.SaveChanges();
-
-        // Seed Tasks
-        db.TaskItems.AddRange(
-            new TaskItem { Title = "Limpiar baño principal", Description = "Limpieza completa del baño", Priority = "Alta", PropertyId = prop1.Id, AssigneeId = users[0].Id },
-            new TaskItem { Title = "Comprar papel higiénico", Description = "Comprar paquete de 12", Priority = "Media", PropertyId = prop1.Id, AssigneeId = users[1].Id },
-            new TaskItem { Title = "Sacar la basura", Description = "Contenedores de orgánico y plástico", Priority = "Baja", IsCompleted = true, PropertyId = prop1.Id, AssigneeId = users[0].Id },
-            new TaskItem { Title = "Fregar suelos", Description = "Fregado de cocina y pasillos", Priority = "Media", PropertyId = prop2.Id, AssigneeId = users[2].Id }
-        );
-
-        // Seed Expenses
-        db.Expenses.AddRange(
-            new Expense { Description = "Factura WiFi Abril", Amount = 45.00m, Date = DateTime.Now.AddDays(-5), PayerId = users[0].Id, PropertyId = prop1.Id },
-            new Expense { Description = "Compra supermercado", Amount = 87.50m, Date = DateTime.Now.AddDays(-3), PayerId = users[1].Id, PropertyId = prop1.Id },
-            new Expense { Description = "Factura electricidad", Amount = 62.30m, Date = DateTime.Now.AddDays(-1), PayerId = users[0].Id, PropertyId = prop1.Id }
-        );
-
-        // Seed Messages
-        db.Messages.AddRange(
-            new Message { Text = "¡Bienvenidos al piso! 🏠", Timestamp = DateTime.Now.AddHours(-48), SenderId = users[0].Id, PropertyId = prop1.Id },
-            new Message { Text = "He dejado las llaves en la entrada", Timestamp = DateTime.Now.AddHours(-24), SenderId = users[1].Id, PropertyId = prop1.Id },
-            new Message { Text = "¿Alguien puede comprar leche?", Timestamp = DateTime.Now.AddHours(-2), SenderId = users[0].Id, PropertyId = prop1.Id }
-        );
-
-        // Seed Reservations
-        db.Reservations.AddRange(
-            new Reservation { CommonArea = "Lavadora", StartTime = DateTime.Now.AddHours(2), EndTime = DateTime.Now.AddHours(4), UserId = users[0].Id, PropertyId = prop1.Id },
-            new Reservation { CommonArea = "Salón (reunión)", StartTime = DateTime.Now.AddDays(1), EndTime = DateTime.Now.AddDays(1).AddHours(3), UserId = users[1].Id, PropertyId = prop1.Id }
-        );
-
-        // Seed Incidents
-        db.Incidents.AddRange(
-            new Incident { Title = "Grifo cocina gotea", Description = "El grifo de la cocina pierde agua constantemente", Status = "abierta", DateReported = DateTime.Now.AddDays(-7), PropertyId = prop1.Id },
-            new Incident { Title = "Bombilla pasillo fundida", Description = "La luz del pasillo no funciona", Status = "en proceso", DateReported = DateTime.Now.AddDays(-3), PropertyId = prop1.Id },
-            new Incident { Title = "Cerradura puerta principal", Description = "La cerradura está dura, cuesta cerrar", Status = "cerrada", DateReported = DateTime.Now.AddDays(-14), PropertyId = prop1.Id }
-        );
-
-        // Seed Contracts (ENContrato)
-        var contrato1 = new ENContrato
-        {
-            Type = "arrendamiento",
-            StartDate = new DateTime(2026, 1, 1),
-            EndDate = new DateTime(2026, 12, 31),
-            MonthlyRent = 400,
-            DepositAmount = 800,
-            Status = "activo",
-            Notes = "Contrato de arrendamiento estándar",
-            PropertyId = prop1.Id,
-            UserId = users[0].Id
-        };
-        var contrato2 = new ENContrato
-        {
-            Type = "arrendamiento",
-            StartDate = new DateTime(2026, 1, 1),
-            EndDate = new DateTime(2026, 12, 31),
-            MonthlyRent = 380,
-            DepositAmount = 760,
-            Status = "activo",
-            Notes = "Contrato sujeto a revisión semestral",
-            PropertyId = prop1.Id,
-            UserId = users[1].Id
-        };
-        db.Contratos.AddRange(contrato1, contrato2);
-        db.SaveChanges();
-
-        // Seed Payments (ENPago)
-        db.Pagos.AddRange(
-            new ENPago { Amount = 400, Date = new DateTime(2026, 1, 5), Method = "transferencia", Status = "pagado", Concept = "Alquiler Enero 2026", ContratoId = contrato1.Id, UserId = users[0].Id },
-            new ENPago { Amount = 400, Date = new DateTime(2026, 2, 5), Method = "transferencia", Status = "pagado", Concept = "Alquiler Febrero 2026", ContratoId = contrato1.Id, UserId = users[0].Id },
-            new ENPago { Amount = 400, Date = new DateTime(2026, 3, 5), Method = "bizum", Status = "pagado", Concept = "Alquiler Marzo 2026", ContratoId = contrato1.Id, UserId = users[0].Id },
-            new ENPago { Amount = 400, Date = new DateTime(2026, 4, 5), Method = "transferencia", Status = "pagado", Concept = "Alquiler Abril 2026", ContratoId = contrato1.Id, UserId = users[0].Id },
-            new ENPago { Amount = 380, Date = new DateTime(2026, 1, 5), Method = "tarjeta", Status = "pagado", Concept = "Alquiler Enero 2026", ContratoId = contrato2.Id, UserId = users[1].Id },
-            new ENPago { Amount = 380, Date = new DateTime(2026, 2, 5), Method = "tarjeta", Status = "pagado", Concept = "Alquiler Febrero 2026", ContratoId = contrato2.Id, UserId = users[1].Id },
-            new ENPago { Amount = 380, Date = new DateTime(2026, 3, 5), Method = "tarjeta", Status = "pagado", Concept = "Alquiler Marzo 2026", ContratoId = contrato2.Id, UserId = users[1].Id },
-            new ENPago { Amount = 380, Date = new DateTime(2026, 4, 5), Method = "transferencia", Status = "pendiente", Concept = "Alquiler Abril 2026", ContratoId = contrato2.Id, UserId = users[1].Id }
-        );
-
-        db.SaveChanges();
-    }
-}
+// ═══ INICIALIZACIÓN DE BASE DE DATOS (ADO.NET) ═══════════════════════
+InitDb();
 
 // Configure pipeline
 if (!app.Environment.IsDevelopment())
-{
     app.UseExceptionHandler("/Home/Error");
-}
 
 app.UseStaticFiles();
 app.UseRouting();
@@ -146,3 +38,298 @@ app.MapControllerRoute(
     pattern: "{controller=Home}/{action=Index}/{id?}");
 
 app.Run();
+
+// ═══ MÉTODO DE INICIALIZACIÓN ════════════════════════════════════════
+void InitDb()
+{
+    string constring = DbConfig.ConnectionString;
+
+    using var c = new SQLiteConnection(constring);
+    c.Open();
+
+    // Crear tablas
+    ExecuteNonQuery(c, @"
+        CREATE TABLE IF NOT EXISTS Usuario (
+            id             INTEGER PRIMARY KEY AUTOINCREMENT,
+            nombre         TEXT,
+            apellidos      TEXT,
+            email          TEXT NOT NULL UNIQUE,
+            password_hash  TEXT NOT NULL,
+            telefono       TEXT,
+            fecha_registro TEXT NOT NULL,
+            activo         INTEGER NOT NULL DEFAULT 1,
+            rol            TEXT NOT NULL DEFAULT 'Basico'
+        );");
+
+    ExecuteNonQuery(c, @"
+        CREATE TABLE IF NOT EXISTS Piso (
+            id                  INTEGER PRIMARY KEY AUTOINCREMENT,
+            direccion           TEXT,
+            ciudad              TEXT,
+            codigo_postal       TEXT,
+            numero_habitaciones INTEGER NOT NULL DEFAULT 0,
+            numero_banos        INTEGER NOT NULL DEFAULT 0,
+            precio_total        REAL NOT NULL DEFAULT 0,
+            descripcion         TEXT,
+            disponible          INTEGER NOT NULL DEFAULT 1
+        );");
+
+
+    ExecuteNonQuery(c, @"
+        CREATE TABLE IF NOT EXISTS Tarea (
+            id             INTEGER PRIMARY KEY AUTOINCREMENT,
+            titulo         TEXT,
+            descripcion    TEXT,
+            estado         TEXT NOT NULL DEFAULT 'pendiente',
+            prioridad      TEXT NOT NULL DEFAULT 'media',
+            fecha_creacion TEXT NOT NULL,
+            creada_por_id  INTEGER NOT NULL DEFAULT 0,
+            piso_id        INTEGER
+        );");
+
+    ExecuteNonQuery(c, @"
+        CREATE TABLE IF NOT EXISTS Gasto (
+            id                INTEGER PRIMARY KEY AUTOINCREMENT,
+            concepto          TEXT,
+            importe           REAL NOT NULL DEFAULT 0,
+            fecha             TEXT NOT NULL,
+            pagado            INTEGER NOT NULL DEFAULT 0,
+            descripcion       TEXT,
+            registrado_por_id INTEGER NOT NULL DEFAULT 0,
+            piso_id           INTEGER
+        );");
+
+    ExecuteNonQuery(c, @"
+        CREATE TABLE IF NOT EXISTS Mensaje (
+            id          INTEGER PRIMARY KEY AUTOINCREMENT,
+            contenido   TEXT,
+            fecha_envio TEXT NOT NULL,
+            leido       INTEGER NOT NULL DEFAULT 0,
+            emisor_id   INTEGER NOT NULL DEFAULT 0,
+            piso_id     INTEGER
+        );");
+
+    ExecuteNonQuery(c, @"
+        CREATE TABLE IF NOT EXISTS ZonaComun (
+            id     INTEGER PRIMARY KEY AUTOINCREMENT,
+            nombre TEXT,
+            piso_id INTEGER
+        );");
+
+    ExecuteNonQuery(c, @"
+        CREATE TABLE IF NOT EXISTS Reserva (
+            id             INTEGER PRIMARY KEY AUTOINCREMENT,
+            fecha_inicio   TEXT NOT NULL,
+            fecha_fin      TEXT NOT NULL,
+            estado         TEXT NOT NULL DEFAULT 'pendiente',
+            motivo         TEXT,
+            usuario_id     INTEGER NOT NULL DEFAULT 0,
+            zona_comun_id  INTEGER NOT NULL DEFAULT 1
+        );");
+
+    ExecuteNonQuery(c, @"
+        CREATE TABLE IF NOT EXISTS Incidencia (
+            id                INTEGER PRIMARY KEY AUTOINCREMENT,
+            titulo            TEXT,
+            descripcion       TEXT,
+            estado            TEXT NOT NULL DEFAULT 'abierta',
+            prioridad         TEXT NOT NULL DEFAULT 'media',
+            fecha_reporte     TEXT NOT NULL,
+            reportada_por_id  INTEGER NOT NULL DEFAULT 0,
+            piso_id           INTEGER
+        );");
+
+    ExecuteNonQuery(c, @"
+        CREATE TABLE IF NOT EXISTS Contrato (
+            id              INTEGER PRIMARY KEY AUTOINCREMENT,
+            type            TEXT,
+            start_date      TEXT NOT NULL,
+            end_date        TEXT NOT NULL,
+            monthly_rent    REAL NOT NULL DEFAULT 0,
+            deposit_amount  REAL NOT NULL DEFAULT 0,
+            status          TEXT NOT NULL DEFAULT 'activo',
+            notes           TEXT,
+            commission_rate REAL NOT NULL DEFAULT 0,
+            property_id     INTEGER NOT NULL DEFAULT 1,
+            user_id         INTEGER NOT NULL DEFAULT 0
+        );");
+
+    ExecuteNonQuery(c, @"
+        CREATE TABLE IF NOT EXISTS Pago (
+            id          INTEGER PRIMARY KEY AUTOINCREMENT,
+            amount      REAL NOT NULL DEFAULT 0,
+            date        TEXT NOT NULL,
+            method      TEXT,
+            status      TEXT NOT NULL DEFAULT 'pagado',
+            concept     TEXT,
+            reference   TEXT,
+            contrato_id INTEGER NOT NULL DEFAULT 0,
+            user_id     INTEGER NOT NULL DEFAULT 0
+        );");
+
+    ExecuteNonQuery(c, @"
+        CREATE TABLE IF NOT EXISTS Documento (
+            id           INTEGER PRIMARY KEY AUTOINCREMENT,
+            file_name    TEXT,
+            file_data    BLOB,
+            content_type TEXT,
+            file_size    INTEGER NOT NULL DEFAULT 0,
+            type         TEXT NOT NULL DEFAULT 'otro',
+            description  TEXT,
+            upload_date  TEXT NOT NULL,
+            property_id  INTEGER,
+            user_id      INTEGER NOT NULL DEFAULT 0
+        );");
+
+
+    ExecuteNonQuery(c, @"
+        CREATE TABLE IF NOT EXISTS Habitacion (
+            id          INTEGER PRIMARY KEY AUTOINCREMENT,
+            numero      TEXT,
+            precio      REAL NOT NULL DEFAULT 0,
+            metros      REAL NOT NULL DEFAULT 0,
+            disponible  INTEGER NOT NULL DEFAULT 1,
+            tiene_bano  INTEGER NOT NULL DEFAULT 0,
+            descripcion TEXT,
+            piso_id     INTEGER NOT NULL
+        );");
+
+    ExecuteNonQuery(c, @"
+        CREATE TABLE IF NOT EXISTS Favorito (
+            id            INTEGER PRIMARY KEY AUTOINCREMENT,
+            fecha_guardado TEXT NOT NULL,
+            usuario_id    INTEGER NOT NULL,
+            habitacion_id INTEGER,
+            piso_id       INTEGER
+        );");
+
+    ExecuteNonQuery(c, @"
+        CREATE TABLE IF NOT EXISTS CategoriaGasto (
+            id          INTEGER PRIMARY KEY AUTOINCREMENT,
+            nombre      TEXT,
+            descripcion TEXT,
+            icono       TEXT
+        );");
+
+    ExecuteNonQuery(c, @"
+        CREATE TABLE IF NOT EXISTS Imagen (
+            id           INTEGER PRIMARY KEY AUTOINCREMENT,
+            url          TEXT NOT NULL,
+            descripcion  TEXT,
+            es_principal INTEGER NOT NULL DEFAULT 0,
+            fecha_subida TEXT NOT NULL,
+            habitacion_id INTEGER,
+            piso_id       INTEGER
+        );");
+
+    ExecuteNonQuery(c, @"
+        CREATE TABLE IF NOT EXISTS Notificacion (
+            id             INTEGER PRIMARY KEY AUTOINCREMENT,
+            titulo         TEXT,
+            mensaje        TEXT,
+            tipo           TEXT,
+            leida          INTEGER NOT NULL DEFAULT 0,
+            fecha_creacion TEXT NOT NULL,
+            fecha_lectura  TEXT,
+            usuario_id     INTEGER NOT NULL
+        );");
+
+    ExecuteNonQuery(c, @"
+        CREATE TABLE IF NOT EXISTS Rol (
+            id                      INTEGER PRIMARY KEY AUTOINCREMENT,
+            nombre                  TEXT NOT NULL,
+            descripcion             TEXT,
+            puede_gestionar_pisos   INTEGER NOT NULL DEFAULT 0,
+            puede_ver_contratos     INTEGER NOT NULL DEFAULT 0,
+            puede_gestionar_usuarios INTEGER NOT NULL DEFAULT 0
+        );");
+
+    ExecuteNonQuery(c, @"
+        CREATE TABLE IF NOT EXISTS Suscripcion (
+            id             INTEGER PRIMARY KEY AUTOINCREMENT,
+            plan           TEXT NOT NULL,
+            precio_mensual REAL NOT NULL DEFAULT 0,
+            fecha_inicio   TEXT NOT NULL,
+            fecha_fin      TEXT NOT NULL,
+            activa         INTEGER NOT NULL DEFAULT 1,
+            usuario_id     INTEGER NOT NULL
+        );");
+
+
+    // ─── SEED (sólo si la tabla Usuario está vacía) ───────────────
+    using var chk = new SQLiteCommand("SELECT COUNT(*) FROM Usuario", c);
+    var count = Convert.ToInt32(chk.ExecuteScalar());
+    if (count > 0) return;
+
+    // Seed Pisos
+    ExecuteNonQuery(c, "INSERT INTO Piso(direccion,ciudad,numero_habitaciones,precio_total,descripcion,disponible) VALUES('Calle Gran Vía 42','Madrid',4,1200,'Amplio piso en el corazón de Madrid',1);");
+    ExecuteNonQuery(c, "INSERT INTO Piso(direccion,ciudad,numero_habitaciones,precio_total,descripcion,disponible) VALUES('Av. Malvarrosa 15','Valencia',3,850,'Apartamento luminoso cerca de la playa',1);");
+    ExecuteNonQuery(c, "INSERT INTO Piso(direccion,ciudad,numero_habitaciones,precio_total,descripcion,disponible) VALUES('Calle San Vicente 88','Alicante',3,600,'Piso ideal para estudiantes cerca de la UA',1);");
+
+
+    // Seed ZonaComun
+    ExecuteNonQuery(c, "INSERT INTO ZonaComun(nombre,piso_id) VALUES('Lavadora',1);");
+    ExecuteNonQuery(c, "INSERT INTO ZonaComun(nombre,piso_id) VALUES('Salón',1);");
+
+    // Seed Usuarios
+    string now = DateTime.Now.ToString("o");
+    ExecuteNonQuery(c, $"INSERT INTO Usuario(nombre,email,password_hash,fecha_registro,activo,rol) VALUES('Dani','dani@conviapp.com','1234','{now}',1,'Enterprise');");
+    ExecuteNonQuery(c, $"INSERT INTO Usuario(nombre,email,password_hash,fecha_registro,activo,rol) VALUES('Lidia','lidia@conviapp.com','1234','{now}',1,'Profesional');");
+    ExecuteNonQuery(c, $"INSERT INTO Usuario(nombre,email,password_hash,fecha_registro,activo,rol) VALUES('Marina','marina@conviapp.com','1234','{now}',1,'Basico');");
+    ExecuteNonQuery(c, $"INSERT INTO Usuario(nombre,email,password_hash,fecha_registro,activo,rol) VALUES('Nazim','nazim@conviapp.com','1234','{now}',1,'Basico');");
+
+    // Seed Tareas
+    string today = DateTime.Now.ToString("o");
+    ExecuteNonQuery(c, $"INSERT INTO Tarea(titulo,descripcion,estado,prioridad,fecha_creacion,creada_por_id,piso_id) VALUES('Limpiar baño principal','Limpieza completa del baño','pendiente','alta','{today}',1,1);");
+    ExecuteNonQuery(c, $"INSERT INTO Tarea(titulo,descripcion,estado,prioridad,fecha_creacion,creada_por_id,piso_id) VALUES('Comprar papel higiénico','Comprar paquete de 12','pendiente','media','{today}',2,1);");
+    ExecuteNonQuery(c, $"INSERT INTO Tarea(titulo,descripcion,estado,prioridad,fecha_creacion,creada_por_id,piso_id) VALUES('Sacar la basura','Contenedores de orgánico y plástico','completada','baja','{today}',1,1);");
+
+    // Seed Gastos
+    string d1 = DateTime.Now.AddDays(-5).ToString("o");
+    string d2 = DateTime.Now.AddDays(-3).ToString("o");
+    string d3 = DateTime.Now.AddDays(-1).ToString("o");
+    ExecuteNonQuery(c, $"INSERT INTO Gasto(concepto,importe,fecha,pagado,registrado_por_id,piso_id) VALUES('Factura WiFi Abril',45.00,'{d1}',1,1,1);");
+    ExecuteNonQuery(c, $"INSERT INTO Gasto(concepto,importe,fecha,pagado,registrado_por_id,piso_id) VALUES('Compra supermercado',87.50,'{d2}',0,2,1);");
+    ExecuteNonQuery(c, $"INSERT INTO Gasto(concepto,importe,fecha,pagado,registrado_por_id,piso_id) VALUES('Factura electricidad',62.30,'{d3}',0,1,1);");
+
+    // Seed Mensajes
+    string m1 = DateTime.Now.AddHours(-48).ToString("o");
+    string m2 = DateTime.Now.AddHours(-24).ToString("o");
+    string m3 = DateTime.Now.AddHours(-2).ToString("o");
+    ExecuteNonQuery(c, $"INSERT INTO Mensaje(contenido,fecha_envio,leido,emisor_id,piso_id) VALUES('¡Bienvenidos al piso! 🏠','{m1}',0,1,1);");
+    ExecuteNonQuery(c, $"INSERT INTO Mensaje(contenido,fecha_envio,leido,emisor_id,piso_id) VALUES('He dejado las llaves en la entrada','{m2}',0,2,1);");
+    ExecuteNonQuery(c, $"INSERT INTO Mensaje(contenido,fecha_envio,leido,emisor_id,piso_id) VALUES('¿Alguien puede comprar leche?','{m3}',0,1,1);");
+
+    // Seed Reservas
+    string r1s = DateTime.Now.AddHours(2).ToString("o");
+    string r1e = DateTime.Now.AddHours(4).ToString("o");
+    string r2s = DateTime.Now.AddDays(1).ToString("o");
+    string r2e = DateTime.Now.AddDays(1).AddHours(3).ToString("o");
+    ExecuteNonQuery(c, $"INSERT INTO Reserva(fecha_inicio,fecha_fin,estado,motivo,usuario_id,zona_comun_id) VALUES('{r1s}','{r1e}','confirmada','Lavadora',1,1);");
+    ExecuteNonQuery(c, $"INSERT INTO Reserva(fecha_inicio,fecha_fin,estado,motivo,usuario_id,zona_comun_id) VALUES('{r2s}','{r2e}','confirmada','Reunión en el salón',2,2);");
+
+    // Seed Incidencias
+    string i1 = DateTime.Now.AddDays(-7).ToString("o");
+    string i2 = DateTime.Now.AddDays(-3).ToString("o");
+    ExecuteNonQuery(c, $"INSERT INTO Incidencia(titulo,descripcion,estado,prioridad,fecha_reporte,reportada_por_id,piso_id) VALUES('Grifo cocina gotea','El grifo de la cocina pierde agua constantemente','abierta','alta','{i1}',1,1);");
+    ExecuteNonQuery(c, $"INSERT INTO Incidencia(titulo,descripcion,estado,prioridad,fecha_reporte,reportada_por_id,piso_id) VALUES('Bombilla pasillo fundida','La luz del pasillo no funciona','abierta','media','{i2}',2,1);");
+
+    // Seed Contratos y Pagos
+    string cs = new DateTime(2026,1,1).ToString("o");
+    string ce = new DateTime(2026,12,31).ToString("o");
+    ExecuteNonQuery(c, $"INSERT INTO Contrato(type,start_date,end_date,monthly_rent,deposit_amount,status,notes,commission_rate,property_id,user_id) VALUES('arrendamiento','{cs}','{ce}',400,800,'activo','Contrato estándar',0,1,1);");
+    ExecuteNonQuery(c, $"INSERT INTO Contrato(type,start_date,end_date,monthly_rent,deposit_amount,status,notes,commission_rate,property_id,user_id) VALUES('arrendamiento','{cs}','{ce}',380,760,'activo','Sujeto a revisión semestral',0,1,2);");
+
+    foreach (var mes in new[] { "Enero","Febrero","Marzo","Abril" })
+    {
+        string pd = new DateTime(2026, Array.IndexOf(new[]{"","Enero","Febrero","Marzo","Abril"}, mes), 5).ToString("o");
+        ExecuteNonQuery(c, $"INSERT INTO Pago(amount,date,method,status,concept,contrato_id,user_id) VALUES(400,'{pd}','transferencia','pagado','Alquiler {mes} 2026',1,1);");
+        ExecuteNonQuery(c, $"INSERT INTO Pago(amount,date,method,status,concept,contrato_id,user_id) VALUES(380,'{pd}','tarjeta','pagado','Alquiler {mes} 2026',2,2);");
+    }
+}
+
+void ExecuteNonQuery(SQLiteConnection c, string sql)
+{
+    using var cmd = new SQLiteCommand(sql, c);
+    cmd.ExecuteNonQuery();
+}

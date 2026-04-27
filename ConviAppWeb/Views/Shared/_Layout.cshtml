@@ -8,7 +8,38 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="~/css/site.css" />
+    <link rel="stylesheet" href="~/css/site.css?v=2026.4" />
+    <style>
+        /* CSS FORZADO PARA PREVENIR ERROR DE CACHE O DARK MODE EN RENDER */
+        .page-wrapper {
+            padding-top: 130px !important; 
+        }
+        .header-bottom {
+            background: #1e3a8a !important; 
+        }
+        .header-bottom a.nav-link {
+            color: rgba(255, 255, 255, 0.85) !important;
+        }
+        .header-bottom a.nav-link.active, .header-bottom a.nav-link:hover {
+            background: rgba(255, 255, 255, 0.15) !important;
+            color: #ffffff !important;
+        }
+        
+        /* Contraste forzado para tarjetas blancas (evita texto invisible en dark mode) */
+        .flat-card {
+            background: #ffffff !important;
+            color: #111827 !important;
+        }
+        .flat-card h2, .flat-card h3, .flat-card h4, .dash-stat .value, .data-table th, .data-table td, .task-info .task-name {
+            color: #111827 !important;
+        }
+        .dash-stat .label, .task-meta, .flat-card p {
+            color: #4b5563 !important;
+        }
+        .status-badge {
+            color: #111827 !important;
+        }
+    </style>
 </head>
 <body>
     <!-- ═══ FIXED HEADER ═══ -->

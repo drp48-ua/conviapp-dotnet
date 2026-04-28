@@ -8,52 +8,21 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="~/css/site.css?v=2026.4" />
-    <style>
-        /* CSS FORZADO PARA PREVENIR ERROR DE CACHE O DARK MODE EN RENDER */
-        .page-wrapper {
-            padding-top: 130px !important; 
-        }
-        .header-bottom {
-            background: #1e3a8a !important; 
-        }
-        .header-bottom a.nav-link {
-            color: rgba(255, 255, 255, 0.85) !important;
-        }
-        .header-bottom a.nav-link.active, .header-bottom a.nav-link:hover {
-            background: rgba(255, 255, 255, 0.15) !important;
-            color: #ffffff !important;
-        }
-        
-        /* Contraste forzado para tarjetas blancas (evita texto invisible en dark mode) */
-        .flat-card {
-            background: #ffffff !important;
-            color: #111827 !important;
-        }
-        .flat-card h2, .flat-card h3, .flat-card h4, .dash-stat .value, .data-table th, .data-table td, .task-info .task-name {
-            color: #111827 !important;
-        }
-        .dash-stat .label, .task-meta, .flat-card p {
-            color: #4b5563 !important;
-        }
-        .status-badge {
-            color: #111827 !important;
-        }
-    </style>
+    <link rel="stylesheet" href="~/css/site.css" />
 </head>
 <body>
     <!-- ═══ FIXED HEADER ═══ -->
     <header class="header">
         <div class="header-top container" style="max-width:100%; width:100%">
-            <a href="/" class="logo" style="flex-direction:row; align-items:center;">
+            <a href="/" class="logo" style="color: white;">
                 <div class="logo-icon" style="background:white; color:var(--primary); font-size:1.5rem">🏠</div>
-                <div style="line-height: 1.1;">
-                    <div style="font-size: 1.25rem;">ConviApp</div>
-                    <div style="font-size: 0.65rem; font-weight: 500; opacity: 0.8; text-transform: uppercase;">Gestión de Piso Compartido</div>
-                </div>
+                ConviApp
             </a>
             
-            <div style="flex:1;"></div>
+            <div style="flex:1; max-width:600px; margin: 0 40px; display:flex; align-items:center; background:rgba(255,255,255,0.9); border-radius:100px; padding:8px 16px;">
+                <span style="color:#6b7280; margin-right:8px">🔍</span>
+                <input type="text" placeholder="Buscar pisos, gastos, tareas..." style="border:none; background:transparent; width:100%; outline:none; color:#111827">
+            </div>
 
             <div class="header-actions">
                 @if (Context.Session.GetString("UserEmail") != null)
@@ -63,10 +32,10 @@
                             🔔
                             <span style="position:absolute; top:-4px; right:-4px; background:#ef4444; width:10px; height:10px; border-radius:50%;"></span>
                         </span>
-                        <img src="https://ui-avatars.com/api/?name=U&background=ffffff&color=1e3a8a&rounded=true" alt="Avatar Genérico" style="width:36px; height:36px; border-radius:50%; object-fit:cover;">
-                        <div style="color:white; font-size:0.9rem; line-height:1.2; text-align:right;">
-                            <div style="font-weight:600;">Hola, @Context.Session.GetString("UserEmail")?.Split('@')[0]</div>
-                            <a href="/Account/Logout" style="color:rgba(255,255,255,0.7); font-size:0.8rem; text-decoration:none;">Cerrar sesión</a>
+                        <img src="@(Context.Session.GetString("UserPhotoUrl") ?? "https://i.pravatar.cc/100?u=moni")" alt="Avatar" style="width:36px; height:36px; border-radius:50%; object-fit:cover;">
+                        <div style="color:white; font-size:0.9rem; line-height:1.2;">
+                            <div style="font-weight:600;">@(Context.Session.GetString("UserName") ?? Context.Session.GetString("UserEmail"))</div>
+                            <a href="/Account/Logout" style="color:var(--accent-light); font-size:0.8rem; text-decoration:none;">Cerrar sesión</a>
                         </div>
                     </div>
                 }
@@ -79,28 +48,14 @@
         </div>
         <div class="header-bottom">
             <div class="container" style="display:flex; gap:8px; width:100%; max-width:100%;">
-                @if (Context.Session.GetString("UserEmail") != null)
-                {
-                    <a href="/Dashboard/Index" class="nav-link">📊 General</a>
-                    <a href="/Home/Pisos" class="nav-link">🏢 Catálogo</a>
-                    <a href="/Dashboard/Tareas" class="nav-link">✅ Tareas</a>
-                    <a href="/Dashboard/Gastos" class="nav-link">💶 Gastos</a>
-                    <a href="/Dashboard/Reservas" class="nav-link">📅 Reservas</a>
-                    <a href="/Dashboard/Incidencias" class="nav-link">🔧 Incidencias</a>
-                    <a href="/Dashboard/ContratosYPagos" class="nav-link">📄 Contratos</a>
-                    <a href="/Dashboard/Documentos" class="nav-link">📎 Documentos</a>
-                    <a href="/Dashboard/MisPisos" class="nav-link">🏠 Mis Pisos</a>
-                }
-                else
-                {
-                    <a href="/#tab-inicio" class="nav-link active" onclick="if(window.switchMainTab) switchMainTab('inicio')">🏠 Inicio</a>
-                    <a href="/Home/Pisos" class="nav-link">🏢 Pisos</a>
-                    <a href="/#tab-contratos" class="nav-link" onclick="if(window.switchMainTab) switchMainTab('contratos')">📄 Contratos</a>
-                    <a href="/#tab-tareas" class="nav-link" onclick="if(window.switchMainTab) switchMainTab('tareas')">✅ Tareas</a>
-                    <a href="/#tab-gastos" class="nav-link" onclick="if(window.switchMainTab) switchMainTab('gastos')">💶 Gastos</a>
-                    <a href="/#tab-reservas" class="nav-link" onclick="if(window.switchMainTab) switchMainTab('reservas')">📅 Reservas</a>
-                    <a href="/#tab-mensajes" class="nav-link" onclick="if(window.switchMainTab) switchMainTab('mensajes')">✉️ Mensajes</a>
-                }
+                <a href="#tab-inicio" onclick="switchMainTab('inicio')" class="nav-link active">🏠 Inicio</a>
+                <a href="/Home/Pisos" class="nav-link">🏢 Pisos</a>
+                <a href="#tab-contratos" onclick="switchMainTab('contratos')" class="nav-link">📄 Contratos</a>
+                <a href="#tab-tareas" onclick="switchMainTab('tareas')" class="nav-link">✅ Tareas</a>
+                <a href="#tab-gastos" onclick="switchMainTab('gastos')" class="nav-link">💶 Gastos</a>
+                <a href="#tab-reservas" onclick="switchMainTab('reservas')" class="nav-link">📅 Reservas</a>
+                <a href="#tab-mensajes" onclick="switchMainTab('mensajes')" class="nav-link">✉️ Mensajes</a>
+                <a href="#tab-perfil" onclick="switchMainTab('perfil')" class="nav-link">👤 Perfil</a>
             </div>
         </div>
     </header>
@@ -112,7 +67,8 @@
 
     @{
         var _layoutRole = Context.Session.GetString("UserRole") ?? "";
-        var _showBottomAd = _layoutRole == "Basico";
+        var _isLoggedInAd = Context.Session.GetString("UserEmail") != null;
+        var _showBottomAd = !_isLoggedInAd || _layoutRole == "Basico";
     }
     @if (_showBottomAd)
     {
@@ -151,26 +107,45 @@
     }
 
     <!-- ═══ FOOTER ═══ -->
-    <footer class="footer" style="background: var(--primary-dark); border-top: 1px solid rgba(255,255,255,0.1); padding: 16px 0; color: rgba(255,255,255,0.7); font-size: 0.85rem;">
-        <div class="container" style="display: flex; justify-content: space-between; align-items: center; max-width: 100%;">
-            <div style="display: flex; align-items: center; gap: 8px;">
-                <span style="font-size: 1.2rem;">🏠</span>
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-grid">
+                <div class="footer-brand">
+                    <a href="/" class="logo" style="font-size:1.2rem;">
+                        <div class="logo-icon" style="width:32px;height:32px;font-size:1rem;">🏠</div>
+                        ConviApp
+                    </a>
+                    <p>La plataforma definitiva para gestionar tu piso compartido. Tareas, gastos, reservas y comunicación en un solo lugar.</p>
+                </div>
                 <div>
-                    <strong style="color: white; display:block;">ConviApp</strong>
-                    <span style="font-size: 0.7rem;">Gestión de Piso Compartido</span>
+                    <h4>Plataforma</h4>
+                    <ul class="footer-links">
+                        <li><a href="/#funciones">Funciones</a></li>
+                        <li><a href="/Home/Pisos">Catálogo de Pisos</a></li>
+                        <li><a href="/#planes">Planes y Precios</a></li>
+                        <li><a href="/Account/Login">Acceder</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4>Legal</h4>
+                    <ul class="footer-links">
+                        <li><a href="/Home/Privacidad">Privacidad</a></li>
+                        <li><a href="/Home/Terminos">Términos de Uso</a></li>
+                        <li><a href="/Home/Cookies">Política de Cookies</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4>Contacto</h4>
+                    <ul class="footer-links">
+                        <li><a href="mailto:info@conviapp.com">info@conviapp.com</a></li>
+                        <li><a href="#">Soporte</a></li>
+                        <li><a href="#">GitHub</a></li>
+                    </ul>
                 </div>
             </div>
-            <div style="display: flex; gap: 24px;">
-                <a href="#" style="color: rgba(255,255,255,0.7); text-decoration: none;">Quiénes somos</a>
-                <span style="opacity:0.3">|</span>
-                <a href="#" style="color: rgba(255,255,255,0.7); text-decoration: none;">Ayuda</a>
-                <span style="opacity:0.3">|</span>
-                <a href="#" style="color: rgba(255,255,255,0.7); text-decoration: none;">Contacto</a>
-                <span style="opacity:0.3">|</span>
-                <a href="#" style="color: rgba(255,255,255,0.7); text-decoration: none;">Términos y privacidad</a>
-            </div>
-            <div>
-                © 2026 ConviApp
+            <div class="footer-bottom">
+                <span>© 2026 ConviApp. Todos los derechos reservados.</span>
+                <span>Hecho con ❤️ para convivir mejor</span>
             </div>
         </div>
     </footer>

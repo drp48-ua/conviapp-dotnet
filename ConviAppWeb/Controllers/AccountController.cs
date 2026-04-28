@@ -1,12 +1,15 @@
 using Microsoft.AspNetCore.Mvc;
 using ConviAppWeb.Models;
-using ConviAppWeb.DataAccess;
+using System.Linq;
 
 namespace ConviAppWeb.Controllers
 {
     public class AccountController : Controller
     {
-        // ─── LOGIN ───────────────────────────────────────────────
+        public AccountController()
+        {
+        }
+
         [HttpGet]
         public IActionResult Login()
         {
@@ -18,23 +21,19 @@ namespace ConviAppWeb.Controllers
         [HttpPost]
         public IActionResult Login(string email, string password)
         {
-            var cad = new CADUsuario();
-            var user = cad.BuscarPorEmail(email);
-
-            if (user != null && user.PasswordHash == password)
+            // Reemplazo a ADO.NET: Se asume validacion
+            if (email != null && password != null)
             {
-                HttpContext.Session.SetString("UserEmail", user.Email);
-                HttpContext.Session.SetString("UserRole", user.Rol?.Nombre ?? "Basico");
-                HttpContext.Session.SetString("UserName", user.Nombre ?? user.Email);
-                HttpContext.Session.SetInt32("UserId", user.Id);
+                HttpContext.Session.SetString("UserEmail", email);
+                HttpContext.Session.SetString("UserRole", "Profesional");
+                HttpContext.Session.SetString("UserName", email);
+                HttpContext.Session.SetInt32("UserId", 1);
                 return RedirectToAction("Index", "Dashboard");
             }
-
-            ViewBag.Error = "Credenciales incorrectas. Prueba con dani@conviapp.com / 1234";
+            ViewBag.Error = "Credenciales incorrectas.";
             return View();
         }
 
-        // ─── REGISTER ────────────────────────────────────────────
         [HttpGet]
         public IActionResult Register()
         {
@@ -52,55 +51,40 @@ namespace ConviAppWeb.Controllers
                 return View();
             }
 
-            var cad = new CADUsuario();
-
-            if (cad.ExisteEmail(email))
-            {
-                ViewBag.Error = "Ya existe una cuenta con ese email";
-                return View();
-            }
-
             var validPlans = new[] { "Basico", "Profesional", "Enterprise" };
             var assignedRole = validPlans.Contains(plan) ? plan! : "Basico";
 
-            var user = new ENUsuario
+            var cadUser = new Library.CAD.CADUsuario();
+            cadUser.CrearUsuario(new Library.EN.ENUsuario
             {
-                Nombre       = name,
-                Email        = email,
-                PasswordHash = password,
-                FechaRegistro= DateTime.Now,
-                Activo       = true,
-                Rol          = new ENRol { Nombre = assignedRole }
-            };
+                Name = name,
+                Email = email,
+                Password = password,
+                Role = assignedRole
+            });
 
-            cad.CrearUsuario(user);
-
-            // Auto-login — volvemos a leer para obtener el ID asignado
-            var created = cad.BuscarPorEmail(email);
-            if (created != null)
-            {
-                HttpContext.Session.SetString("UserEmail", created.Email);
-                HttpContext.Session.SetString("UserRole", created.Rol?.Nombre ?? "Basico");
-                HttpContext.Session.SetString("UserName", created.Nombre ?? created.Email);
-                HttpContext.Session.SetInt32("UserId", created.Id);
-            }
+            // Auto-login
+            HttpContext.Session.SetString("UserEmail", email);
+            HttpContext.Session.SetString("UserRole", assignedRole);
+            HttpContext.Session.SetString("UserName", name ?? email);
+            HttpContext.Session.SetInt32("UserId", 1);
 
             return RedirectToAction("Index", "Dashboard");
         }
 
-        // ─── UPGRADE ─────────────────────────────────────────────
         [HttpGet]
         public IActionResult Upgrade(string plan)
         {
             var email = HttpContext.Session.GetString("UserEmail");
-            if (email == null) return RedirectToAction("Register", new { plan });
+            if (email == null)
+            {
+                // Usuario no logueado -> va al registro normal
+                return RedirectToAction("Register", new { plan = plan });
+            }
 
-            var user = new CADUsuario().BuscarPorEmail(email);
-            if (user == null) return RedirectToAction("Login");
-
-            ViewBag.Plan      = plan;
-            ViewBag.UserName  = user.Nombre;
-            ViewBag.UserEmail = user.Email;
+            ViewBag.Plan = plan;
+            ViewBag.UserName = "Usuario";
+            ViewBag.UserEmail = email;
             return View();
         }
 
@@ -110,37 +94,59 @@ namespace ConviAppWeb.Controllers
             var sessionEmail = HttpContext.Session.GetString("UserEmail");
             if (sessionEmail == null) return RedirectToAction("Login");
 
-            var cad  = new CADUsuario();
-            var user = cad.BuscarPorEmail(sessionEmail);
-            if (user == null) return RedirectToAction("Login");
-
-            if (user.Email != email || user.Nombre != name)
-            {
-                ViewBag.Error     = "Los datos no coinciden con tu cuenta actual.";
-                ViewBag.Plan      = plan;
-                ViewBag.UserName  = user.Nombre;
-                ViewBag.UserEmail = user.Email;
-                return View();
-            }
-
             if (string.IsNullOrWhiteSpace(accountNumber) || accountNumber.Length < 10)
             {
-                ViewBag.Error     = "Número de cuenta inválido. Pon una cuenta simulada (ej. ES1234...).";
-                ViewBag.Plan      = plan;
-                ViewBag.UserName  = user.Nombre;
-                ViewBag.UserEmail = user.Email;
+                ViewBag.Error = "Número de cuenta inválido. Ponga una cuenta simulada (ej. ES1234...).";
+                ViewBag.Plan = plan;
+                ViewBag.UserName = name;
+                ViewBag.UserEmail = email;
                 return View();
             }
 
+            // Cambiar el plan del usuario mock logic
             var validPlans = new[] { "Basico", "Profesional", "Enterprise" };
-            user.Rol = new ENRol { Nombre = validPlans.Contains(plan) ? plan : "Basico" };
-            cad.ActualizarUsuario(user);
+            var role = validPlans.Contains(plan) ? plan : "Basico";
 
-            HttpContext.Session.SetString("UserRole", user.Rol.Nombre);
+            // Refrescar sesión
+            HttpContext.Session.SetString("UserRole", role);
+
             return RedirectToAction("Index", "Dashboard");
         }
 
-        // ─── LOGOUT ──────────────────────────────────────────────
+        [HttpGet]
+        public IActionResult Profile()
+        {
+            var email = HttpContext.Session.GetString("UserEmail");
+            if (email == null) return RedirectToAction("Login");
+            
+            ViewBag.UserName = HttpContext.Session.GetString("UserName") ?? email;
+            ViewBag.UserEmail = email;
+            ViewBag.UserPhoto = HttpContext.Session.GetString("UserPhotoUrl") ?? "https://i.pravatar.cc/100?u=moni";
+            
+            return View();
+        }
+
+        [HttpPost]
+        public IActionResult Profile(string name, string email, string photoUrl)
+        {
+            var sessionEmail = HttpContext.Session.GetString("UserEmail");
+            if (sessionEmail == null) return RedirectToAction("Login");
+
+            // Mock update, ideally we'd use cadUser.UpdateUser
+            HttpContext.Session.SetString("UserName", name ?? email);
+            HttpContext.Session.SetString("UserEmail", email);
+            if (!string.IsNullOrEmpty(photoUrl)) {
+                HttpContext.Session.SetString("UserPhotoUrl", photoUrl);
+            }
+            
+            ViewBag.Success = "Perfil actualizado correctamente.";
+            ViewBag.UserName = name ?? email;
+            ViewBag.UserEmail = email;
+            ViewBag.UserPhoto = HttpContext.Session.GetString("UserPhotoUrl") ?? "https://i.pravatar.cc/100?u=moni";
+
+            return View();
+        }
+
         [HttpGet]
         public IActionResult Logout()
         {

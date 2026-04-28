@@ -1,0 +1,46 @@
+@{
+    ViewData["Title"] = "Editar Perfil";
+    var successMsg = ViewBag.Success as string;
+    var currentName = ViewBag.UserName as string;
+    var currentEmail = ViewBag.UserEmail as string;
+    var currentPhoto = ViewBag.UserPhoto as string;
+}
+
+<div class="container" style="max-width: 600px; padding-top: 40px; padding-bottom: 80px;">
+    <div class="glass-card">
+        <h2 style="margin-bottom: 24px; color: var(--primary);">Mi Perfil</h2>
+        
+        @if (!string.IsNullOrEmpty(successMsg))
+        {
+            <div style="background: rgba(16, 185, 129, 0.1); border: 1px solid var(--success); color: var(--success); padding: 12px; border-radius: var(--radius-sm); margin-bottom: 24px;">
+                @successMsg
+            </div>
+        }
+
+        <form method="post" action="/Account/Profile" style="display: flex; flex-direction: column; gap: 20px;">
+            <div style="text-align: center; margin-bottom: 12px;">
+                <img src="@currentPhoto" alt="Profile" style="width: 100px; height: 100px; border-radius: 50%; object-fit: cover; margin-bottom: 12px;" />
+            </div>
+
+            <div>
+                <label style="display: block; font-weight: 500; margin-bottom: 8px;">URL Foto de perfil</label>
+                <input type="url" name="photoUrl" value="@currentPhoto" class="form-control" style="width: 100%; padding: 10px; border-radius: var(--radius-md); border: 1px solid var(--border);" placeholder="https://..." />
+            </div>
+
+            <div>
+                <label style="display: block; font-weight: 500; margin-bottom: 8px;">Nombre</label>
+                <input type="text" name="name" value="@currentName" required class="form-control" style="width: 100%; padding: 10px; border-radius: var(--radius-md); border: 1px solid var(--border);" />
+            </div>
+
+            <div>
+                <label style="display: block; font-weight: 500; margin-bottom: 8px;">Correo Electrónico</label>
+                <input type="email" name="email" value="@currentEmail" required class="form-control" style="width: 100%; padding: 10px; border-radius: var(--radius-md); border: 1px solid var(--border);" />
+            </div>
+
+            <div style="display: flex; gap: 12px; margin-top: 20px;">
+                <button type="submit" class="btn btn-primary" style="flex: 1; justify-content: center;">Guardar Cambios</button>
+                <a href="/Dashboard/Index" class="btn btn-outline" style="flex: 1; justify-content: center;">Volver</a>
+            </div>
+        </form>
+    </div>
+</div>

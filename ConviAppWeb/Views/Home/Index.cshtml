@@ -1,4 +1,4 @@
-﻿@model List<ConviAppWeb.Models.ENPiso>
+﻿@model List<ConviAppWeb.Models.Property>
 @{
     ViewData["Title"] = "Inicio";
     ViewData["ActivePage"] = "Home";
@@ -118,18 +118,33 @@
         from { opacity: 0; transform: translateY(10px); }
         to { opacity: 1; transform: translateY(0); }
     }
+    
+    @@media (max-width: 900px) {
+        .dashboard-layout {
+            flex-direction: column;
+        }
+        .sidebar-left, .sidebar-right {
+            width: 100%;
+        }
+        .summary-grid {
+            grid-template-columns: 1fr;
+        }
+        .services-grid {
+            grid-template-columns: 1fr 1fr;
+        }
+    }
 </style>
 
 <div class="dashboard-layout">
-    @if (isLoggedIn)
-    {
-        <!-- RIGHT LOGGED IN SIDEBAR -->
-        <div class="sidebar-left">
-            <div class="flat-card profile-card" style="text-align:center;">
-                <img src="https://ui-avatars.com/api/?name=U&background=f3f4f6&color=1e3a8a&rounded=true&size=128" alt="Usuario" style="width: 80px; height: 80px; border-radius: 50%; margin: 0 auto 12px; display: block;" />
-                <h4 style="margin-bottom: 4px;">Hola, @(userEmail?.Split('@')[0] ?? "Usuario")</h4>
-                <p style="color:var(--text-muted); font-size:0.85rem; margin-bottom:16px;">@userEmail</p>
-                <a href="#" onclick="switchMainTab('perfil'); return false;" class="btn btn-outline btn-sm" style="width:100%; justify-content:center;">Editar perfil</a>
+    <!-- LEFT SIDEBAR -->
+    <div class="sidebar-left">
+        @if (isLoggedIn)
+        {
+            <div class="flat-card profile-card">
+                <img src="@(Context.Session.GetString("UserPhotoUrl") ?? "https://i.pravatar.cc/100?u=moni")" alt="Usuario" />
+                <h4>@(Context.Session.GetString("UserName") ?? "Usuario")</h4>
+                <p>@userEmail</p>
+                <a href="/Account/Profile" class="btn btn-outline btn-sm" style="width:100%">Editar perfil</a>
             </div>
             
             <div class="flat-card" style="padding: 16px;">
@@ -139,148 +154,98 @@
                 <a href="#" class="menu-link"><span>🔧</span> Nueva incidencia</a>
                 <a href="#" onclick="switchMainTab('reservas'); return false;" class="menu-link"><span>📅</span> Calendario</a>
             </div>
-        </div>
-    }
+        }
+        else
+        {
+            <div class="flat-card" style="background: linear-gradient(to bottom, #10b981, #059669); color: white; padding: 24px; text-align: center;">
+                <h3 style="font-size: 1.2rem; margin-bottom: 8px;">Habitación Premium</h3>
+                <p style="font-size: 0.85rem; color: #d1fae5; margin-bottom: 16px;">Encuentra las mejores habitaciones para estudiantes con todo incluido.</p>
+                <button class="btn btn-outline btn-sm" style="color:white; border-color:rgba(255,255,255,0.4);">Ver pisos</button>
+            </div>
+            
+            <div class="flat-card" style="background: #eff6ff; border-color: #bfdbfe; padding: 24px; text-align: center;">
+                <h3 style="font-size: 1.2rem; color: #1e3a8a; margin-bottom: 8px;">Seguro de Estudiantes</h3>
+                <p style="font-size: 0.85rem; color: #1e40af; margin-bottom: 16px;">Protege tus pertenencias en tu piso compartido desde solo 5€/mes.</p>
+                <button class="btn btn-primary btn-sm" style="background:#3b82f6;">Más info</button>
+            </div>
+        }
+    </div>
 
     <!-- MAIN INTERACTIVE AREA -->
     <div class="main-content">
         <!-- TAB INICIO -->
         <div id="tab-inicio" class="tab-content active">
-            @if (isLoggedIn)
-            {
-                <div class="welcome-banner" style="background: url('https://images.unsplash.com/photo-1556910103-1c02745aae4f?q=80&w=1500&auto=format&fit=crop') center/cover; position:relative; overflow:hidden;">
-                    <div style="position:absolute; top:0; left:0; width:100%; height:100%; background:linear-gradient(90deg, rgba(255,255,255,0.95) 0%, rgba(255,255,255,0.8) 100%); z-index:1;"></div>
-                    <div style="position:relative; z-index:2; width:100%;">
-                        <h2 style="color: #1e3a8a !important; margin-bottom:8px; font-size: 2rem;">¡Bienvenida a ConviApp!</h2>
-                        <p style="color: #4b5563 !important; max-width: 500px; font-size:1.1rem; margin-bottom:20px;">La forma más fácil de gestionar tu piso compartido de manera organizada y eficiente.</p>
-                        <div style="display: flex; gap: 12px;">
-                            <a href="/Dashboard/MisPisos" class="btn btn-primary">Ver mis pisos</a>
-                            <a href="/Dashboard/Tareas" class="btn btn-outline" style="background:white; color:#1e3a8a;">Ir a mis tareas</a>
-                        </div>
+            <div class="welcome-banner">
+                <div>
+                    <h2>¡Bienvenida a ConviApp!</h2>
+                    <p>La forma más fácil de gestionar tu piso compartido de manera organizada.</p>
+                    <div style="display: flex; gap: 12px;">
+                        <button onclick="switchMainTab('pisos')" class="btn btn-primary">Ver mis pisos</button>
+                        <button onclick="switchMainTab('tareas')" class="btn btn-outline" style="background:white">Ir a mis tareas</button>
                     </div>
                 </div>
-                
-                <h3 style="font-size: 1.1rem; margin-bottom: 16px; color: #1e3a8a !important;">Servicios principales</h3>
-                <div class="services-grid">
-                    <a href="#" onclick="switchMainTab('pisos'); return false;" class="service-card" style="border: 1px solid var(--border);">
-                        <div class="service-icon" style="color: #3b82f6;">🏠</div>
-                        <h4>Pisos</h4>
-                        <p>Consulta y gestiona pisos disponibles.</p>
-                        <span style="font-size: 0.75rem; color: #3b82f6; margin-top:8px; font-weight:600;">Ver pisos →</span>
-                    </a>
-                    <a href="#" onclick="switchMainTab('contratos'); return false;" class="service-card" style="border: 1px solid var(--border);">
-                        <div class="service-icon" style="color: #10b981;">📄</div>
-                        <h4>Contratos</h4>
-                        <p>Documentos y pagos del piso.</p>
-                        <span style="font-size: 0.75rem; color: #10b981; margin-top:8px; font-weight:600;">Ver contratos →</span>
-                    </a>
-                    <a href="#" onclick="switchMainTab('tareas'); return false;" class="service-card" style="border: 1px solid var(--border);">
-                        <div class="service-icon" style="color: #f59e0b;">✅</div>
-                        <h4>Tareas</h4>
-                        <p>Organiza roles del hogar.</p>
-                        <span style="font-size: 0.75rem; color: #f59e0b; margin-top:8px; font-weight:600;">Ver tareas →</span>
-                    </a>
-                    <a href="#" onclick="switchMainTab('gastos'); return false;" class="service-card" style="border: 1px solid var(--border);">
-                        <div class="service-icon" style="color: #8b5cf6;">💶</div>
-                        <h4>Gastos</h4>
-                        <p>Controla los pagos.</p>
-                        <span style="font-size: 0.75rem; color: #8b5cf6; margin-top:8px; font-weight:600;">Ver gastos →</span>
-                    </a>
-                    <a href="#" onclick="switchMainTab('reservas'); return false;" class="service-card" style="border: 1px solid var(--border);">
-                        <div class="service-icon" style="color: #06b6d4;">📅</div>
-                        <h4>Reservas</h4>
-                        <p>Reserva zonas comunes.</p>
-                        <span style="font-size: 0.75rem; color: #06b6d4; margin-top:8px; font-weight:600;">Ver reservas →</span>
-                    </a>
-                    <a href="#" onclick="switchMainTab('mensajes'); return false;" class="service-card" style="border: 1px solid var(--border);">
-                        <div class="service-icon" style="color: #f43f5e;">🔔</div>
-                        <h4>Notificaciones</h4>
-                        <p>Mensajes e incidencias.</p>
-                        <span style="font-size: 0.75rem; color: #f43f5e; margin-top:8px; font-weight:600;">Ver todas →</span>
-                    </a>
-                </div>
-                
-                <div style="display:grid; grid-template-columns: 2fr 1fr; gap:24px; margin-bottom:24px;">
-                    <div class="flat-card" style="margin-bottom:0;">
-                        <h3 style="font-size: 1.1rem; margin-bottom: 16px; color: #1e3a8a !important;">Resumen del mes</h3>
-                        <div class="summary-grid" style="grid-template-columns: 1fr 1fr; margin-bottom:0;">
-                            <div class="summary-item">
-                                <div class="label">Gastos totales</div>
-                                <div class="value">450 €</div>
-                                <div class="trend">+12% que el mes pasado</div>
-                            </div>
-                            <div class="summary-item">
-                                <div class="label">Tareas completadas</div>
-                                <div class="value">12</div>
-                                <div class="trend" style="color:#6b7280">+3 esta semana</div>
-                            </div>
-                            <div class="summary-item">
-                                <div class="label">Incidencias abiertas</div>
-                                <div class="value" style="color:#ef4444 !important;">2</div>
-                                <div class="trend" style="color:#ef4444">-1 que el mes pasado</div>
-                            </div>
-                            <div class="summary-item">
-                                <div class="label">Reservas este mes</div>
-                                <div class="value">5</div>
-                                <div class="trend" style="color:#3b82f6"><a href="#" onclick="switchMainTab('reservas'); return false;">Ver calendario</a></div>
-                            </div>
-                        </div>
+            </div>
+            
+            <h3 style="font-size: 1.1rem; margin-bottom: 16px; color: #1e3a8a;">Servicios principales</h3>
+            
+            <div class="services-grid">
+                <a href="#" onclick="switchMainTab('pisos'); return false;" class="service-card">
+                    <div class="service-icon">🏠</div>
+                    <h4>Pisos</h4>
+                    <p>Consulta y gestiona los pisos disponibles.</p>
+                </a>
+                <a href="#" onclick="switchMainTab('contratos'); return false;" class="service-card">
+                    <div class="service-icon">📄</div>
+                    <h4>Contratos</h4>
+                    <p>Gestiona los contratos y documentos.</p>
+                </a>
+                <a href="#" onclick="switchMainTab('tareas'); return false;" class="service-card">
+                    <div class="service-icon">✅</div>
+                    <h4>Tareas</h4>
+                    <p>Organiza y asigna tareas del hogar.</p>
+                </a>
+                <a href="#" onclick="switchMainTab('gastos'); return false;" class="service-card">
+                    <div class="service-icon">💶</div>
+                    <h4>Gastos</h4>
+                    <p>Controla los gastos y pagos del piso.</p>
+                </a>
+                <a href="#" onclick="switchMainTab('reservas'); return false;" class="service-card">
+                    <div class="service-icon">📅</div>
+                    <h4>Reservas</h4>
+                    <p>Reserva zonas y espacios comunes.</p>
+                </a>
+                <a href="#" class="service-card">
+                    <div class="service-icon">🔔</div>
+                    <h4>Notificaciones</h4>
+                    <p>Mantente al día con todo lo importante.</p>
+                </a>
+            </div>
+            
+            <div class="flat-card">
+                <h3 style="font-size: 1.1rem; margin-bottom: 16px; color: #1e3a8a;">Resumen del mes</h3>
+                <div class="summary-grid">
+                    <div class="summary-item">
+                        <div class="label">Gastos totales</div>
+                        <div class="value">450 €</div>
+                        <div class="trend">+12% que el mes pasado</div>
                     </div>
-                    <div class="flat-card" style="margin-bottom:0;">
-                         <h3 style="font-size: 1.1rem; margin-bottom: 16px; color: #1e3a8a !important;">Última actividad</h3>
-                         <ul style="list-style:none; padding:0; margin:0;">
-                             <li style="display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid var(--border); padding:8px 0; font-size:0.85rem;">
-                                 <div><span style="color:#3b82f6; margin-right:6px;">◉</span> Has pagado el gasto de luz</div>
-                                 <div style="color:var(--text-muted) !important; font-size:0.75rem;">Hace 2 h</div>
-                             </li>
-                             <li style="display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid var(--border); padding:8px 0; font-size:0.85rem;">
-                                 <div><span style="color:#10b981; margin-right:6px;">◉</span> Incidencia: Fregadero...</div>
-                                 <div style="color:var(--text-muted) !important; font-size:0.75rem;">Hace 5 h</div>
-                             </li>
-                             <li style="display:flex; justify-content:space-between; align-items:center; padding:8px 0; font-size:0.85rem;">
-                                 <div style="text-decoration:line-through; color:var(--text-muted) !important;"><span style="color:var(--border); margin-right:6px;">○</span> Tarea completada: Baño</div>
-                                 <div style="color:var(--text-muted) !important; font-size:0.75rem;">Ayer</div>
-                             </li>
-                         </ul>
+                    <div class="summary-item">
+                        <div class="label">Tareas completadas</div>
+                        <div class="value">12</div>
+                        <div class="trend" style="color:#6b7280">+3 esta semana</div>
+                    </div>
+                    <div class="summary-item">
+                        <div class="label">Incidencias abiertas</div>
+                        <div class="value" style="color:#ef4444">2</div>
+                        <div class="trend" style="color:#ef4444">-1 que el mes pasado</div>
+                    </div>
+                    <div class="summary-item">
+                        <div class="label">Reservas este mes</div>
+                        <div class="value">5</div>
+                        <div class="trend" style="color:#3b82f6"><a href="#" onclick="switchMainTab('reservas')">Ver calendario</a></div>
                     </div>
                 </div>
-
-                <div class="welcome-banner" style="display:flex; justify-content:space-between; align-items:center; background:#f0f9ff; border:1px solid #bae6fd; padding:32px; border-radius:8px;">
-                     <div>
-                         <h3 style="color:#0369a1 !important; margin:0 0 8px; font-size:1.5rem;">¿Necesitas muebles para tu piso?</h3>
-                         <p style="margin:0; font-size:1rem; color:#0c4a6e !important;">Descuentos exclusivos para pisos compartidos en IKEA y Maisons du Monde.</p>
-                     </div>
-                     <button class="btn btn-primary" style="background:#0ea5e9; border:none;">Ver ofertas</button>
-                </div>
-            }
-            else
-            {
-                <!-- MARKETING LANDING PREVIEW WHEN NOT LOGGED IN -->
-                <div class="welcome-banner" style="text-align:center; display:block;">
-                    <h2 style="font-size:2.5rem; margin-bottom:16px; color: #1e3a8a !important;">La convivencia inteligente empieza aquí</h2>
-                    <p style="margin:0 auto 24px;">Gestiona tu piso compartido de forma sencilla: tareas, gastos, reservas y comunicación.</p>
-                    <a href="/Account/Register" class="btn btn-primary btn-lg">Empezar gratis</a>
-                </div>
-                
-                <h3 style="text-align:center; margin: 40px 0 20px;">Explora la plataforma</h3>
-                <div class="services-grid" style="justify-content:center;">
-                    <button onclick="switchMainTab('funciones')" class="service-card">
-                        <div class="service-icon">✨</div>
-                        <h4>Funciones</h4>
-                        <p>Todo lo que necesitas</p>
-                    </button>
-                    <button onclick="switchMainTab('planes')" class="service-card">
-                        <div class="service-icon">💎</div>
-                        <h4>Planes</h4>
-                        <p>Opciones para todos</p>
-                    </button>
-                    <a href="/Home/Pisos" class="service-card">
-                        <div class="service-icon">🏙️</div>
-                        <h4>Catálogo</h4>
-                        <p>Ver pisos disponibles</p>
-                    </a>
-                </div>
-            }
+            </div>
         </div>
 
         <!-- TAB FUNCIONES (ONLY USED IF NOT LOGGED IN) -->
@@ -320,242 +285,59 @@
 
         <!-- MOCK TABS FOR THE UI DEMO -->
         <div id="tab-pisos" class="tab-content flat-card">
-            <h2 style="margin-bottom:16px;">🏢 Tus Propiedades</h2>
-            <div class="dash-grid" style="grid-template-columns: 1fr 1fr; margin-bottom: 24px;">
-                <div class="dash-stat" style="background: linear-gradient(135deg, rgba(59, 130, 246, 0.1), transparent);">
-                    <div class="icon">🏘️</div>
-                    <div class="value">2</div>
-                    <div class="label">Pisos Registrados</div>
-                </div>
-                <div class="dash-stat" style="background: linear-gradient(135deg, rgba(16, 185, 129, 0.1), transparent);">
-                    <div class="icon">✅</div>
-                    <div class="value">100%</div>
-                    <div class="label">Ocupación Actual</div>
-                </div>
-            </div>
-            <div class="glass-card" style="padding:0; overflow:hidden; border: 1px solid var(--border);">
-                <table class="data-table" style="width: 100%; border-collapse: collapse; text-align: left;">
-                    <thead style="background: var(--bg-input);">
-                        <tr><th style="padding:12px 16px;">Dirección</th><th style="padding:12px 16px;">Ciudad</th><th style="padding:12px 16px;">Habitaciones</th><th style="padding:12px 16px;">Mantenimiento</th></tr>
-                    </thead>
-                    <tbody>
-                        <tr style="border-bottom: 1px solid var(--border);">
-                            <td style="padding: 12px 16px; font-weight: 500;">Av. Marni, 14, 2A</td>
-                            <td style="padding: 12px 16px;">Valencia</td>
-                            <td style="padding: 12px 16px;">🛏️ 3 hab.</td>
-                            <td style="padding: 12px 16px;"><span class="status-badge" style="background:rgba(16, 185, 129, 0.1); color:#10b981;">Al día</span></td>
-                        </tr>
-                        <tr>
-                            <td style="padding: 12px 16px; font-weight: 500;">Calle Mayor, 100</td>
-                            <td style="padding: 12px 16px;">Alicante</td>
-                            <td style="padding: 12px 16px;">🛏️ 4 hab.</td>
-                            <td style="padding: 12px 16px;"><span class="status-badge pending">1 Incidencia</span></td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
-            <div style="display:flex; justify-content:space-between; align-items:center; margin-top: 24px;">
-                <p style="color:var(--text-muted); margin:0; font-size:0.9rem;">(Demo) Regístrate para añadir tus propios pisos reales.</p>
-                <a href="/Account/Register" class="btn btn-primary btn-sm">Añadir piso</a>
-            </div>
+            <h2 style="margin-bottom:16px;">Mis pisos</h2>
+            <p>Aquí se listarán tus pisos gestionados con la estructura MVC. <a href="/Dashboard/MisPisos">Ir a Dashboard/MisPisos</a></p>
+            <button onclick="switchMainTab('inicio')" class="btn btn-outline" style="margin-top:20px;">← Volver</button>
         </div>
-
         <div id="tab-tareas" class="tab-content flat-card">
-            <h2 style="margin-bottom:16px;">✅ Tareas del Hogar</h2>
-            <ul class="task-list">
-                <li class="task-item">
-                    <span style="font-size: 1.2rem;">🧹</span>
-                    <div class="task-info">
-                        <div class="task-name">Limpieza de baño semanal</div>
-                        <div class="task-meta">Asignado a: Carlos · Vence hoy</div>
-                    </div>
-                    <span class="status-badge pending">Pendiente</span>
-                </li>
-                <li class="task-item">
-                    <span style="font-size: 1.2rem;">🗑️</span>
-                    <div class="task-info">
-                        <div class="task-name">Bajar la basura y reciclaje</div>
-                        <div class="task-meta">Asignado a: Lucía · Vence mañana</div>
-                    </div>
-                    <span class="status-badge pending">Pendiente</span>
-                </li>
-                <li class="task-item completed" style="opacity: 0.7;">
-                    <span style="font-size: 1.2rem;">🍽️</span>
-                    <div class="task-info">
-                        <div class="task-name" style="text-decoration: line-through;">Limpiar la cocina a fondo</div>
-                        <div class="task-meta">Completado por: Dani</div>
-                    </div>
-                    <span class="status-badge" style="background: rgba(16, 185, 129, 0.1); color: #10b981;">Hecho</span>
-                </li>
-            </ul>
-            <div style="display:flex; justify-content:space-between; align-items:center; margin-top: 24px;">
-                <p style="color:var(--text-muted); margin:0; font-size:0.9rem;">(Demo) Evita peleas: centraliza turnos y avisos.</p>
-                <a href="/Account/Register" class="btn btn-primary btn-sm">Probar Tareas Gratis</a>
-            </div>
+            <h2 style="margin-bottom:16px;">Tareas del hogar</h2>
+            <p>Lista interactiva de tareas pendientes... <a href="/Dashboard/Tareas">Ir a Dashboard/Tareas</a></p>
+            <button onclick="switchMainTab('inicio')" class="btn btn-outline" style="margin-top:20px;">← Volver</button>
         </div>
-
         <div id="tab-gastos" class="tab-content flat-card">
-            <h2 style="margin-bottom:16px;">💶 Centro de Gastos</h2>
-            <div class="dash-grid" style="grid-template-columns: 1fr 1fr; margin-bottom: 24px;">
-                <div class="dash-stat">
-                    <div class="icon">⚡</div>
-                    <div class="value">84.50 €</div>
-                    <div class="label">Recibo Luz (Enero)</div>
-                </div>
-                <div class="dash-stat">
-                    <div class="icon">💧</div>
-                    <div class="value">32.20 €</div>
-                    <div class="label">Recibo Agua</div>
-                </div>
-            </div>
-            <div class="glass-card" style="padding:0; overflow:hidden; border: 1px solid var(--border);">
-                <table class="data-table" style="width: 100%; border-collapse: collapse; text-align: left;">
-                    <thead style="background: var(--bg-input);">
-                        <tr><th style="padding:12px 16px;">Concepto</th><th style="padding:12px 16px;">Importe Total</th><th style="padding:12px 16px;">Tu Parte</th><th style="padding:12px 16px;">Estado</th></tr>
-                    </thead>
-                    <tbody>
-                        <tr style="border-bottom: 1px solid var(--border);">
-                            <td style="padding: 12px 16px; font-weight: 500;">Factura Iberdrola</td>
-                            <td style="padding: 12px 16px;">84.50 €</td>
-                            <td style="padding: 12px 16px; font-weight: bold; color: var(--danger);">21.12 €</td>
-                            <td style="padding: 12px 16px;"><span class="status-badge pending">A Pagar</span></td>
-                        </tr>
-                        <tr>
-                            <td style="padding: 12px 16px; font-weight: 500;">Compra Supermercado común</td>
-                            <td style="padding: 12px 16px;">30.00 €</td>
-                            <td style="padding: 12px 16px; font-weight: bold;">—</td>
-                            <td style="padding: 12px 16px;"><span class="status-badge" style="background: rgba(16, 185, 129, 0.1); color: #10b981;">Tú pagaste</span></td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
-            <div style="display:flex; justify-content:space-between; align-items:center; margin-top: 24px;">
-                <p style="color:var(--text-muted); margin:0; font-size:0.9rem;">(Demo) Reparte cuentas como un profesional.</p>
-                <a href="/Account/Register" class="btn btn-primary btn-sm">Dividir Gastos</a>
-            </div>
+            <h2 style="margin-bottom:16px;">Gastos del mes</h2>
+            <p>Control de gastos detallado... <a href="/Dashboard/Gastos">Ir a Dashboard/Gastos</a></p>
+            <button onclick="switchMainTab('inicio')" class="btn btn-outline" style="margin-top:20px;">← Volver</button>
         </div>
-
         <div id="tab-contratos" class="tab-content flat-card">
-            <h2 style="margin-bottom:16px;">📄 Contratos y Documentos</h2>
-            <div class="glass-card" style="padding:0; overflow:hidden; border: 1px solid var(--border);">
-                <table class="data-table" style="width: 100%; border-collapse: collapse; text-align: left;">
-                    <thead style="background: var(--bg-input);">
-                        <tr><th style="padding:12px 16px;">Archivo</th><th style="padding:12px 16px;">Tipo</th><th style="padding:12px 16px;">Vigencia / Fecha</th></tr>
-                    </thead>
-                    <tbody>
-                        <tr style="border-bottom: 1px solid var(--border);">
-                            <td style="padding: 12px 16px; font-weight: 500;">📄 contrato_arrendamiento_firmado.pdf</td>
-                            <td style="padding: 12px 16px;"><span class="status-badge active" style="font-size:0.75rem;">Contrato</span></td>
-                            <td style="padding: 12px 16px; color: var(--text-muted);">Hasta Ago 2027</td>
-                        </tr>
-                        <tr>
-                            <td style="padding: 12px 16px; font-weight: 500;">🧾 justificante_transferencia_fianza.jpg</td>
-                            <td style="padding: 12px 16px;"><span class="status-badge active" style="font-size:0.75rem; background: var(--accent);">Recibo</span></td>
-                            <td style="padding: 12px 16px; color: var(--text-muted);">Subido: Ayer</td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
-            <div style="display:flex; justify-content:space-between; align-items:center; margin-top: 24px;">
-                <p style="color:var(--text-muted); margin:0; font-size:0.9rem;">(Demo) Sube o descarga documentos en la nube a un clic.</p>
-                <a href="/Account/Register" class="btn btn-primary btn-sm">Subir mi primer documento</a>
-            </div>
+            <h2 style="margin-bottom:16px;">Contratos y Pagos</h2>
+            <p>Gestión de documentos integrados con ADO.NET.</p>
+            <button onclick="switchMainTab('inicio')" class="btn btn-outline" style="margin-top:20px;">← Volver</button>
         </div>
-
         <div id="tab-reservas" class="tab-content flat-card">
-            <h2 style="margin-bottom:16px;">📅 Reservas de Zonas Comunes</h2>
-            <div style="display: flex; gap: 16px; flex-wrap: wrap;">
-                <div class="feature-card" style="flex: 1; padding: 20px; text-align: center;">
-                    <div style="font-size: 2rem;">📺</div>
-                    <h4 style="margin: 10px 0 5px;">Salón / Televisión</h4>
-                    <p style="font-size: 0.8rem; color: var(--text-muted);">1 Reserva hoy</p>
-                    <button class="btn btn-outline btn-sm" style="margin-top: 10px; pointer-events: none;">Reservar</button>
-                </div>
-                <div class="feature-card" style="flex: 1; padding: 20px; text-align: center;">
-                    <div style="font-size: 2rem;">🧺</div>
-                    <h4 style="margin: 10px 0 5px;">Lavadora</h4>
-                    <p style="font-size: 0.8rem; color: var(--text-muted);">Disponible</p>
-                    <button class="btn btn-primary btn-sm" style="margin-top: 10px; pointer-events: none;">Reservar</button>
-                </div>
-            </div>
-            <div style="display:flex; justify-content:space-between; align-items:center; margin-top: 24px;">
-                <p style="color:var(--text-muted); margin:0; font-size:0.9rem;">(Demo) Evita choques a la hora de poner la lavadora.</p>
-                <a href="/Account/Register" class="btn btn-primary btn-sm">Usar Reservas</a>
-            </div>
+            <h2 style="margin-bottom:16px;">Reservas de zonas comunes</h2>
+            <p>Calendario y disponibilidad...</p>
+            <button onclick="switchMainTab('inicio')" class="btn btn-outline" style="margin-top:20px;">← Volver</button>
         </div>
-
         <div id="tab-mensajes" class="tab-content flat-card">
-            <h2 style="margin-bottom:16px;">💬 Mensajes e Incidencias</h2>
-            <div style="border: 1px solid var(--border); border-radius: var(--radius-md); overflow:hidden;">
-                <div style="background: rgba(239, 68, 68, 0.05); border-bottom: 1px solid var(--border); padding: 16px; border-left: 4px solid var(--danger);">
-                    <div style="display: flex; justify-content: space-between;">
-                        <strong style="color: var(--text-primary);">Dani</strong>
-                        <span style="font-size: 0.75rem; color: var(--text-muted);">Ayer, 20:45</span>
-                    </div>
-                    <p style="font-size: 0.88rem; margin: 4px 0 0; color: var(--text-secondary);">Chicos, el grifo de la cocina gotea muchísimo. ¿Alguien puede avisar al casero?</p>
-                </div>
-                <div style="background: var(--bg-card); padding: 16px; padding-left: 32px; border-left: 4px solid transparent;">
-                    <div style="display: flex; justify-content: space-between;">
-                        <strong style="color: var(--primary);">Casero Administrador</strong>
-                        <span style="font-size: 0.75rem; color: var(--text-muted);">Hoy, 09:12</span>
-                    </div>
-                    <p style="font-size: 0.88rem; margin: 4px 0 0; color: var(--text-secondary);">Leídas las quejas. Envío al fontanero mañana a las 10:00 AM.</p>
-                </div>
-            </div>
-            <div style="display:flex; justify-content:space-between; align-items:center; margin-top: 24px;">
-                <p style="color:var(--text-muted); margin:0; font-size:0.9rem;">(Demo) Comunicación directa y registro legal.</p>
-                <a href="/Account/Register" class="btn btn-outline btn-sm">Abrir Foro</a>
-            </div>
+            <h2 style="margin-bottom:16px;">Mensajes</h2>
+            <p>Bandeja de entrada de comunicaciones...</p>
+            <button onclick="switchMainTab('inicio')" class="btn btn-outline" style="margin-top:20px;">← Volver</button>
         </div>
-
         <div id="tab-perfil" class="tab-content flat-card">
-            <h2 style="margin-bottom:16px;">👤 Mi Perfil ConviApp</h2>
-            <div style="display: flex; gap: 24px; align-items: center; margin-bottom: 24px;">
-                <img src="https://ui-avatars.com/api/?name=U&background=f3f4f6&color=1e3a8a&rounded=true&size=150" alt="Demo Avatar" style="width: 80px; height: 80px; border-radius: 50%; border: 3px solid var(--primary-light); margin: 0;">
-                <div>
-                    <h3 style="margin: 0; font-size: 1.5rem;">Usuario Invitado</h3>
-                    <p style="color: var(--text-muted) !important; margin: 4px 0;">Plan Actual: <span style="color: var(--primary-light); font-weight: bold;">FREE</span></p>
-                </div>
-            </div>
-            <div class="pricing-card featured" style="padding: 24px; text-align: left; transform: none;">
-                <h3 style="color: var(--primary) !important; margin-bottom: 8px;">Plan Profesional</h3>
-                <p style="color: var(--text-secondary) !important; margin-bottom: 16px;">Potencia tu gestión subiendo a Pro para tener documentos ilimitados, cero anuncios y prioridad telefónica.</p>
-                <a href="/Account/Register" class="btn btn-primary" style="width: 100%; justify-content: center;">Suscríbete ahora por 4.99€/mes</a>
-            </div>
+            <h2 style="margin-bottom:16px;">Mi Perfil</h2>
+            <p>Edita tus datos, sube una foto, revisa tu plan...</p>
+            <a href="/Account/Upgrade?plan=Profesional" class="btn btn-primary">Actualizar Plan</a>
+            <button onclick="switchMainTab('inicio')" class="btn btn-outline" style="margin-top:20px;">← Volver</button>
         </div>
     </div>
 
-    @if (isLoggedIn)
-    {
     <!-- RIGHT FIXED ADVERTISEMENTS (PUBLICIDAD) -->
-    <div class="sidebar-right">
-        <div class="flat-card" style="padding: 0; overflow:hidden; border:none; border-radius:12px; margin-bottom:16px;">
-            <div style="background: linear-gradient(to bottom, #1e3a8a, #3b82f6); color: white; padding: 24px 20px; position:relative;">
-                <img src="https://images.unsplash.com/photo-1527515637462-cff94eecc1ac?auto=format&fit=crop&w=300&q=80" alt="Limpieza" style="position:absolute; right: -20px; top:-20px; width:140px; border-radius:50%; opacity:0.4; mix-blend-mode: overlay;">
-                <h3 style="font-size: 1.25rem; font-weight:700; margin-bottom: 8px; position:relative; z-index:2; color: white !important;">Limpieza a domicilio</h3>
-                <p style="font-size: 0.9rem; color: #dbeafe !important; margin-bottom: 16px; position:relative; z-index:2;">Deja tu piso impecable.</p>
-                <button class="btn btn-sm" style="background:rgba(255,255,255,0.2); color:white !important; border:1px solid rgba(255,255,255,0.4); z-index:2; position:relative;">Ver ofertas</button>
+    @if (!isLoggedIn || Context.Session.GetString("UserRole") == "Basico")
+    {
+        <div class="sidebar-right">
+            <div class="flat-card" style="background: linear-gradient(to bottom, #1e3a8a, #3b82f6); color: white; padding: 24px; text-align: center;">
+                <h3 style="font-size: 1.2rem; margin-bottom: 8px;">Limpieza a domicilio</h3>
+                <p style="font-size: 0.85rem; color: #dbeafe; margin-bottom: 16px;">Deja tu piso impecable.</p>
+                <button class="btn btn-outline btn-sm" style="color:white; border-color:rgba(255,255,255,0.4);">Ver ofertas</button>
+            </div>
+            
+            <div class="flat-card" style="background: #ecfdf5; border-color: #a7f3d0; padding: 24px; text-align: center;">
+                <h3 style="font-size: 1.2rem; color: #065f46; margin-bottom: 8px;">Muebles para compartir</h3>
+                <p style="font-size: 0.85rem; color: #047857; margin-bottom: 16px;">Precios increíbles para nuevas camas y escritorios.</p>
+                <button class="btn btn-primary btn-sm" style="background:#10b981;">Descubrir</button>
             </div>
         </div>
-        
-        <div class="flat-card" style="padding: 0; overflow:hidden; border:none; border-radius:12px; margin-bottom:16px; box-shadow: 0 4px 6px rgba(0,0,0,0.05);">
-            <div style="padding: 24px 20px; background: #ecfdf5; position:relative;">
-                <img src="https://images.unsplash.com/photo-1616486338812-3dadae4b4ace?auto=format&fit=crop&w=300&q=80" alt="Muebles" style="position:absolute; right: -30px; bottom:-30px; width:130px; border-radius:50%; opacity:0.8; mix-blend-mode: multiply;">
-                <h3 style="font-size: 1.25rem; font-weight:700; color: #065f46 !important; margin-bottom: 8px; position:relative; z-index:2;">Muebles para compartir</h3>
-                <p style="font-size: 0.9rem; color: #047857 !important; margin-bottom: 16px; position:relative; z-index:2;">Precios increíbles para nuevas camas y escritorios.</p>
-                <button class="btn btn-sm" style="background:#10b981; color:white !important; border:none; position:relative; z-index:2;">Descubrir</button>
-            </div>
-        </div>
-
-        <div class="flat-card" style="padding: 0; overflow:hidden; border:none; border-radius:12px; box-shadow: 0 4px 6px rgba(0,0,0,0.05);">
-            <div style="padding: 24px 20px; background: #fffbeb; position:relative;">
-                <div style="position:absolute; right: 10px; bottom: 10px; font-size:3.5rem; opacity:0.8;">🏡</div>
-                <h3 style="font-size: 1.25rem; font-weight:700; color: #b45309 !important; margin-bottom: 8px; position:relative; z-index:2;">Seguros para tu hogar</h3>
-                <p style="font-size: 0.9rem; color: #92400e !important; margin-bottom: 16px; position:relative; z-index:2;">Protege lo que más te importa.</p>
-                <button class="btn btn-sm" style="background:#f59e0b; color:white !important; border:none; position:relative; z-index:2;">Más información</button>
-            </div>
-        </div>
-    </div>
     }
 </div>
 
@@ -571,36 +353,7 @@
         }
         
         // Match nav links globally to add bold/active style
-        var relatedNav = document.querySelectorAll('a.nav-link[onclick*="' + tabId + '"]');
-        if(relatedNav) relatedNav.forEach(el => el.classList.add('active'));
-        
-        // Update URL hash for sharing/back button friendly
-        if(history.pushState) {
-            history.pushState(null, null, '#' + 'tab-' + tabId);
-        } else {
-            location.hash = '#tab-' + tabId;
-        }
+        var relatedNav = document.querySelector('a.nav-link[onclick*="' + tabId + '"]');
+        if(relatedNav) relatedNav.classList.add('active');
     }
-
-    // Auto-open tab on load if hash is present
-    document.addEventListener('DOMContentLoaded', function() {
-        if (window.location.hash) {
-            var tabId = window.location.hash.replace('#tab-', '');
-            if (document.getElementById('tab-' + tabId)) {
-                switchMainTab(tabId);
-            }
-        }
-    });
-
-    // Support browser back/forward buttons
-    window.addEventListener('hashchange', function() {
-        if (window.location.hash) {
-            var tabId = window.location.hash.replace('#tab-', '');
-            if (document.getElementById('tab-' + tabId)) {
-                switchMainTab(tabId);
-            }
-        } else {
-            switchMainTab('inicio');
-        }
-    });
 </script>

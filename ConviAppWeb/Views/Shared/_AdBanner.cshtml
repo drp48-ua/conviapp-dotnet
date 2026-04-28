@@ -1,15 +1,37 @@
-@* Ad Slider Banner for Basic plan users — rotating carousel *@
+@* Context-Aware Ad Slider Banner for Basic plan / unregistered users *@
 @{
-    var adSlides = new[] {
+    var activePage = ViewData["ActivePage"] as string ?? "";
+    
+    var defaultAds = new[] {
         new { Icon = "🏠", Title = "MudanzasExpress.es", Text = "¿Te mudas? Presupuesto gratis en 24h. Mudanzas nacionales desde 199€", Color = "#f59e0b", Cta = "Ver oferta" },
-        new { Icon = "🧹", Title = "LimpiaHogar Pro", Text = "Limpieza profesional de pisos compartidos. Primera limpieza al 50%", Color = "#06d6a0", Cta = "Reservar" },
         new { Icon = "📦", Title = "StorageBox", Text = "¿Sin espacio? Guarda tus cosas desde 29€/mes. Recogida a domicilio", Color = "#60a5fa", Cta = "Más info" },
-        new { Icon = "🔐", Title = "SeguroPiso.com", Text = "Seguro de hogar para inquilinos desde 8€/mes. Cobertura total garantizada", Color = "#a78bfa", Cta = "Contratar" },
-        new { Icon = "🛋️", Title = "IKEA Estudiantes", Text = "Descuento del 15% en muebles para pisos compartidos. ¡Código CONVI15!", Color = "#f87171", Cta = "Usar código" },
         new { Icon = "📱", Title = "Fibra&Móvil Pack", Text = "Internet 600Mb + Móvil ilimitado por 29.90€/mes para tu piso", Color = "#34d399", Cta = "Contratar" },
-        new { Icon = "🛒", Title = "Mercadona Online", Text = "Primer pedido con -10€ de descuento. Entrega en 1h para tu piso", Color = "#fbbf24", Cta = "Pedir ahora" },
         new { Icon = "⚡", Title = "Octopus Energy", Text = "Luz 100% renovable desde 0.09€/kWh. Cambia tu tarifa sin coste", Color = "#818cf8", Cta = "Comparar" }
     };
+
+    var cleaningAds = new[] {
+        new { Icon = "🧹", Title = "LimpiaHogar Pro", Text = "Limpieza profesional de pisos compartidos. Primera limpieza al 50%", Color = "#06d6a0", Cta = "Reservar" },
+        new { Icon = "🧼", Title = "EcoClean", Text = "Productos de limpieza sostenibles para tu hogar. 2x1 en tu primer pedido", Color = "#10b981", Cta = "Comprar" },
+    };
+
+    var expensesAds = new[] {
+        new { Icon = "💳", Title = "SplitWise Pro", Text = "Olvídate de las cuentas con tus compañeros. Prueba premium gratis", Color = "#f59e0b", Cta = "Probar" },
+        new { Icon = "🏦", Title = "NeoBank Joven", Text = "Cuenta compartida sin comisiones. Tarjetas independientes", Color = "#3b82f6", Cta = "Abrir cuenta" },
+    };
+
+    var furnitureAds = new[] {
+        new { Icon = "🛋️", Title = "IKEA Estudiantes", Text = "Descuento del 15% en muebles para pisos compartidos. ¡Código CONVI15!", Color = "#f87171", Cta = "Usar código" },
+        new { Icon = "🛏️", Title = "ColchonesDescanso", Text = "Colchones viscoelásticos baratos. Envío e instalación gratuitos", Color = "#8b5cf6", Cta = "Ver catálogo" }
+    };
+
+    var adSlides = defaultAds;
+    if (activePage.Contains("Tareas") || activePage.Contains("Incidencias")) {
+        adSlides = cleaningAds.Concat(defaultAds.Take(2)).ToArray();
+    } else if (activePage.Contains("Gastos") || activePage.Contains("Contratos")) {
+        adSlides = expensesAds.Concat(defaultAds.Take(2)).ToArray();
+    } else if (activePage.Contains("Home") || activePage.Contains("Pisos")) {
+        adSlides = defaultAds.Concat(furnitureAds).ToArray();
+    }
 }
 <div class="ad-slider-wrap">
     <div class="ad-label">PUBLICIDAD</div>

@@ -32,7 +32,7 @@
                             🔔
                             <span style="position:absolute; top:-4px; right:-4px; background:#ef4444; width:10px; height:10px; border-radius:50%;"></span>
                         </span>
-                        <img src="@(Context.Session.GetString("UserPhotoUrl") ?? "https://i.pravatar.cc/100?u=moni")" alt="Avatar" style="width:36px; height:36px; border-radius:50%; object-fit:cover;">
+                        <svg width="36" height="36" viewBox="0 0 64 64" style="border-radius:50%;background:#c7d2fe;flex-shrink:0;" xmlns="http://www.w3.org/2000/svg"><circle cx="32" cy="26" r="12" fill="#a5b4fc"/><ellipse cx="32" cy="50" rx="20" ry="14" fill="#818cf8"/></svg>
                         <div style="color:white; font-size:0.9rem; line-height:1.2;">
                             <div style="font-weight:600;">@(Context.Session.GetString("UserName") ?? Context.Session.GetString("UserEmail"))</div>
                             <a href="/Account/Logout" style="color:var(--accent-light); font-size:0.8rem; text-decoration:none;">Cerrar sesión</a>
@@ -48,14 +48,14 @@
         </div>
         <div class="header-bottom">
             <div class="container" style="display:flex; gap:8px; width:100%; max-width:100%;">
-                <a href="#tab-inicio" onclick="switchMainTab('inicio')" class="nav-link active">🏠 Inicio</a>
+                <a href="/" class="nav-link active" id="navInicio">🏠 Inicio</a>
                 <a href="/Home/Pisos" class="nav-link">🏢 Pisos</a>
-                <a href="#tab-contratos" onclick="switchMainTab('contratos')" class="nav-link">📄 Contratos</a>
-                <a href="#tab-tareas" onclick="switchMainTab('tareas')" class="nav-link">✅ Tareas</a>
-                <a href="#tab-gastos" onclick="switchMainTab('gastos')" class="nav-link">💶 Gastos</a>
-                <a href="#tab-reservas" onclick="switchMainTab('reservas')" class="nav-link">📅 Reservas</a>
-                <a href="#tab-mensajes" onclick="switchMainTab('mensajes')" class="nav-link">✉️ Mensajes</a>
-                <a href="#tab-perfil" onclick="switchMainTab('perfil')" class="nav-link">👤 Perfil</a>
+                <a href="/?tab=contratos" class="nav-link" id="navContratos">📄 Contratos</a>
+                <a href="/?tab=tareas" class="nav-link" id="navTareas">✅ Tareas</a>
+                <a href="/?tab=gastos" class="nav-link" id="navGastos">💶 Gastos</a>
+                <a href="/?tab=reservas" class="nav-link" id="navReservas">📅 Reservas</a>
+                <a href="/?tab=mensajes" class="nav-link" id="navMensajes">✉️ Mensajes</a>
+                <a href="/?tab=perfil" class="nav-link" id="navPerfil">👤 Perfil</a>
             </div>
         </div>
     </header>

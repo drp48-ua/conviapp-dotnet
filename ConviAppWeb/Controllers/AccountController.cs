@@ -19,13 +19,15 @@ namespace ConviAppWeb.Controllers
         }
 
         [HttpPost]
-        public IActionResult Login(string email, string password)
+        public IActionResult Login(string email, string password, string? plan)
         {
             // Reemplazo a ADO.NET: Se asume validacion
             if (email != null && password != null)
             {
+                var validPlans = new[] { "Basico", "Profesional", "Enterprise" };
+                var role = validPlans.Contains(plan) ? plan! : "Basico";
                 HttpContext.Session.SetString("UserEmail", email);
-                HttpContext.Session.SetString("UserRole", "Profesional");
+                HttpContext.Session.SetString("UserRole", role);
                 HttpContext.Session.SetString("UserName", email);
                 HttpContext.Session.SetInt32("UserId", 1);
                 return RedirectToAction("Index", "Dashboard");
@@ -121,7 +123,7 @@ namespace ConviAppWeb.Controllers
             
             ViewBag.UserName = HttpContext.Session.GetString("UserName") ?? email;
             ViewBag.UserEmail = email;
-            ViewBag.UserPhoto = HttpContext.Session.GetString("UserPhotoUrl") ?? "https://i.pravatar.cc/100?u=moni";
+            ViewBag.UserPhoto = HttpContext.Session.GetString("UserPhotoUrl") ?? "";
             
             return View();
         }
@@ -142,7 +144,7 @@ namespace ConviAppWeb.Controllers
             ViewBag.Success = "Perfil actualizado correctamente.";
             ViewBag.UserName = name ?? email;
             ViewBag.UserEmail = email;
-            ViewBag.UserPhoto = HttpContext.Session.GetString("UserPhotoUrl") ?? "https://i.pravatar.cc/100?u=moni";
+            ViewBag.UserPhoto = HttpContext.Session.GetString("UserPhotoUrl") ?? "";
 
             return View();
         }

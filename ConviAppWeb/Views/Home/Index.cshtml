@@ -17,17 +17,17 @@
         max-width: 1400px;
         margin: 0 auto;
     }
-    .sidebar-left {
-        width: 250px;
-        flex-shrink: 0;
-    }
-    .main-content {
-        flex: 1;
-        min-width: 0;
-    }
     .sidebar-right {
         width: 300px;
         flex-shrink: 0;
+        display: flex;
+        flex-direction: column;
+    }
+    .sidebar-left {
+        width: 250px;
+        flex-shrink: 0;
+        display: flex;
+        flex-direction: column;
     }
     
     .flat-card {
@@ -144,7 +144,7 @@
         }
         @if (isLoggedIn)
         {
-            <div class="flat-card profile-card">
+            <div class="flat-card profile-card" style="margin-bottom: 24px;">
                 <svg width="64" height="64" viewBox="0 0 64 64" style="display:block;margin:0 auto 12px;border-radius:50%;background:#e0e7ff;" xmlns="http://www.w3.org/2000/svg">
                     <circle cx="32" cy="26" r="12" fill="#a5b4fc"/>
                     <ellipse cx="32" cy="50" rx="20" ry="14" fill="#c7d2fe"/>
@@ -154,51 +154,47 @@
                 <a href="/Account/Profile" class="btn btn-outline btn-sm" style="width:100%">Editar perfil</a>
             </div>
             
-            <div class="flat-card" style="padding: 16px;">
+            <div class="flat-card" style="padding: 16px; margin-bottom: 24px;">
                 <h4 style="font-size: 0.9rem; color: #6b7280; margin-bottom: 12px; font-weight: 600; text-transform: uppercase;">Accesos rápidos</h4>
                 <a href="/Home/Index#tab-tareas" onclick="switchMainTab('tareas'); return false;" class="menu-link"><span>✅</span> Mis tareas</a>
                 <a href="/Home/Index#tab-gastos" onclick="switchMainTab('gastos'); return false;" class="menu-link"><span>💶</span> Mis gastos</a>
                 <a href="/Home/Index#tab-contratos" onclick="switchMainTab('contratos'); return false;" class="menu-link"><span>🔧</span> Contratos</a>
                 <a href="/Home/Index#tab-reservas" onclick="switchMainTab('reservas'); return false;" class="menu-link"><span>📅</span> Calendario</a>
             </div>
-
-            @if (showSidebarAds)
-            {
-                <div class="flat-card" style="background: linear-gradient(to bottom, #1e3a8a, #3b82f6); color: white; padding: 20px; text-align: center; margin-top: 8px;">
-                    <div style="font-size:0.6rem;color:rgba(255,255,255,0.5);letter-spacing:2px;margin-bottom:6px;">PUBLICIDAD</div>
-                    <h4 style="font-size:1rem;margin-bottom:6px;">Limpieza a domicilio</h4>
-                    <p style="font-size:0.8rem;color:#dbeafe;margin-bottom:12px;">Primera limpieza al 50% con código CONVI50</p>
-                    <a href="/Account/Upgrade?plan=Profesional" class="btn btn-outline btn-sm" style="color:white;border-color:rgba(255,255,255,0.4);font-size:0.75rem;">💎 Eliminar anuncios</a>
-                </div>
-                <div class="flat-card" style="background: #ecfdf5; border-color: #a7f3d0; padding: 20px; text-align: center;">
-                    <div style="font-size:0.6rem;color:#6b7280;letter-spacing:2px;margin-bottom:6px;">PUBLICIDAD</div>
-                    <h4 style="font-size:1rem;color:#065f46;margin-bottom:6px;">Muebles estudiantiles</h4>
-                    <p style="font-size:0.8rem;color:#047857;margin-bottom:12px;">Precios increíbles. Código CONVI15 → 15% dto.</p>
-                    <a href="/Account/Upgrade?plan=Profesional" class="btn btn-primary btn-sm" style="background:#10b981;font-size:0.75rem;">💎 Actualizar plan</a>
-                </div>
-            }
         }
-        else
-        {
-            <div class="flat-card" style="background: linear-gradient(to bottom, #10b981, #059669); color: white; padding: 24px; text-align: center;">
-                <div style="font-size:0.6rem;color:rgba(255,255,255,0.5);letter-spacing:2px;margin-bottom:6px;">PUBLICIDAD</div>
-                <h3 style="font-size: 1.2rem; margin-bottom: 8px;">Habitación Premium</h3>
-                <p style="font-size: 0.85rem; color: #d1fae5; margin-bottom: 16px;">Encuentra las mejores habitaciones para estudiantes con todo incluido.</p>
-                <a href="/Account/Register" class="btn btn-outline btn-sm" style="color:white; border-color:rgba(255,255,255,0.4);">Registrarse gratis</a>
-            </div>
-            
-            <div class="flat-card" style="background: #eff6ff; border-color: #bfdbfe; padding: 24px; text-align: center;">
-                <div style="font-size:0.6rem;color:#6b7280;letter-spacing:2px;margin-bottom:6px;">PUBLICIDAD</div>
-                <h3 style="font-size: 1.2rem; color: #1e3a8a; margin-bottom: 8px;">Seguro de Estudiantes</h3>
-                <p style="font-size: 0.85rem; color: #1e40af; margin-bottom: 16px;">Protege tus pertenencias en tu piso compartido desde solo 5€/mes.</p>
-                <a href="/Account/Register" class="btn btn-primary btn-sm" style="background:#3b82f6;">Más info</a>
-            </div>
 
-            <div class="flat-card" style="background: linear-gradient(to bottom, #7c3aed, #4f46e5); color: white; padding: 24px; text-align: center;">
-                <div style="font-size:0.6rem;color:rgba(255,255,255,0.5);letter-spacing:2px;margin-bottom:6px;">PUBLICIDAD</div>
-                <h3 style="font-size: 1.1rem; margin-bottom: 8px;">Fibra 600Mb</h3>
-                <p style="font-size: 0.85rem; color: #e9d5ff; margin-bottom: 16px;">Internet ultra-rápido para tu piso desde 24.90€/mes.</p>
-                <a href="/Account/Register" class="btn btn-outline btn-sm" style="color:white; border-color:rgba(255,255,255,0.4);">Ver oferta</a>
+        @if (showSidebarAds)
+        {
+            <div style="flex-grow: 1; display: flex; flex-direction: column;">
+                <div class="flat-card" style="background: linear-gradient(to bottom, #10b981, #059669); color: white; padding: 0; text-align: center; overflow: hidden; margin-bottom: 24px;">
+                    <img src="https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?auto=format&fit=crop&w=300&q=80" style="width:100%; height:120px; object-fit:cover;" alt="Habitación" />
+                    <div style="padding: 16px;">
+                        <div style="font-size:0.6rem;color:rgba(255,255,255,0.7);letter-spacing:2px;margin-bottom:6px;">PUBLICIDAD</div>
+                        <h3 style="font-size: 1.2rem; margin-bottom: 8px;">Habitación Premium</h3>
+                        <p style="font-size: 0.85rem; color: #d1fae5; margin-bottom: 16px;">Encuentra las mejores habitaciones para estudiantes.</p>
+                        <a href="/Account/Register" class="btn btn-outline btn-sm" style="color:white; border-color:rgba(255,255,255,0.4);">Registrarse gratis</a>
+                    </div>
+                </div>
+                
+                <div class="flat-card" style="background: #eff6ff; border-color: #bfdbfe; padding: 0; text-align: center; overflow: hidden; margin-bottom: 24px;">
+                    <img src="https://images.unsplash.com/photo-1450101499163-c8848c66ca85?auto=format&fit=crop&w=300&q=80" style="width:100%; height:120px; object-fit:cover;" alt="Seguro" />
+                    <div style="padding: 16px;">
+                        <div style="font-size:0.6rem;color:#6b7280;letter-spacing:2px;margin-bottom:6px;">PUBLICIDAD</div>
+                        <h3 style="font-size: 1.2rem; color: #1e3a8a; margin-bottom: 8px;">Seguro de Estudiantes</h3>
+                        <p style="font-size: 0.85rem; color: #1e40af; margin-bottom: 16px;">Protege tus pertenencias en tu piso compartido desde solo 5€/mes.</p>
+                        <a href="/Account/Register" class="btn btn-primary btn-sm" style="background:#3b82f6;">Más info</a>
+                    </div>
+                </div>
+
+                <div class="flat-card" style="background: linear-gradient(to bottom, #7c3aed, #4f46e5); color: white; padding: 0; text-align: center; overflow: hidden; flex-grow: 1; display:flex; flex-direction:column; justify-content:center;">
+                    <img src="https://images.unsplash.com/photo-1544197150-b99a580bb7a8?auto=format&fit=crop&w=300&q=80" style="width:100%; height:120px; object-fit:cover;" alt="Internet" />
+                    <div style="padding: 16px;">
+                        <div style="font-size:0.6rem;color:rgba(255,255,255,0.7);letter-spacing:2px;margin-bottom:6px;">PUBLICIDAD</div>
+                        <h3 style="font-size: 1.1rem; margin-bottom: 8px;">Fibra 600Mb</h3>
+                        <p style="font-size: 0.85rem; color: #e9d5ff; margin-bottom: 16px;">Internet ultra-rápido para tu piso desde 24.90€/mes.</p>
+                        <a href="/Account/Register" class="btn btn-outline btn-sm" style="color:white; border-color:rgba(255,255,255,0.4);">Ver oferta</a>
+                    </div>
+                </div>
             </div>
         }
     </div>
@@ -280,7 +276,9 @@
             </div>
 
             <!-- PLANES DE SUSCRIPCIÓN -->
-            <div style="margin-top:32px;" id="planes">
+            @if (!isLoggedIn)
+            {
+                <div style="margin-top:32px;" id="planes">
                 <h3 style="font-size:1.3rem;color:#1e3a8a;margin-bottom:6px;text-align:center;">📦 Nuestros planes</h3>
                 <p style="color:#6b7280;text-align:center;margin-bottom:24px;font-size:0.9rem;">Elige el plan que mejor se adapte a ti. Sin permanencia.</p>
                 <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:20px;">
@@ -327,8 +325,9 @@
                         </ul>
                         <a href="mailto:info@conviapp.com?subject=Enterprise%20ConviApp" class="btn btn-outline" style="width:100%;display:block;">Contactar ventas ✉️</a>
                     </div>
+                    </div>
                 </div>
-            </div>
+            }
         </div>
 
         <!-- TAB FUNCIONES -->
@@ -399,15 +398,13 @@
         <!-- MOCK TABS FOR THE UI DEMO -->
         @{
             var _isDemo = !isLoggedIn;
-            string DemoReg(string tab, string desc) => _isDemo
-                ? $"<div class='demo-cta-box'><p class='demo-desc'>{desc}</p><a href='/Account/Register' class='btn btn-primary'>🚀 Regístrate para usar esta función</a><button onclick=\"switchMainTab('inicio')\" class='btn btn-outline' style='margin-left:8px;'>← Volver</button></div>"
-                : "";
         }
         <div id="tab-pisos" class="tab-content flat-card">
             <h2 style="margin-bottom:8px;">🏠 Mis pisos</h2>
             <p style="color:#6b7280;margin-bottom:16px;">Consulta y gestiona todos los pisos que administras. Añade fotos, detalles de habitaciones y más.</p>
             @if (_isDemo) {
-                <div class="demo-cta-box">
+                <div class="demo-cta-box" style="margin-bottom:20px;">
+                    <img style="width:100%; border-radius:8px; margin-bottom:16px; border:1px solid #e5e7eb;" src="https://images.unsplash.com/photo-1560518883-ce09059eeffa?auto=format&fit=crop&w=800&q=80" alt="Demo Pisos" />
                     <div style="background:#f0f4ff;border-radius:8px;padding:16px;margin-bottom:16px;border-left:4px solid #3b82f6;">
                         <strong style="color:#1e3a8a;">Vista previa del módulo de Pisos</strong>
                         <p style="color:#6b7280;font-size:0.9rem;margin:6px 0 0;">Con ConviApp podrás ver el listado de pisos disponibles, añadir los tuyos, ver planos, fotos y disponibilidad en tiempo real.</p>
@@ -424,12 +421,15 @@
             <h2 style="margin-bottom:8px;">✅ Tareas del hogar</h2>
             <p style="color:#6b7280;margin-bottom:16px;">Organiza y asigna tareas domésticas entre todos los compañeros de forma equitativa.</p>
             @if (_isDemo) {
-                <div class="demo-cta-box" style="background:#f0fdf4;border-radius:8px;padding:16px;margin-bottom:16px;border-left:4px solid #10b981;">
-                    <strong style="color:#065f46;">Vista previa: Gestión de Tareas</strong>
-                    <p style="color:#6b7280;font-size:0.9rem;margin:6px 0 0;">Crea listas de tareas, asígnalas a compañeros con fechas límite y recibe notificaciones automáticas cuando se completen.</p>
+                <div class="demo-cta-box" style="margin-bottom:20px;">
+                    <img style="width:100%; border-radius:8px; margin-bottom:16px; border:1px solid #e5e7eb;" src="https://images.unsplash.com/photo-1540350394557-8d14678e7f91?auto=format&fit=crop&w=800&q=80" alt="Demo Tareas" />
+                    <div style="background:#f0fdf4;border-radius:8px;padding:16px;margin-bottom:16px;border-left:4px solid #10b981;">
+                        <strong style="color:#065f46;">Vista previa: Gestión de Tareas</strong>
+                        <p style="color:#6b7280;font-size:0.9rem;margin:6px 0 0;">Crea listas de tareas, asígnalas a compañeros con fechas límite y recibe notificaciones automáticas cuando se completen.</p>
+                    </div>
+                    <a href="/Account/Register" class="btn btn-primary">🚀 Regístrate para gestionar tareas</a>
+                    <button onclick="switchMainTab('inicio')" class="btn btn-outline" style="margin-left:8px;">← Volver</button>
                 </div>
-                <a href="/Account/Register" class="btn btn-primary">🚀 Regístrate para gestionar tareas</a>
-                <button onclick="switchMainTab('inicio')" class="btn btn-outline" style="margin-left:8px;">← Volver</button>
             } else {
                 <a href="/Dashboard/Tareas" class="btn btn-primary">Ir a Tareas →</a>
                 <button onclick="switchMainTab('inicio')" class="btn btn-outline" style="margin-top:20px;">← Volver</button>
@@ -439,12 +439,15 @@
             <h2 style="margin-bottom:8px;">💶 Gastos del mes</h2>
             <p style="color:#6b7280;margin-bottom:16px;">Controla todos los gastos del piso (luz, agua, internet, supermercado) y divídelos automáticamente.</p>
             @if (_isDemo) {
-                <div style="background:#fffbeb;border-radius:8px;padding:16px;margin-bottom:16px;border-left:4px solid #f59e0b;">
-                    <strong style="color:#92400e;">Vista previa: Control de Gastos</strong>
-                    <p style="color:#6b7280;font-size:0.9rem;margin:6px 0 0;">Añade facturas, tickets del supermercado y reparte los gastos automáticamente. Gráficas mensuales y exportación a Excel.</p>
+                <div class="demo-cta-box" style="margin-bottom:20px;">
+                    <img style="width:100%; border-radius:8px; margin-bottom:16px; border:1px solid #e5e7eb;" src="https://images.unsplash.com/photo-1554224155-6726b3ff858f?auto=format&fit=crop&w=800&q=80" alt="Demo Gastos" />
+                    <div style="background:#fffbeb;border-radius:8px;padding:16px;margin-bottom:16px;border-left:4px solid #f59e0b;">
+                        <strong style="color:#92400e;">Vista previa: Control de Gastos</strong>
+                        <p style="color:#6b7280;font-size:0.9rem;margin:6px 0 0;">Añade facturas, tickets del supermercado y reparte los gastos automáticamente. Gráficas mensuales y exportación a Excel.</p>
+                    </div>
+                    <a href="/Account/Register" class="btn btn-primary">🚀 Regístrate para ver los gastos</a>
+                    <button onclick="switchMainTab('inicio')" class="btn btn-outline" style="margin-left:8px;">← Volver</button>
                 </div>
-                <a href="/Account/Register" class="btn btn-primary">🚀 Regístrate para ver los gastos</a>
-                <button onclick="switchMainTab('inicio')" class="btn btn-outline" style="margin-left:8px;">← Volver</button>
             } else {
                 <a href="/Dashboard/Gastos" class="btn btn-primary">Ir a Gastos →</a>
                 <button onclick="switchMainTab('inicio')" class="btn btn-outline" style="margin-top:20px;">← Volver</button>
@@ -454,12 +457,15 @@
             <h2 style="margin-bottom:8px;">📄 Contratos y Pagos</h2>
             <p style="color:#6b7280;margin-bottom:16px;">Guarda y gestiona todos los contratos y documentos legales del piso.</p>
             @if (_isDemo) {
-                <div style="background:#f5f3ff;border-radius:8px;padding:16px;margin-bottom:16px;border-left:4px solid #7c3aed;">
-                    <strong style="color:#5b21b6;">Vista previa: Contratos</strong>
-                    <p style="color:#6b7280;font-size:0.9rem;margin:6px 0 0;">Sube contratos de alquiler, recibos de pago y cualquier documento importante. Firma digital, alertas de vencimiento y historial completo.</p>
+                <div class="demo-cta-box" style="margin-bottom:20px;">
+                    <img style="width:100%; border-radius:8px; margin-bottom:16px; border:1px solid #e5e7eb;" src="https://images.unsplash.com/photo-1562664377-709f2c337eb2?auto=format&fit=crop&w=800&q=80" alt="Demo Contratos" />
+                    <div style="background:#f5f3ff;border-radius:8px;padding:16px;margin-bottom:16px;border-left:4px solid #7c3aed;">
+                        <strong style="color:#5b21b6;">Vista previa: Contratos</strong>
+                        <p style="color:#6b7280;font-size:0.9rem;margin:6px 0 0;">Sube contratos de alquiler, recibos de pago y cualquier documento importante. Firma digital, alertas de vencimiento y historial completo.</p>
+                    </div>
+                    <a href="/Account/Register" class="btn btn-primary">🚀 Regístrate para ver contratos</a>
+                    <button onclick="switchMainTab('inicio')" class="btn btn-outline" style="margin-left:8px;">← Volver</button>
                 </div>
-                <a href="/Account/Register" class="btn btn-primary">🚀 Regístrate para ver contratos</a>
-                <button onclick="switchMainTab('inicio')" class="btn btn-outline" style="margin-left:8px;">← Volver</button>
             } else {
                 <a href="/Dashboard/ContratosYPagos" class="btn btn-primary">Ir a Contratos →</a>
                 <button onclick="switchMainTab('inicio')" class="btn btn-outline" style="margin-top:20px;">← Volver</button>
@@ -469,12 +475,15 @@
             <h2 style="margin-bottom:8px;">📅 Reservas de zonas comunes</h2>
             <p style="color:#6b7280;margin-bottom:16px;">Reserva la lavadora, sala de estar, parking u otros espacios del piso sin conflictos.</p>
             @if (_isDemo) {
-                <div style="background:#eff6ff;border-radius:8px;padding:16px;margin-bottom:16px;border-left:4px solid #3b82f6;">
-                    <strong style="color:#1e40af;">Vista previa: Reservas</strong>
-                    <p style="color:#6b7280;font-size:0.9rem;margin:6px 0 0;">Calendario compartido en tiempo real. Reserva franjas horarias para zonas comunes y evita conflictos entre compañeros de forma sencilla.</p>
+                <div class="demo-cta-box" style="margin-bottom:20px;">
+                    <img style="width:100%; border-radius:8px; margin-bottom:16px; border:1px solid #e5e7eb;" src="https://images.unsplash.com/photo-1506784951206-aa92b158bce0?auto=format&fit=crop&w=800&q=80" alt="Demo Reservas" />
+                    <div style="background:#eff6ff;border-radius:8px;padding:16px;margin-bottom:16px;border-left:4px solid #3b82f6;">
+                        <strong style="color:#1e40af;">Vista previa: Reservas</strong>
+                        <p style="color:#6b7280;font-size:0.9rem;margin:6px 0 0;">Calendario compartido en tiempo real. Reserva franjas horarias para zonas comunes y evita conflictos entre compañeros de forma sencilla.</p>
+                    </div>
+                    <a href="/Account/Register" class="btn btn-primary">🚀 Regístrate para hacer reservas</a>
+                    <button onclick="switchMainTab('inicio')" class="btn btn-outline" style="margin-left:8px;">← Volver</button>
                 </div>
-                <a href="/Account/Register" class="btn btn-primary">🚀 Regístrate para hacer reservas</a>
-                <button onclick="switchMainTab('inicio')" class="btn btn-outline" style="margin-left:8px;">← Volver</button>
             } else {
                 <a href="/Dashboard/Reservas" class="btn btn-primary">Ir a Reservas →</a>
                 <button onclick="switchMainTab('inicio')" class="btn btn-outline" style="margin-top:20px;">← Volver</button>
@@ -484,12 +493,15 @@
             <h2 style="margin-bottom:8px;">✉️ Mensajes</h2>
             <p style="color:#6b7280;margin-bottom:16px;">Canal de comunicación privado para todos los inquilinos del piso.</p>
             @if (_isDemo) {
-                <div style="background:#f0fdf4;border-radius:8px;padding:16px;margin-bottom:16px;border-left:4px solid #10b981;">
-                    <strong style="color:#065f46;">Vista previa: Mensajería interna</strong>
-                    <p style="color:#6b7280;font-size:0.9rem;margin:6px 0 0;">Chatea con tus compañeros, comparte novedades del piso y adjunta fotos o documentos. Todo en un canal centralizado dentro de ConviApp.</p>
+                <div class="demo-cta-box" style="margin-bottom:20px;">
+                    <img style="width:100%; border-radius:8px; margin-bottom:16px; border:1px solid #e5e7eb;" src="https://images.unsplash.com/photo-1611162617213-7d7a39e9b1d7?auto=format&fit=crop&w=800&q=80" alt="Demo Mensajes" />
+                    <div style="background:#f0fdf4;border-radius:8px;padding:16px;margin-bottom:16px;border-left:4px solid #10b981;">
+                        <strong style="color:#065f46;">Vista previa: Mensajería interna</strong>
+                        <p style="color:#6b7280;font-size:0.9rem;margin:6px 0 0;">Chatea con tus compañeros, comparte novedades del piso y adjunta fotos o documentos. Todo en un canal centralizado dentro de ConviApp.</p>
+                    </div>
+                    <a href="/Account/Register" class="btn btn-primary">🚀 Regístrate para enviar mensajes</a>
+                    <button onclick="switchMainTab('inicio')" class="btn btn-outline" style="margin-left:8px;">← Volver</button>
                 </div>
-                <a href="/Account/Register" class="btn btn-primary">🚀 Regístrate para enviar mensajes</a>
-                <button onclick="switchMainTab('inicio')" class="btn btn-outline" style="margin-left:8px;">← Volver</button>
             } else {
                 <a href="/Dashboard/Mensajes" class="btn btn-primary">Ir a Mensajes →</a>
                 <button onclick="switchMainTab('inicio')" class="btn btn-outline" style="margin-top:20px;">← Volver</button>
@@ -499,12 +511,15 @@
             <h2 style="margin-bottom:8px;">👤 Mi Perfil</h2>
             <p style="color:#6b7280;margin-bottom:16px;">Gestiona tu cuenta, foto, correo y plan de suscripción.</p>
             @if (_isDemo) {
-                <div style="background:#fdf4ff;border-radius:8px;padding:16px;margin-bottom:16px;border-left:4px solid #a855f7;">
-                    <strong style="color:#7e22ce;">Vista previa: Perfil de usuario</strong>
-                    <p style="color:#6b7280;font-size:0.9rem;margin:6px 0 0;">Actualiza tu nombre, correo electrónico y foto de perfil. Consulta tu plan actual y actualiza a Pro en cualquier momento.</p>
+                <div class="demo-cta-box" style="margin-bottom:20px;">
+                    <img style="width:100%; border-radius:8px; margin-bottom:16px; border:1px solid #e5e7eb;" src="https://images.unsplash.com/photo-1543165365-1d6ebef4272f?auto=format&fit=crop&w=800&q=80" alt="Demo Perfil" />
+                    <div style="background:#fdf4ff;border-radius:8px;padding:16px;margin-bottom:16px;border-left:4px solid #a855f7;">
+                        <strong style="color:#7e22ce;">Vista previa: Perfil de usuario</strong>
+                        <p style="color:#6b7280;font-size:0.9rem;margin:6px 0 0;">Actualiza tu nombre, correo electrónico y foto de perfil. Consulta tu plan actual y actualiza a Pro en cualquier momento.</p>
+                    </div>
+                    <a href="/Account/Register" class="btn btn-primary">🚀 Crear mi perfil</a>
+                    <button onclick="switchMainTab('inicio')" class="btn btn-outline" style="margin-left:8px;">← Volver</button>
                 </div>
-                <a href="/Account/Register" class="btn btn-primary">🚀 Crear mi perfil</a>
-                <button onclick="switchMainTab('inicio')" class="btn btn-outline" style="margin-left:8px;">← Volver</button>
             } else {
                 <a href="/Account/Profile" class="btn btn-primary">Editar perfil →</a>
                 <a href="/Account/Upgrade?plan=Profesional" class="btn btn-outline" style="margin-left:8px;">Actualizar Plan</a>
@@ -519,33 +534,46 @@
     }
     @if (showRightAd)
     {
-        <div class="sidebar-right">
-            <div class="flat-card" style="background: linear-gradient(135deg, #1e3a8a, #3b82f6); color: white; padding: 20px; text-align: center;">
-                <div style="font-size:0.6rem;color:rgba(255,255,255,0.5);letter-spacing:2px;margin-bottom:6px;">PUBLICIDAD</div>
-                <h3 style="font-size: 1.1rem; margin-bottom: 8px;">🧹 Limpieza a domicilio</h3>
-                <p style="font-size: 0.82rem; color: #dbeafe; margin-bottom: 16px;">Primera limpieza al 50% para nuevos clientes con código CONVI50.</p>
-                <a href="#" class="btn btn-outline btn-sm" style="color:white; border-color:rgba(255,255,255,0.4);">Ver ofertas</a>
+        <!-- Use flex-grow for stretching the elements to the bottom -->
+        <div class="sidebar-right" style="flex-grow:1;">
+            <div class="flat-card" style="background: linear-gradient(135deg, #1e3a8a, #3b82f6); color: white; padding: 0; text-align: center; margin-bottom: 24px; overflow: hidden;">
+                <img src="https://images.unsplash.com/photo-1581578731548-c64695cc6952?auto=format&fit=crop&w=300&q=80" alt="Limpieza" style="width:100%; height:120px; object-fit:cover;" />
+                <div style="padding: 16px;">
+                    <div style="font-size:0.6rem;color:rgba(255,255,255,0.5);letter-spacing:2px;margin-bottom:6px;">PUBLICIDAD</div>
+                    <h3 style="font-size: 1.1rem; margin-bottom: 8px;">Limpieza a domicilio</h3>
+                    <p style="font-size: 0.82rem; color: #dbeafe; margin-bottom: 16px;">Primera limpieza al 50% para nuevos clientes con código CONVI50.</p>
+                    <a href="#" class="btn btn-outline btn-sm" style="color:white; border-color:rgba(255,255,255,0.4);">Ver ofertas</a>
+                </div>
             </div>
 
-            <div class="flat-card" style="background: #ecfdf5; border-color: #a7f3d0; padding: 20px; text-align: center;">
-                <div style="font-size:0.6rem;color:#6b7280;letter-spacing:2px;margin-bottom:6px;">PUBLICIDAD</div>
-                <h3 style="font-size: 1.1rem; color: #065f46; margin-bottom: 8px;">🛋️ Muebles para el piso</h3>
-                <p style="font-size: 0.82rem; color: #047857; margin-bottom: 16px;">Descuento del 15% en camas y escritorios. Código CONVI15.</p>
-                <a href="#" class="btn btn-primary btn-sm" style="background:#10b981;">Descubrir</a>
+            <div class="flat-card" style="background: #ecfdf5; border-color: #a7f3d0; padding: 0; text-align: center; margin-bottom: 24px; overflow: hidden;">
+                <img src="https://images.unsplash.com/photo-1555041469-a586c61ea9bc?auto=format&fit=crop&w=300&q=80" alt="Muebles" style="width:100%; height:120px; object-fit:cover;" />
+                <div style="padding: 16px;">
+                    <div style="font-size:0.6rem;color:#6b7280;letter-spacing:2px;margin-bottom:6px;">PUBLICIDAD</div>
+                    <h3 style="font-size: 1.1rem; color: #065f46; margin-bottom: 8px;">Muebles para el piso</h3>
+                    <p style="font-size: 0.82rem; color: #047857; margin-bottom: 16px;">Descuento del 15% en camas y escritorios. Código CONVI15.</p>
+                    <a href="#" class="btn btn-primary btn-sm" style="background:#10b981;">Descubrir</a>
+                </div>
             </div>
 
-            <div class="flat-card" style="background: #fffbeb; border-color: #fde68a; padding: 20px; text-align: center;">
-                <div style="font-size:0.6rem;color:#6b7280;letter-spacing:2px;margin-bottom:6px;">PUBLICIDAD</div>
-                <h3 style="font-size: 1.1rem; color: #92400e; margin-bottom: 8px;">⚡ Tarifa de luz</h3>
-                <p style="font-size: 0.82rem; color: #b45309; margin-bottom: 16px;">Octopus Energy: luz 100% renovable desde 0.09€/kWh. Sin permanencia.</p>
-                <a href="#" class="btn btn-sm" style="background:#fbbf24;color:#fff;">Comparar</a>
+            <div class="flat-card" style="background: #fffbeb; border-color: #fde68a; padding: 0; text-align: center; margin-bottom: 24px; overflow: hidden;">
+                <img src="https://images.unsplash.com/photo-1473341304170-971dccb5ac1e?auto=format&fit=crop&w=300&q=80" alt="Luz" style="width:100%; height:120px; object-fit:cover;" />
+                <div style="padding: 16px;">
+                    <div style="font-size:0.6rem;color:#6b7280;letter-spacing:2px;margin-bottom:6px;">PUBLICIDAD</div>
+                    <h3 style="font-size: 1.1rem; color: #92400e; margin-bottom: 8px;">Tarifa de luz</h3>
+                    <p style="font-size: 0.82rem; color: #b45309; margin-bottom: 16px;">Octopus Energy: luz 100% renovable desde 0.09€/kWh.</p>
+                    <a href="#" class="btn btn-sm" style="background:#fbbf24;color:#fff;">Comparar</a>
+                </div>
             </div>
 
-            <div class="flat-card" style="background: #f5f3ff; border-color: #c4b5fd; padding: 20px; text-align: center;">
-                <div style="font-size:0.6rem;color:#6b7280;letter-spacing:2px;margin-bottom:6px;">PUBLICIDAD</div>
-                <h3 style="font-size: 1.1rem; color: #5b21b6; margin-bottom: 8px;">📱 Fibra 600Mb</h3>
-                <p style="font-size: 0.82rem; color: #7c3aed; margin-bottom: 16px;">Internet ultra-rápido para el piso desde 24.90€/mes. Sin permanencia.</p>
-                <a href="#" class="btn btn-sm" style="background:#7c3aed;color:#fff;">Ver oferta</a>
+            <div class="flat-card" style="background: #f5f3ff; border-color: #c4b5fd; padding: 0; text-align: center; margin-bottom: 24px; overflow: hidden; flex-grow: 1; display:flex; flex-direction:column; justify-content:center;">
+                <img src="https://images.unsplash.com/photo-1611078489935-0c966ad50587?auto=format&fit=crop&w=300&q=80" alt="Móvil" style="width:100%; height:120px; object-fit:cover;" />
+                <div style="padding: 16px;">
+                    <div style="font-size:0.6rem;color:#6b7280;letter-spacing:2px;margin-bottom:6px;">PUBLICIDAD</div>
+                    <h3 style="font-size: 1.1rem; color: #5b21b6; margin-bottom: 8px;">Fibra 600Mb</h3>
+                    <p style="font-size: 0.82rem; color: #7c3aed; margin-bottom: 16px;">Internet ultra-rápido para el piso desde 24.90€/mes.</p>
+                    <a href="#" class="btn btn-sm" style="background:#7c3aed;color:#fff;">Ver oferta</a>
+                </div>
             </div>
 
             <div style="text-align:center;margin-top:4px;">
@@ -555,7 +583,26 @@
     }
     @if (!showRightAd)
     {
-        <div class="sidebar-right" style="width:300px;flex-shrink:0;"></div>
+        <div class="sidebar-right" style="flex-grow:1;">
+            <div class="flat-card" style="padding: 20px;">
+                <h4 style="margin-bottom: 16px; color: #1e3a8a;">✨ Sugerencias Pro</h4>
+                <p style="font-size: 0.85rem; color: #4b5563; margin-bottom: 16px;">Aprovecha al máximo tu suscripción ad-free revisando estos atajos útiles.</p>
+                
+                <a href="/Dashboard/MisPisos" class="menu-link" style="background:#ef4444; color:white; justify-content:center; margin-bottom:12px;">+ Añadir piso rápido</a>
+                <a href="/Dashboard/ContratosYPagos" class="menu-link" style="background:#3b82f6; color:white; justify-content:center; margin-bottom:12px;">📑 Subir contrato nuevo</a>
+                <a href="/Dashboard/Gastos" class="menu-link" style="background:#10b981; color:white; justify-content:center; margin-bottom:12px;">💶 Registrar un gasto</a>
+                
+                <div style="margin-top: 24px; padding-top: 16px; border-top: 1px solid #e5e7eb;">
+                    <div style="display:flex; align-items:center; gap:8px;">
+                        <span style="font-size:2rem;">🎧</span>
+                        <div>
+                            <strong style="display:block; font-size:0.9rem;">Soporte Premium</strong>
+                            <span style="font-size:0.75rem; color:#6b7280;">Te respondemos en &lt; 1h</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
     }
 </div>
 

@@ -3,25 +3,25 @@
     var activePage = ViewData["ActivePage"] as string ?? "";
     
     var defaultAds = new[] {
-        new { Icon = "🏠", Title = "MudanzasExpress.es", Text = "¿Te mudas? Presupuesto gratis en 24h. Mudanzas nacionales desde 199€", Color = "#f59e0b", Cta = "Ver oferta" },
-        new { Icon = "📦", Title = "StorageBox", Text = "¿Sin espacio? Guarda tus cosas desde 29€/mes. Recogida a domicilio", Color = "#60a5fa", Cta = "Más info" },
-        new { Icon = "📱", Title = "Fibra&Móvil Pack", Text = "Internet 600Mb + Móvil ilimitado por 29.90€/mes para tu piso", Color = "#34d399", Cta = "Contratar" },
-        new { Icon = "⚡", Title = "Octopus Energy", Text = "Luz 100% renovable desde 0.09€/kWh. Cambia tu tarifa sin coste", Color = "#818cf8", Cta = "Comparar" }
+        new { Icon = "<img src=\"https://images.unsplash.com/photo-1586023492125-27b2c045efd7?auto=format&fit=crop&w=150&q=80\" style=\"width:40px;height:40px;border-radius:8px;object-fit:cover;\"/>", Title = "MudanzasExpress.es", Text = "¿Te mudas? Presupuesto gratis en 24h. Mudanzas nacionales desde 199€", Color = "#f59e0b", Cta = "Ver oferta" },
+        new { Icon = "<img src=\"https://images.unsplash.com/photo-1595222046187-51ad3cb899c7?auto=format&fit=crop&w=150&q=80\" style=\"width:40px;height:40px;border-radius:8px;object-fit:cover;\"/>", Title = "StorageBox", Text = "¿Sin espacio? Guarda tus cosas desde 29€/mes. Recogida a domicilio", Color = "#60a5fa", Cta = "Más info" },
+        new { Icon = "<img src=\"https://images.unsplash.com/photo-1611078489935-0c966ad50587?auto=format&fit=crop&w=150&q=80\" style=\"width:40px;height:40px;border-radius:8px;object-fit:cover;\"/>", Title = "Fibra&Móvil Pack", Text = "Internet 600Mb + Móvil ilimitado por 29.90€/mes para tu piso", Color = "#34d399", Cta = "Contratar" },
+        new { Icon = "<img src=\"https://images.unsplash.com/photo-1473341304170-971dccb5ac1e?auto=format&fit=crop&w=150&q=80\" style=\"width:40px;height:40px;border-radius:8px;object-fit:cover;\"/>", Title = "Octopus Energy", Text = "Luz 100% renovable desde 0.09€/kWh. Cambia tu tarifa sin coste", Color = "#818cf8", Cta = "Comparar" }
     };
 
     var cleaningAds = new[] {
-        new { Icon = "🧹", Title = "LimpiaHogar Pro", Text = "Limpieza profesional de pisos compartidos. Primera limpieza al 50%", Color = "#06d6a0", Cta = "Reservar" },
-        new { Icon = "🧼", Title = "EcoClean", Text = "Productos de limpieza sostenibles para tu hogar. 2x1 en tu primer pedido", Color = "#10b981", Cta = "Comprar" },
+        new { Icon = "<img src=\"https://images.unsplash.com/photo-1581578731548-c64695cc6952?auto=format&fit=crop&w=150&q=80\" style=\"width:40px;height:40px;border-radius:8px;object-fit:cover;\"/>", Title = "LimpiaHogar Pro", Text = "Limpieza profesional de pisos compartidos. Primera limpieza al 50%", Color = "#06d6a0", Cta = "Reservar" },
+        new { Icon = "<img src=\"https://images.unsplash.com/photo-1585832770485-e68a5dbfa5cd?auto=format&fit=crop&w=150&q=80\" style=\"width:40px;height:40px;border-radius:8px;object-fit:cover;\"/>", Title = "EcoClean", Text = "Productos de limpieza sostenibles para tu hogar. 2x1 en tu primer pedido", Color = "#10b981", Cta = "Comprar" },
     };
 
     var expensesAds = new[] {
-        new { Icon = "💳", Title = "SplitWise Pro", Text = "Olvídate de las cuentas con tus compañeros. Prueba premium gratis", Color = "#f59e0b", Cta = "Probar" },
-        new { Icon = "🏦", Title = "NeoBank Joven", Text = "Cuenta compartida sin comisiones. Tarjetas independientes", Color = "#3b82f6", Cta = "Abrir cuenta" },
+        new { Icon = "<img src=\"https://images.unsplash.com/photo-1579621970563-ebec7560ff3e?auto=format&fit=crop&w=150&q=80\" style=\"width:40px;height:40px;border-radius:8px;object-fit:cover;\"/>", Title = "SplitWise Pro", Text = "Olvídate de las cuentas con tus compañeros. Prueba premium gratis", Color = "#f59e0b", Cta = "Probar" },
+        new { Icon = "<img src=\"https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?auto=format&fit=crop&w=150&q=80\" style=\"width:40px;height:40px;border-radius:8px;object-fit:cover;\"/>", Title = "NeoBank Joven", Text = "Cuenta compartida sin comisiones. Tarjetas independientes", Color = "#3b82f6", Cta = "Abrir cuenta" },
     };
 
     var furnitureAds = new[] {
-        new { Icon = "🛋️", Title = "IKEA Estudiantes", Text = "Descuento del 15% en muebles para pisos compartidos. ¡Código CONVI15!", Color = "#f87171", Cta = "Usar código" },
-        new { Icon = "🛏️", Title = "ColchonesDescanso", Text = "Colchones viscoelásticos baratos. Envío e instalación gratuitos", Color = "#8b5cf6", Cta = "Ver catálogo" }
+        new { Icon = "<img src=\"https://images.unsplash.com/photo-1555041469-a586c61ea9bc?auto=format&fit=crop&w=150&q=80\" style=\"width:40px;height:40px;border-radius:8px;object-fit:cover;\"/>", Title = "IKEA Estudiantes", Text = "Descuento del 15% en muebles para pisos compartidos. ¡Código CONVI15!", Color = "#f87171", Cta = "Usar código" },
+        new { Icon = "<img src=\"https://images.unsplash.com/photo-1505693314120-0d443867891c?auto=format&fit=crop&w=150&q=80\" style=\"width:40px;height:40px;border-radius:8px;object-fit:cover;\"/>", Title = "ColchonesDescanso", Text = "Colchones viscoelásticos baratos. Envío e instalación gratuitos", Color = "#8b5cf6", Cta = "Ver catálogo" }
     };
 
     var adSlides = defaultAds;
@@ -40,7 +40,7 @@
         {
             var a = adSlides[i];
             <div class="ad-slide @(i == 0 ? "active" : "")">
-                <span class="ad-slide-icon">@a.Icon</span>
+                <span class="ad-slide-icon">@Html.Raw(a.Icon)</span>
                 <div class="ad-slide-body">
                     <strong style="color: @a.Color;">@a.Title</strong>
                     <span class="ad-slide-text">@a.Text</span>

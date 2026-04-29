@@ -54,13 +54,13 @@ namespace ConviAppWeb.Controllers
             var validPlans = new[] { "Basico", "Profesional", "Enterprise" };
             var assignedRole = validPlans.Contains(plan) ? plan! : "Basico";
 
-            var cadUser = new Library.CAD.CADUsuario();
-            cadUser.CrearUsuario(new Library.EN.ENUsuario
+            var cadUser = new ConviAppWeb.DataAccess.CADUsuario();
+            cadUser.CrearUsuario(new ConviAppWeb.Models.ENUsuario
             {
-                Name = name,
+                Nombre = name ?? "Usuario",
                 Email = email,
-                Password = password,
-                Role = assignedRole
+                PasswordHash = password,
+                RolId = 1
             });
 
             // Auto-login
